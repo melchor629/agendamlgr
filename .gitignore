@@ -1,0 +1,29 @@
+#Java stuff
+*.class
+*.jar
+*.war
+*.ear
+hs_err_pid*
+
+#Archivos basura de los SO
+Thumbs.db
+*.ini
+.DS_Store
+*~
+*.bak
+
+#Carpetas y archivos de los IDEs
+.idea
+build/
+*.iml
+lib/*
+nbproject
+build.xml
+/dist/
+/agendamlgr-ejb/dist/
+/agendamlgr-war/dist/
+/agendamlgr-cliente/dist/
+out/
+
+#Depenencias con Google OAuth 2.0
+#TODO
