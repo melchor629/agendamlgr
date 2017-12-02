@@ -22,7 +22,7 @@ import java.util.List;
 @Stateless
 public class UsuarioFacade extends AbstractFacade<Usuario> {
 
-    @PersistenceContext(unitName = "agendamlg-ejbPU")
+    @PersistenceContext(unitName = "agendamlgr-ejbPU")
     private EntityManager em;
 
     @Override

@@ -35,7 +35,7 @@ public class EventoFacade extends AbstractFacade<Evento> {
     @EJB
     private UsuarioFacade usuarioFacade;
 
-    @PersistenceContext(unitName = "agendamlg-ejbPU")
+    @PersistenceContext(unitName = "agendamlgr-ejbPU")
     private EntityManager em;
 
     @Override

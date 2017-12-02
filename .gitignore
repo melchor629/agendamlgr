@@ -26,4 +26,5 @@ build.xml
 out/
 
 #Depenencias con Google OAuth 2.0
-#TODO
+tokens.json
+!agendamlgr-war/lib/*
