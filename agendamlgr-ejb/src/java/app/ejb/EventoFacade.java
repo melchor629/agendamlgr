@@ -9,6 +9,7 @@ import app.entity.Categoria;
 import app.entity.Evento;
 import app.entity.Usuario;
 import app.exception.AgendamlgException;
+import app.exception.AgendamlgNotFoundException;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -96,13 +97,13 @@ public class EventoFacade extends AbstractFacade<Evento> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Evento> buscarEventosUsuario(Usuario usuario) throws AgendamlgException {
+    public List<Evento> buscarEventosUsuario(Usuario usuario) throws AgendamlgNotFoundException {
         if(usuario != null) {
             Query q = this.em.createQuery("select e from Evento e where e.creador.id=:id");
             q.setParameter("id", usuario.getId());
             return (List) q.getResultList();
         } else {
-            throw new AgendamlgException("No existe ese usuario");
+            throw new AgendamlgNotFoundException("No existe ese usuario");
         }
     }
 
@@ -188,7 +189,7 @@ public class EventoFacade extends AbstractFacade<Evento> {
         return duplicadosEliminados;
     }
 
-    public void validarEvento(Usuario usuario, int idEvento) throws AgendamlgException {
+    public void validarEvento(Usuario usuario, int idEvento) throws AgendamlgException, AgendamlgNotFoundException {
         if(usuario == null) {
             throw new AgendamlgException("Un usuario anónimo no puede validar eventos");
         } else if(usuario.getTipo() == 3) {
@@ -202,7 +203,7 @@ public class EventoFacade extends AbstractFacade<Evento> {
                     throw new AgendamlgException("El evento ya ha sido validado");
                 }
             } else {
-                throw new AgendamlgException("No existe un evento con el identificador " + idEvento);
+                throw new AgendamlgNotFoundException("No existe un evento con el identificador " + idEvento);
             }
         } else {
             throw new AgendamlgException("El usuario " + usuario.getId() + " no tiene permisos para realizar esta acción");
@@ -224,13 +225,13 @@ public class EventoFacade extends AbstractFacade<Evento> {
         return Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
     }
 
-    public void borrarEvento(Usuario usuario, int idEvento) throws AgendamlgException {
+    public void borrarEvento(Usuario usuario, int idEvento) throws AgendamlgException, AgendamlgNotFoundException {
         if(usuario == null) {
             throw new AgendamlgException("Un usuario anónimo no puede borrar eventos");
         } else if(usuario.getTipo() == 3) {
             Evento evento = find(idEvento);
             if(evento == null) {
-                throw new AgendamlgException("No existe el evento con identificador " + idEvento);
+                throw new AgendamlgNotFoundException("No existe el evento con identificador " + idEvento);
             }
             remove(evento);
         } else {
@@ -239,7 +240,7 @@ public class EventoFacade extends AbstractFacade<Evento> {
     }
 
     // Este metodo permite actualizar un evento, dado el evento y una lista de categorias
-    public void editarEventoTipoUsuario(Evento evento, List<Categoria> categoriasEvento, Usuario usuarioQueEdita) throws AgendamlgException {
+    public void editarEventoTipoUsuario(Evento evento, List<Categoria> categoriasEvento, Usuario usuarioQueEdita) throws AgendamlgException, AgendamlgNotFoundException {
         try {
             // Se obtiene una lista de Categorias "de verdad"
             // No es necesario ya que sobre estos objetos no se invoca
@@ -263,10 +264,10 @@ public class EventoFacade extends AbstractFacade<Evento> {
     }
 
     // Este metodo permite actualizar las categorias del evento que se le ofrece
-    private void actualizarCategoriaEvento(Evento evento, List<Categoria> categoriasEvento) throws AgendamlgException {
+    private void actualizarCategoriaEvento(Evento evento, List<Categoria> categoriasEvento) throws AgendamlgNotFoundException {
         //No se puede modificar el creador ni el validado
         Evento original = find(evento.getId());
-        if(original == null) throw new AgendamlgException("El evento original debe existir");
+        if(original == null) throw new AgendamlgNotFoundException("El evento original debe existir");
         evento.setCreador(original.getCreador());
         evento.setValidado(original.getValidado());
         List<Categoria> categoriasOriginal = original.getCategoriaList();

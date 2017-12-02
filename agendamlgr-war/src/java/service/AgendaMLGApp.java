@@ -11,6 +11,9 @@ public class AgendaMLGApp extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         HashSet<Class<?>> set = new HashSet<>();
+        set.add(AgendamlgExceptionMapper.class);
+        set.add(AgendamlgNotFoundExceptionMapper.class);
+        set.add(NotAuthenticatedExceptionManager.class);
         return set;
     }
 }

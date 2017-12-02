@@ -1,6 +1,12 @@
 package app.exception;
 
-public class AgendamlgException extends Exception {
+import java.io.Serializable;
+
+/**
+ * When you try to do something and one parameter doesn't exist in the DB
+ * @author Melchor Alejo Garau Madrigal
+ */
+public class AgendamlgException extends Exception implements Serializable {
 
     private Throwable cause;
 
