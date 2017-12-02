@@ -9,7 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(urlPatterns = { "/oauth_init" })
+/**
+ * Starts the Google OAuth 2.0 login process
+ * @author Melchor Alejo Garau Madrigal
+ */
+@WebServlet(urlPatterns = { "/oauth/init" })
 public class LoginServlet extends AbstractAuthorizationCodeServlet {
 
     @Override
@@ -18,17 +22,24 @@ public class LoginServlet extends AbstractAuthorizationCodeServlet {
     }
 
     @Override
-    protected AuthorizationCodeFlow initializeFlow() throws ServletException, IOException {
+    protected AuthorizationCodeFlow initializeFlow() throws IOException {
         return Shared.newFlow();
     }
 
     @Override
-    protected String getRedirectUri(HttpServletRequest httpServletRequest) throws ServletException, IOException {
-        return Shared.responseUrl();
+    protected String getRedirectUri(HttpServletRequest httpServletRequest) {
+        String url = httpServletRequest.getParameter("url");
+        String referer = httpServletRequest.getHeader("referer");
+        String callbackUrl = referer != null && !referer.isEmpty() ? referer : url;
+        if (callbackUrl != null && !callbackUrl.isEmpty()) {
+            httpServletRequest.getSession().setAttribute("callbackUrl", callbackUrl);
+        }
+        return Shared.responseUrl(httpServletRequest);
     }
 
     @Override
-    protected String getUserId(HttpServletRequest httpServletRequest) throws ServletException, IOException {
+    protected String getUserId(HttpServletRequest httpServletRequest) {
         return null;
     }
+
 }

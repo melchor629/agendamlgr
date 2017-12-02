@@ -1,5 +1,7 @@
 package servlet;
 
+import app.ejb.UsuarioFacade;
+import app.entity.Usuario;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeResponseUrl;
 import com.google.api.client.auth.oauth2.Credential;
@@ -12,8 +14,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
+import service.TokensUtils;
 
-import javax.servlet.ServletException;
+import javax.ejb.EJB;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,28 +24,21 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet(urlPatterns = { "/oauth" })
+/**
+ * Ends the Google OAuth 2.0 login process. If everything went good, it will
+ * look in our users table, add it if doesn't exist or modify it if there any
+ * changes, and redirect to the index page.
+ * @author Melchor Alejo Garau Madrigal
+ */
+@WebServlet(urlPatterns = { "/oauth/response" })
 public class OAuthCallbackServlet extends AbstractAuthorizationCodeCallbackServlet {
 
-    @Override
-    protected void onSuccess(HttpServletRequest req, HttpServletResponse resp, Credential credential) throws ServletException, IOException {
-        BufferedOutputStream bos = new BufferedOutputStream(resp.getOutputStream());
-        resp.setContentType("text/html");
-        PrintWriter pw = new PrintWriter(bos);
-        pw.println(credential.getAccessToken());
-        pw.print("<br>");
-        pw.println(credential.getClock().currentTimeMillis());
-        pw.print("<br>");
-        pw.println(credential.getExpirationTimeMilliseconds());
-        pw.print("<br>");
-        pw.println(credential.getExpiresInSeconds());
-        pw.print("<br>");
-        pw.println(credential.getRefreshToken());
-        pw.print("<br>");
-        pw.println(credential.getTokenServerEncodedUrl());
-        pw.print("<br>");
-        pw.println("<a href=\"https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token="+credential.getAccessToken()+"\">Ver info</a>");
+    @EJB private UsuarioFacade usuarioFacade;
 
+    @Override
+    protected void onSuccess(HttpServletRequest req, HttpServletResponse resp, Credential credential) throws IOException {
+        //https://coderanch.com/t/542459/java/GoogleAPI-user-info
+        //https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=%ACCESS_TOKEN%
         HttpClient httpClient = new DefaultHttpClient();
         HttpUriRequest request = new HttpGet("https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token="+credential.getAccessToken());
         HttpResponse res = httpClient.execute(request);
@@ -52,51 +48,87 @@ public class OAuthCallbackServlet extends AbstractAuthorizationCodeCallbackServl
         UserInfo u = new UserInfo(parser);
         parser.close();
 
-        pw.print("<br>");
-        pw.println("Hola " + u.givenName);
+        Usuario usuario = usuarioFacade.find(u.id);
+        boolean newcomer = false;
+        if(usuario == null) {
+            newcomer = true;
+            usuario = new Usuario();
+            usuario.setId(u.id);
+            usuario.setNombre(u.givenName);
+            usuario.setApellidos(u.familyName);
+            usuario.setEmail(u.email);
+            usuario.setTipo((short) 1); //By default, will be registering with type 1 (normal user)
+            usuarioFacade.create(usuario);
+        } else {
+            //If the user has changed something, reflect that into the DB
+            usuario.setNombre(u.givenName);
+            usuario.setApellidos(u.familyName);
+            usuario.setEmail(u.email);
+            usuarioFacade.edit(usuario);
+        }
 
-        //https://coderanch.com/t/542459/java/GoogleAPI-user-info
-        //https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=%ACCESS_TOKEN%
-        pw.close();
+        String token = TokensUtils.createJwtTokenForUserId(u.id);
+        String callbackUrl = (String) req.getSession().getAttribute("callbackUrl");
+        if(callbackUrl != null) {
+            //If we stored the callback URL during the process, return it
+            resp.sendRedirect(callbackUrl + "?token=" + token + "&newcomer=" + newcomer);
+            req.getSession().removeAttribute("callbackUrl");
+        } else {
+            //Otherwise, return a json with the same info
+            resp.setContentType("application/json");
+            resp.setHeader("access-control-allow-origin", "*");
+            resp.getOutputStream().print("{\"token\": \"" + token + "\", \"newcomer\": " + newcomer + "}"); //Token
+            resp.getOutputStream().close();
+        }
     }
 
     @Override
-    protected void onError(HttpServletRequest req, HttpServletResponse resp, AuthorizationCodeResponseUrl errorResponse) throws ServletException, IOException {
-        BufferedOutputStream bos = new BufferedOutputStream(resp.getOutputStream());
-        PrintWriter pw = new PrintWriter(bos);
-        pw.println("Sad");
-        pw.println(errorResponse.getCode());
-        pw.println(errorResponse.getError());
-        pw.println(errorResponse.getErrorDescription());
-        pw.println(errorResponse.getErrorUri());
-        pw.println(errorResponse.getState());
-        pw.close();
+    protected void onError(HttpServletRequest req, HttpServletResponse resp, AuthorizationCodeResponseUrl errorResponse) throws IOException {
+        String callbackUrl = (String) req.getSession().getAttribute("callbackUrl");
+        if(callbackUrl == null) {
+            BufferedOutputStream bos = new BufferedOutputStream(resp.getOutputStream());
+            PrintWriter pw = new PrintWriter(bos);
+            resp.setContentType("application/json");
+            resp.setHeader("access-control-allow-origin", "*");
+            pw.print(String.format(
+                    "{\"error\": {\"code\": \"%s\", \"errorMessage\": \"%s\", \"errorDescription\": \"%s\", \"errorUri\": \"%s\", \"state\": \"%s\"}}",
+                    errorResponse.getCode(),
+                    errorResponse.getError(),
+                    errorResponse.getErrorDescription(),
+                    errorResponse.getErrorUri(),
+                    errorResponse.getState()
+            ));
+            pw.close();
+        } else {
+            resp.sendRedirect(callbackUrl + "?notLoggedIn=true");
+            req.getSession().removeAttribute("callbackUrl");
+        }
     }
 
     @Override
-    protected AuthorizationCodeFlow initializeFlow() throws ServletException, IOException {
+    protected AuthorizationCodeFlow initializeFlow() throws IOException {
         return Shared.newFlow();
     }
 
     @Override
-    protected String getRedirectUri(HttpServletRequest httpServletRequest) throws ServletException, IOException {
-        return Shared.responseUrl();
+    protected String getRedirectUri(HttpServletRequest httpServletRequest) {
+        return Shared.responseUrl(httpServletRequest);
     }
 
     @Override
-    protected String getUserId(HttpServletRequest httpServletRequest) throws ServletException, IOException {
+    protected String getUserId(HttpServletRequest httpServletRequest) {
         return null;
     }
 
-    public class UserInfo {
-        public String id;
-        public String email;
-        public boolean verifiedEmail;
-        public String name;
-        public String givenName;
-        public String familyName;
-        public String picture;
-        public String locale;
+    class UserInfo {
+        String id;
+        String email;
+        boolean verifiedEmail;
+        String name;
+        String givenName;
+        String familyName;
+        String picture;
+        String locale;
 
         UserInfo(JsonParser parser) throws IOException {
             while(parser.nextToken() == JsonToken.FIELD_NAME) {

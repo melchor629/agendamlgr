@@ -7,14 +7,18 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
-import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
+/**
+ * Shared code between the OAuth Servlets.
+ * @author Melchor Alejo Garau Madrigal
+ */
 class Shared {
 
-    static AuthorizationCodeFlow newFlow() throws ServletException, IOException {
+    static AuthorizationCodeFlow newFlow() throws IOException {
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JacksonFactory.getDefaultInstance(),
                 new InputStreamReader(Shared.class.getResourceAsStream("tokens.json")));
         return new GoogleAuthorizationCodeFlow.Builder(
@@ -26,8 +30,12 @@ class Shared {
         .build();
     }
 
-    static String responseUrl() {
-        return new GenericUrl("http://localhost:8080/GoogleOAuthServletTest_war_exploded/oauth").build();
+    static String responseUrl(HttpServletRequest servletRequest) {
+        return new GenericUrl(
+                (servletRequest.isSecure() ? "https://" : "http://") +
+                servletRequest.getServerName() + ":" + servletRequest.getServerPort() +
+                servletRequest.getContextPath() + "/oauth/response"
+        ).build();
     }
 
 }
