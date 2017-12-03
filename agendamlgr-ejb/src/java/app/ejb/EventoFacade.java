@@ -32,7 +32,7 @@ public class EventoFacade extends AbstractFacade<Evento> {
 
     @EJB
     private GmailBean gmailBean;
-
+    
     @EJB
     private UsuarioFacade usuarioFacade;
 
