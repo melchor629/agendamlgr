@@ -3,15 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package app.ejb;
+package geolocation;
 
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
-import javax.ejb.Stateless;
-import javax.ejb.LocalBean;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -20,16 +18,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 /**
  *
- * @author johncarlo
+ * @author john
  */
-@Stateless
-@LocalBean
-public class GeolocationBean {
-
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
-    
-    public String encontrarCoordenadas(String direccion, String token) throws IOException{
+public class Geolocation {
+    public static String encontrarCoordenadas(String direccion, String token) throws IOException{
         HttpClient httpClient = new DefaultHttpClient();
         HttpUriRequest request = new HttpGet("https://maps.googleapis.com/maps/api/geocode/json?address="+direccion+"&key=AIzaSyBTlwdVS7zlIVZlOPhv29H___ldovUk_qE");
         HttpResponse res = httpClient.execute(request);
@@ -45,5 +37,4 @@ public class GeolocationBean {
         //texto.results[0].geometry.location.lat
         return lat+","+lng;
     }
-    
 }
