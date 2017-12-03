@@ -24,6 +24,7 @@ import javax.ws.rs.core.MediaType;
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.ws.rs.HeaderParam;
 
 /**
  *
@@ -62,9 +63,10 @@ public class CategoriaREST{
     }
     
     @GET
-    @Path("/preferencias/{idUsuario}")
+    @Path("/preferencias")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<CategoriaProxy> buscarPreferenciasUsuario(@PathParam("idUsuario") String idUsuario) throws AgendamlgException, AgendamlgNotFoundException{
+    public List<CategoriaProxy> buscarPreferenciasUsuario(@HeaderParam("bearer") String token) throws AgendamlgException, AgendamlgNotFoundException, NotAuthenticatedException{
+        String idUsuario = TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token));
         Usuario usuario = usuarioFacade.find(idUsuario);
         if(usuario == null){
             throw new AgendamlgNotFoundException("Usuario no existe");
