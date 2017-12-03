@@ -42,8 +42,8 @@ public class TokensUtils {
 
     /**
      * Creates a JWT token using a User ID.
-     * @param id User ID
-     * @return The JWT Token
+     * @param id User ID.
+     * @return The JWT Token.
      */
     public static String createJwtTokenForUserId(String id) {
         try {
@@ -59,8 +59,8 @@ public class TokensUtils {
 
     /**
      * Decodes the JWT, if it is valid.
-     * @param token The JWT Token
-     * @return returns the decoded token or {@code null} if it is invalid
+     * @param token The JWT Token.
+     * @return returns the decoded token or {@code null} if it is invalid.
      */
     public static DecodedJWT decodeJwtToken(String token) {
         JWTVerifier verifier = JWT.require(algorithm)
@@ -74,13 +74,15 @@ public class TokensUtils {
     }
 
     /**
-     * From a DecodedJWT, returns the user id
-     * @param decodedJWT A DecodedJWT token
-     * @return the user id
+     * From a DecodedJWT, returns the user id or throws if there isn't a token, or is invalid.
+     * @param decodedJWT A DecodedJWT token.
+     * @return the user id.
+     * @throws NotAuthenticatedException if the DecodedJWT is null or the JWT doesn't contain the {@code userId}.
      */
-    public static String getUserIdFromJwtToken(DecodedJWT decodedJWT) {
+    public static String getUserIdFromJwtTokenOrThrow(DecodedJWT decodedJWT) throws NotAuthenticatedException {
+        if(decodedJWT == null) throw new NotAuthenticatedException("Tienes que estar autenticado para usar este servicio");
         Claim c =  decodedJWT.getClaim("userId");
-        return c != null ? c.asString() : null;
+        if(c != null) return c.asString(); else throw new NotAuthenticatedException("Tienes que estar autenticado para usar este servicio");
     }
 
 }
