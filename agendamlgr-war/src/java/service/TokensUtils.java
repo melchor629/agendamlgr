@@ -63,6 +63,7 @@ public class TokensUtils {
      * @return returns the decoded token or {@code null} if it is invalid.
      */
     public static DecodedJWT decodeJwtToken(String token) {
+        if(token == null) return null;
         JWTVerifier verifier = JWT.require(algorithm)
                 .withIssuer(issuer)
                 .build();

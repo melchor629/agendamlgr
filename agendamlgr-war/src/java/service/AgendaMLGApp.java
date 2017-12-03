@@ -14,6 +14,7 @@ public class AgendaMLGApp extends Application {
         set.add(AgendamlgExceptionMapper.class);
         set.add(AgendamlgNotFoundExceptionMapper.class);
         set.add(NotAuthenticatedExceptionManager.class);
+        set.add(UsuarioREST.class);
         set.add(CategoriaREST.class);
         return set;
     }

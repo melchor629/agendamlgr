@@ -13,17 +13,17 @@ import app.entity.Evento;
 import app.entity.Usuario;
 import app.exception.AgendamlgException;
 import app.exception.AgendamlgNotFoundException;
-import java.io.Serializable;
-import java.util.List;
-import java.util.stream.Collectors;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.jws.WebParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -51,16 +51,14 @@ public class CategoriaREST{
         if(categoria == null){
             throw new AgendamlgNotFoundException("Categoria no encontrado");
         }else{
-            CategoriaProxy categoriaProxy = new CategoriaProxy(categoria);
-            return categoriaProxy;
+            return new CategoriaProxy(categoria);
         }
     }
     
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public List<CategoriaProxy> buscarTodasLasCategorias(){
-        List<CategoriaProxy> categorias = categoriaFacade.findAll().stream().map(CategoriaProxy::new).collect(Collectors.toList());
-        return categorias;
+        return categoriaFacade.findAll().stream().map(CategoriaProxy::new).collect(Collectors.toList());
     }
     
     @GET
@@ -71,26 +69,24 @@ public class CategoriaREST{
         if(usuario == null){
             throw new AgendamlgNotFoundException("Usuario no existe");
         }
-        List<CategoriaProxy> preferencias = categoriaFacade.buscarPreferenciasUsuario(usuario).stream().map(CategoriaProxy::new).collect(Collectors.toList());
-        return preferencias;
+        return categoriaFacade.buscarPreferenciasUsuario(usuario).stream().map(CategoriaProxy::new).collect(Collectors.toList());
     }
     
     @GET
     @Path("/categoriasEvento/{idEvento}")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<CategoriaProxy> buscarCategoriasEvento(@PathParam("idEvento") int idEvento) throws AgendamlgException, AgendamlgNotFoundException{
+    public List<CategoriaProxy> buscarCategoriasEvento(@PathParam("idEvento") int idEvento) throws AgendamlgNotFoundException{
         Evento evento = eventoFacade.find(idEvento);
         if(evento == null){
             throw new AgendamlgNotFoundException("Evento no existe");
         }
-        List<CategoriaProxy> categoriasEvento = categoriaFacade.buscarCategoriasEvento(evento).stream().map(CategoriaProxy::new).collect(Collectors.toList());
-        return categoriasEvento;
+        return categoriaFacade.buscarCategoriasEvento(evento).stream().map(CategoriaProxy::new).collect(Collectors.toList());
     }
     
     public static class CategoriaProxy implements Serializable{
         public int id;
         public String nombre;
-        public CategoriaProxy(Categoria categoria){
+        CategoriaProxy(Categoria categoria){
             this.id = categoria.getId();
             this.nombre = categoria.getNombre();
         }
