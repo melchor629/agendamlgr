@@ -22,6 +22,7 @@ public class EventoREST {
     @EJB private EventoFacade fachadaEvento;
     
     // Obtener un evento dada una id, pasada por URL
+    /* Esta RUTA necesita autenticacion(jwt token) en el caso que el evento a obtener no este validado! */
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     @Path("{id}")
@@ -33,9 +34,40 @@ public class EventoREST {
     }
     
     // Crear un Evento, POST. Se recibe un JSON con las caracteristicas del evento a crear
+    /*Esta RUTA necesita autenticacion(jwt token) para crear un evento, y evidentemente para que
+      este sea creado a validado o no
+    */
     
-    //
+    @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    @Path("")
+    public EventoProxy crearEvento(EventoProxy evento){
+        
+        return null;
+    }
+    
+    // Actualizar un evento. Dado un evento se actualiza este en el servidor
+    /* Esta RUTA necesita autenticacion(jwt token), dado que se va a hacer una
+       operacion de actualizacion. Ademas un evento solo puede ser editado
+       por un periodista
+    */
+    
 
+    // Eliminar un evento. Dada una id de evento se procede a la eliminacion de este
+    /* Esta RUTA necesita autenticacion(jwt token), dado que se va a hacer una
+       operacion de eliminacion, ademas se ha de comprobar que el usuario logueado
+       es periodista, que es quien puede borrar eventos
+    */
+    @DELETE
+    @Produces({MediaType.APPLICATION_JSON})
+    @Path("{id}")
+    public EventoProxy borrarEvento(@PathParam("id") String id){
+        
+        // Se devuelve el evento que se acaba de borrar
+        return null;
+    }
+    
     /* Clase estatica anidada Serializable la cual permite representar un evento
        que no se corresponde exactamente con la representacion hecha en susodicha clase
        empleada para la entidad JPA */
