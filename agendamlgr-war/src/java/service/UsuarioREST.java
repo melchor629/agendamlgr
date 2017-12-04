@@ -10,6 +10,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.io.Serializable;
 
+/**
+ * @author Melchor Alejo Garau Madrigal
+ */
 @Stateless
 @Path("usuario")
 public class UsuarioREST {

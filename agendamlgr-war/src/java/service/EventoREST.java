@@ -8,19 +8,18 @@ import app.entity.Usuario;
 import app.exception.AgendamlgException;
 import app.exception.AgendamlgNotFoundException;
 import geolocation.Geolocation;
-import java.io.IOException;
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Stateless
 @Path("evento")
@@ -149,7 +148,7 @@ public class EventoREST {
     // esta. Metodo util y necesario en la creacion de eventos
     public String buscarCoordenadas(String direccion) throws AgendamlgException {
         try {
-            return Geolocation.encontrarCoordenadas(direccion, TokensUtils.googleApiKey);
+            return Geolocation.encontrarCoordenadas(direccion);
         } catch (IOException ex) {
             throw new AgendamlgException("Coordenadas no encontradas - Dirección Inválida", ex);
         }
