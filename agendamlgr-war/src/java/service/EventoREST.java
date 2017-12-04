@@ -272,6 +272,8 @@ public class EventoREST {
 
         // ID Usuario creador del evento
         private String creador;
+
+        public Double latitud, longitud;
         
         // 
         private String propiedadInventada;
@@ -287,6 +289,8 @@ public class EventoREST {
             this.precio = evento.getPrecio();
             this.direccion = evento.getDireccion();
             this.validado = evento.getValidado();
+            this.latitud = evento.getLatitud() != null ? evento.getLatitud().doubleValue() : null;
+            this.longitud = evento.getLongitud() != null ? evento.getLongitud().doubleValue() : null;
 
             this.categoriaList = new ArrayList<>();
             // Rellenar de ids la lista de categorias

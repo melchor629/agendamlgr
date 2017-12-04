@@ -15,6 +15,8 @@ CREATE TABLE Evento (
   direccion VARCHAR(200) NOT NULL,
   validado DECIMAL(1,0) NOT NULL DEFAULT 0,
   creador VARCHAR(45) NOT NULL,
+  latitud DOUBLE PRECISION,
+  longitud DOUBLE PRECISION,
   flickrUserId VARCHAR(45),
   flickrAlbumId VARCHAR(45),
   PRIMARY KEY (id));
