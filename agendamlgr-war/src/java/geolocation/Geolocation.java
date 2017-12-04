@@ -35,11 +35,15 @@ public class Geolocation {
         );
         
         List<Map<String, Object>> results = (List<Map<String, Object>>) resultadoJSON.get("results");
-        Map<String,Object> geometry = (Map<String,Object>) results.get(0).get("geometry");
-        Map<String,Object> location = (Map<String,Object>) geometry.get("location");
-        Double lat = (Double) location.get("lat");
-        Double lng = (Double) location.get("lng");
-        //texto.results[0].geometry.location.lat
-        return lat+","+lng;
+        if(!results.isEmpty()) {
+            Map<String,Object> geometry = (Map<String,Object>) results.get(0).get("geometry");
+            Map<String,Object> location = (Map<String,Object>) geometry.get("location");
+            Double lat = (Double) location.get("lat");
+            Double lng = (Double) location.get("lng");
+            //texto.results[0].geometry.location.lat
+            return lat+","+lng;
+        }else{
+            return null;
+        }
     }
 }
