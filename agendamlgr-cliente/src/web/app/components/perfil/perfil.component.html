@@ -1,0 +1,12 @@
+<h4>Datos del Usuario</h4>
+<img [src]="usuario.image"/><br/>
+Nombre: {{ usuario.nombre }}<br/>
+Apellidos: {{ usuario.apellidos }}<br/>
+Email: {{ usuario.email }}<br/>
+Id: {{ usuario.id }}<br/>
+Tipo: {{ usuario.tipo }}<br/>
+
+<h4>Categorias</h4>
+<div *ngFor="let categoria of preferencias">
+{{ categoria.nombre }}
+</div>

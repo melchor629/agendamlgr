@@ -8,6 +8,9 @@ const $ = require('jquery');
 })
 export class AppComponent {
     constructor() {
-        $('html').css('background', 'lightblue');
+      var token = window.location.search.substr(1).split("&").map(e => e.split("=")).reduce((x, e) => { x[e[0]] = e[1]; return x; }, {})["token"];
+      if(token){
+        window.localStorage.setItem('token',token);
+      }
     }
 }
