@@ -24,7 +24,11 @@ import java.util.List;
 @Stateless
 @Path("evento")
 public class EventoREST {
-
+    
+    // Maximo tamaño de la descripcion (numero de caracteres) de un evento cuando
+    // esta es devuelta como resultado de listar los eventos
+    public static final int MAX_CARACTERES_DESCRIPCION = 150;
+    
     // Fachada de eventos para poder trabajar con estos
     @EJB
     private EventoFacade eventoFacade;
@@ -50,7 +54,9 @@ public class EventoREST {
         List<EventoProxy> retorno = new ArrayList<>();
 
         for (Evento evento : listaEventos) {
-            retorno.add(new EventoProxy(evento));
+            EventoProxy eventoProxy = new EventoProxy(evento);
+            eventoProxy.descripcion = ellipsize(eventoProxy.descripcion, MAX_CARACTERES_DESCRIPCION);
+            retorno.add(eventoProxy);
         }
 
         return retorno;
@@ -71,7 +77,9 @@ public class EventoREST {
         List<EventoProxy> listaEventos = new ArrayList<>();
 
         for (Evento evento : eventos) {
-            listaEventos.add(new EventoProxy(evento));
+            EventoProxy eventoProxy = new EventoProxy(evento);
+            eventoProxy.descripcion = ellipsize(eventoProxy.descripcion, MAX_CARACTERES_DESCRIPCION);
+            listaEventos.add(eventoProxy);
         }
 
         return listaEventos;
@@ -286,8 +294,7 @@ public class EventoREST {
     @Consumes({MediaType.APPLICATION_JSON})
     public List<EventoProxy> filtrarEventos(Filtrado filtro, @HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgException {
         // Crear un objeto filtrado acorde a los QueryParam recibidos
-        
-        
+
         Usuario usuarioSesion = usuarioDesdeToken(token);
 
         // Controlar que no se proporcione un filtro incorrecto, es decir nulo
@@ -295,10 +302,10 @@ public class EventoREST {
         if (filtro == null || filtro.mostrarDeMiPreferencia == null || filtro.ordenarPorDistancia == null) {
             throw new AgendamlgException("El filtro es nulo o parametros esenciales de este son nulos");
         }
-        
+
         // Si se ha decidido ordenar por distancia y faltan latitud longitud y
         // radio se lanza excepcion
-        if(filtro.mostrarDeMiPreferencia && (filtro.latitud == null || filtro.longitud == null || filtro.radio == null)){
+        if (filtro.mostrarDeMiPreferencia && (filtro.latitud == null || filtro.longitud == null || filtro.radio == null)) {
             throw new AgendamlgException("Se ha decidido filtrar por distancia,"
                     + "pero parametros esenciales como radio, latitud y longitud"
                     + "no se han proporcionado");
@@ -331,7 +338,9 @@ public class EventoREST {
         List<EventoProxy> retorno = new ArrayList<>();
 
         for (Evento evento : listaEventos) {
-            retorno.add(new EventoProxy(evento));
+            EventoProxy eventoProxy = new EventoProxy(evento);
+            eventoProxy.descripcion = ellipsize(eventoProxy.descripcion, MAX_CARACTERES_DESCRIPCION);
+            retorno.add(eventoProxy);
         }
 
         return retorno;
@@ -362,6 +371,44 @@ public class EventoREST {
         }
 
         return usuario;
+    }
+
+    // Dado un texto permite abreviarlo a un máximo de caracteres dado
+    private final static String NON_THIN = "[^iIl1\\.,']";
+
+    private static int textWidth(String str) {
+        return (int) (str.length() - str.replaceAll(NON_THIN, "").length() / 2);
+    }
+
+    public static String ellipsize(String text, int max) {
+
+        if (textWidth(text) <= max) {
+            return text;
+        }
+
+        // Start by chopping off at the word before max
+        // This is an over-approximation due to thin-characters...
+        int end = text.lastIndexOf(' ', max - 3);
+
+        // Just one long word. Chop it off.
+        if (end == -1) {
+            return text.substring(0, max - 3) + "...";
+        }
+
+        // Step forward as long as textWidth allows.
+        int newEnd = end;
+        do {
+            end = newEnd;
+            newEnd = text.indexOf(' ', end + 1);
+
+            // No more spaces.
+            if (newEnd == -1) {
+                newEnd = text.length();
+            }
+
+        } while (textWidth(text.substring(0, newEnd) + "...") < max);
+
+        return text.substring(0, end) + "...";
     }
 
     /**
