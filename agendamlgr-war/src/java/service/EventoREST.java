@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Stateless
 @Path("evento")
@@ -27,7 +28,7 @@ public class EventoREST {
 
     // Maximo tamaño de la descripcion (numero de caracteres) de un evento cuando
     // esta es devuelta como resultado de listar los eventos
-    public static final int MAX_CARACTERES_DESCRIPCION = 150;
+    private static final int MAX_CARACTERES_DESCRIPCION = 150;
 
     // Fachada de eventos para poder trabajar con estos
     @EJB
@@ -48,16 +49,7 @@ public class EventoREST {
     @Path("usuario")
     public List<EventoProxyMini> buscarEventosUsuario(@HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgNotFoundException {
         Usuario usuario = usuarioFacade.find(TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token)));
-
-        List<Evento> listaEventos = eventoFacade.buscarEventosUsuario(usuario);
-
-        List<EventoProxyMini> retorno = new ArrayList<>();
-
-        for (Evento evento : listaEventos) {
-            retorno.add(new EventoProxyMini(evento));
-        }
-
-        return retorno;
+        return eventoFacade.buscarEventosUsuario(usuario).stream().map(EventoProxyMini::new).collect(Collectors.toList());
     }
 
     // Obtener todos los eventos existentes en el sistema
@@ -65,20 +57,11 @@ public class EventoREST {
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     @Path("")
-    public List<EventoProxyMini> buscarEventos(@HeaderParam("bearer") String token) throws AgendamlgNotFoundException, NotAuthenticatedException {
+    public List<EventoProxyMini> buscarEventos(@HeaderParam("bearer") String token) throws NotAuthenticatedException {
 
         // Usuario que podria tener la sesion iniciada
         Usuario usuarioSesion = usuarioDesdeToken(token);
-
-        List<Evento> eventos = eventoFacade.buscarEventosTipoUsuario(usuarioSesion);
-
-        List<EventoProxyMini> listaEventos = new ArrayList<>();
-
-        for (Evento evento : eventos) {
-            listaEventos.add(new EventoProxyMini(evento));
-        }
-
-        return listaEventos;
+        return eventoFacade.buscarEventosTipoUsuario(usuarioSesion).stream().map(EventoProxyMini::new).collect(Collectors.toList());
     }
 
     // Obtener un evento dada una id, pasada por URL
@@ -109,7 +92,7 @@ public class EventoREST {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     @Path("")
-    public EventoProxy crearEvento(EventoProxy evento, @HeaderParam("bearer") String token) throws AgendamlgException, AgendamlgNotFoundException, NotAuthenticatedException {
+    public EventoProxy crearEvento(EventoProxy evento, @HeaderParam("bearer") String token) throws AgendamlgException, NotAuthenticatedException {
         // Implementacion muy similar a la actualizacion de un evento
 
         Usuario usuario = usuarioFacade.find(TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token)));
@@ -131,11 +114,7 @@ public class EventoREST {
             id y campos de flickr
          */
         // Actualizar categorias. Crear lista de categorias
-        List<Categoria> listaCategorias = new ArrayList<>();
-
-        for (CategoriaREST.CategoriaProxy categoria : evento.categoriaList) {
-            listaCategorias.add(categoriaFacade.find(categoria.id));
-        }
+        List<Categoria> listaCategorias = evento.categoriaList.stream().map(c -> categoriaFacade.find(c.id)).collect(Collectors.toList());
 
         // eventoDB.setCategoriaList(listaCategorias);
         // Est se fija en el servidor
@@ -216,11 +195,7 @@ public class EventoREST {
             creador, latitud, longitud y campos de flickr
          */
         // Actualizar categorias. Crear lista de categorias
-        List<Categoria> listaCategorias = new ArrayList<>();
-
-        for (CategoriaREST.CategoriaProxy categoria : evento.categoriaList) {
-            listaCategorias.add(categoriaFacade.find(categoria.id));
-        }
+        List<Categoria> listaCategorias = evento.categoriaList.stream().map(c -> categoriaFacade.find(c.id)).collect(Collectors.toList());
 
         // El metodo al que se llama del bean es el encargado de actualizar la
         // lista de categorias
@@ -331,15 +306,7 @@ public class EventoREST {
         List<Evento> listaEventos = eventoFacade.buscarEventoCategorias(listaCategorias, usuarioSesion, filtro.ordenarPorDistancia, filtro.latitud, filtro.longitud, filtro.radio);
 
         // Crear instancias de EventoProxy para hacer el retorno
-        List<EventoProxyMini> retorno = new ArrayList<>();
-
-        for (Evento evento : listaEventos) {
-            EventoProxyMini eventoProxy = new EventoProxyMini(evento);
-            eventoProxy.descripcion = ellipsize(eventoProxy.descripcion, MAX_CARACTERES_DESCRIPCION);
-            retorno.add(eventoProxy);
-        }
-
-        return retorno;
+        return listaEventos.stream().map(EventoProxyMini::new).collect(Collectors.toList());
     }
 
     /**
@@ -348,7 +315,7 @@ public class EventoREST {
     /* Metodos auxiliares para los endpoints */
     // Dada una direccion permite obtener las coordenadas en las que se encuentra
     // esta. Metodo util y necesario en la creacion de eventos
-    public String buscarCoordenadas(String direccion) throws AgendamlgException {
+    private String buscarCoordenadas(String direccion) throws AgendamlgException {
         try {
             return Geolocation.encontrarCoordenadas(direccion);
         } catch (IOException ex) {
@@ -358,7 +325,7 @@ public class EventoREST {
 
     // Dado un token devuelve el usuario que tiene dicho token asociado
     // Si no se pasa token se devuelve un nulo
-    public Usuario usuarioDesdeToken(String token) throws NotAuthenticatedException {
+    private Usuario usuarioDesdeToken(String token) throws NotAuthenticatedException {
         Usuario usuario = null;
 
         if (token != null) {
@@ -373,10 +340,10 @@ public class EventoREST {
     private final static String NON_THIN = "[^iIl1\\.,']";
 
     private static int textWidth(String str) {
-        return (int) (str.length() - str.replaceAll(NON_THIN, "").length() / 2);
+        return str.length() - str.replaceAll(NON_THIN, "").length() / 2;
     }
 
-    public static String ellipsize(String text, int max) {
+    private static String ellipsize(String text, int max) {
 
         if (textWidth(text) <= max) {
             return text;
