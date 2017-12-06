@@ -24,11 +24,11 @@ import java.util.List;
 @Stateless
 @Path("evento")
 public class EventoREST {
-    
+
     // Maximo tamaño de la descripcion (numero de caracteres) de un evento cuando
     // esta es devuelta como resultado de listar los eventos
     public static final int MAX_CARACTERES_DESCRIPCION = 150;
-    
+
     // Fachada de eventos para poder trabajar con estos
     @EJB
     private EventoFacade eventoFacade;
@@ -46,17 +46,15 @@ public class EventoREST {
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     @Path("usuario")
-    public List<EventoProxy> buscarEventosUsuario(@HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgNotFoundException {
+    public List<EventoProxyMini> buscarEventosUsuario(@HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgNotFoundException {
         Usuario usuario = usuarioFacade.find(TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token)));
 
         List<Evento> listaEventos = eventoFacade.buscarEventosUsuario(usuario);
 
-        List<EventoProxy> retorno = new ArrayList<>();
+        List<EventoProxyMini> retorno = new ArrayList<>();
 
         for (Evento evento : listaEventos) {
-            EventoProxy eventoProxy = new EventoProxy(evento);
-            eventoProxy.descripcion = ellipsize(eventoProxy.descripcion, MAX_CARACTERES_DESCRIPCION);
-            retorno.add(eventoProxy);
+            retorno.add(new EventoProxyMini(evento));
         }
 
         return retorno;
@@ -67,19 +65,17 @@ public class EventoREST {
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     @Path("")
-    public List<EventoProxy> buscarEventos(@HeaderParam("bearer") String token) throws AgendamlgNotFoundException, NotAuthenticatedException {
+    public List<EventoProxyMini> buscarEventos(@HeaderParam("bearer") String token) throws AgendamlgNotFoundException, NotAuthenticatedException {
 
         // Usuario que podria tener la sesion iniciada
         Usuario usuarioSesion = usuarioDesdeToken(token);
 
         List<Evento> eventos = eventoFacade.buscarEventosTipoUsuario(usuarioSesion);
 
-        List<EventoProxy> listaEventos = new ArrayList<>();
+        List<EventoProxyMini> listaEventos = new ArrayList<>();
 
         for (Evento evento : eventos) {
-            EventoProxy eventoProxy = new EventoProxy(evento);
-            eventoProxy.descripcion = ellipsize(eventoProxy.descripcion, MAX_CARACTERES_DESCRIPCION);
-            listaEventos.add(eventoProxy);
+            listaEventos.add(new EventoProxyMini(evento));
         }
 
         return listaEventos;
@@ -292,7 +288,7 @@ public class EventoREST {
     @Path("filtrar")
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
-    public List<EventoProxy> filtrarEventos(Filtrado filtro, @HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgException {
+    public List<EventoProxyMini> filtrarEventos(Filtrado filtro, @HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgException {
         // Crear un objeto filtrado acorde a los QueryParam recibidos
 
         Usuario usuarioSesion = usuarioDesdeToken(token);
@@ -335,10 +331,10 @@ public class EventoREST {
         List<Evento> listaEventos = eventoFacade.buscarEventoCategorias(listaCategorias, usuarioSesion, filtro.ordenarPorDistancia, filtro.latitud, filtro.longitud, filtro.radio);
 
         // Crear instancias de EventoProxy para hacer el retorno
-        List<EventoProxy> retorno = new ArrayList<>();
+        List<EventoProxyMini> retorno = new ArrayList<>();
 
         for (Evento evento : listaEventos) {
-            EventoProxy eventoProxy = new EventoProxy(evento);
+            EventoProxyMini eventoProxy = new EventoProxyMini(evento);
             eventoProxy.descripcion = ellipsize(eventoProxy.descripcion, MAX_CARACTERES_DESCRIPCION);
             retorno.add(eventoProxy);
         }
@@ -445,14 +441,15 @@ public class EventoREST {
     /* Clase estatica anidada Serializable la cual permite representar un evento
        que no se corresponde exactamente con la representacion hecha en susodicha clase
        empleada para la entidad JPA */
-    public static class EventoProxy implements Serializable {
+    // Se encuentra la clase padre, que es una version abreviada de evento empleada
+    // para ser de vuelta en casos en los que se ofrece una lista de eventos
+    // Anidada en esta se encuentra la clase que representa un evento al completo
+    // empleada en las situaciones en las que se devuelve toda la info sobre este
+    public static class EventoProxyMini implements Serializable {
 
         // Propiedades con visiblidad publica
         // Id del evento
         public Integer id;
-
-        // Tipo del evento 1=Una vez, 2=Recurrente, 3=Persistente
-        public Short tipo;
 
         // Nombre del evento
         public String nombre;
@@ -468,6 +465,38 @@ public class EventoREST {
 
         // Direccion del evento
         public String direccion;
+
+        public EventoProxyMini() {
+
+        }
+
+        public EventoProxyMini(Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion) {
+            this.id = id;
+            this.nombre = nombre;
+            this.descripcion = ellipsize(descripcion, MAX_CARACTERES_DESCRIPCION);
+            this.fecha = fecha;
+            this.precio = precio;
+            this.direccion = direccion;
+        }
+
+        // Acepta un evento en el constructor
+        public EventoProxyMini(Evento evento) {
+            // Construye el evento a partir de un evento ya existente
+            this.id = evento.getId();
+
+            this.nombre = evento.getNombre();
+            this.descripcion = ellipsize(evento.getDescripcion(), MAX_CARACTERES_DESCRIPCION);
+            this.fecha = evento.getFecha();
+            this.precio = evento.getPrecio();
+            this.direccion = evento.getDireccion();
+        }
+
+    }
+
+    public static class EventoProxy extends EventoProxyMini {
+
+        // Tipo del evento 1=Una vez, 2=Recurrente, 3=Persistente
+        public Short tipo;
 
         // Estado validacion del evento
         public short validado;
@@ -485,17 +514,11 @@ public class EventoREST {
         public String propiedadInventada;
 
         public EventoProxy() {
-
         }
 
-        public EventoProxy(Integer id, Short tipo, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion, short validado, List<CategoriaREST.CategoriaProxy> categoriaList, String creador, Double latitud, Double longitud, String propiedadInventada) {
-            this.id = id;
+        public EventoProxy(Short tipo, short validado, List<CategoriaREST.CategoriaProxy> categoriaList, String creador, Double latitud, Double longitud, String propiedadInventada, Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion) {
+            super(id, nombre, descripcion, fecha, precio, direccion);
             this.tipo = tipo;
-            this.nombre = nombre;
-            this.descripcion = descripcion;
-            this.fecha = fecha;
-            this.precio = precio;
-            this.direccion = direccion;
             this.validado = validado;
             this.categoriaList = categoriaList;
             this.creador = creador;
@@ -504,19 +527,10 @@ public class EventoREST {
             this.propiedadInventada = propiedadInventada;
         }
 
-        // Acepta un evento en el constructor
         public EventoProxy(Evento evento) {
-            // Construye el evento a partir de un evento ya existente
-            this.id = evento.getId();
+            super(evento);
             this.tipo = evento.getTipo();
-            this.nombre = evento.getNombre();
-            this.descripcion = evento.getDescripcion();
-            this.fecha = evento.getFecha();
-            this.precio = evento.getPrecio();
-            this.direccion = evento.getDireccion();
             this.validado = evento.getValidado();
-            this.latitud = evento.getLatitud() != null ? evento.getLatitud().doubleValue() : null;
-            this.longitud = evento.getLongitud() != null ? evento.getLongitud().doubleValue() : null;
 
             this.categoriaList = new ArrayList<>();
             // Rellenar de ids la lista de categorias
@@ -524,7 +538,11 @@ public class EventoREST {
                 this.categoriaList.add(new CategoriaREST.CategoriaProxy(categoria));
             }
 
+            this.latitud = evento.getLatitud() != null ? evento.getLatitud().doubleValue() : null;
+            this.longitud = evento.getLongitud() != null ? evento.getLongitud().doubleValue() : null;
             this.creador = evento.getCreador().getId();
+            // Volver a fijar la descipcion en su version larga
+            this.descripcion = evento.getDescripcion();
         }
 
     }
