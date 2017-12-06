@@ -88,6 +88,17 @@ public class CategoriaREST{
     public static class CategoriaProxy implements Serializable{
         public int id;
         public String nombre;
+
+        public CategoriaProxy(int id, String nombre) {
+            this.id = id;
+            this.nombre = nombre;
+        }
+
+        public CategoriaProxy() {
+        }
+        
+        
+        
         CategoriaProxy(Categoria categoria){
             this.id = categoria.getId();
             this.nombre = categoria.getNombre();

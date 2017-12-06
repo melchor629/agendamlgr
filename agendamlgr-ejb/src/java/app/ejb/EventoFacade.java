@@ -167,7 +167,7 @@ public class EventoFacade extends AbstractFacade<Evento> {
             // La clave del mapa es la que se usa para la ordenacion
             Map<Double, Evento> mapa = new TreeMap<>();
 
-            // Se procede a rellnar el mapa
+            // Se procede a rellenar el mapa
             for(Evento evento : duplicadosEliminados) {
                 double distAEvento = distanciaAEvento(x, y, evento);
 
@@ -213,10 +213,9 @@ public class EventoFacade extends AbstractFacade<Evento> {
     // Métodos auxiliares
     // Dada una ubicacion (x,y) y un evento devuelve la distancia hasta ese evento
     private double distanciaAEvento(double x, double y, Evento evento) {
-        // Obtener coordenadas x e y del evento
-        String[] coordenadas = evento.getDireccion().split(",");
-        double eventoX = Double.parseDouble(coordenadas[0]);
-        double eventoY = Double.parseDouble(coordenadas[1]);
+       
+        double eventoX = evento.getLatitud().doubleValue();
+        double eventoY = evento.getLongitud().doubleValue();
         return distanciaEntreDosPuntos(x, y, eventoX, eventoY);
     }
 
