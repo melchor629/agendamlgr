@@ -7,7 +7,10 @@ export class UsuarioService extends AbstractService{
     super(http);
     console.log('Conectado a UsuarioService');
   }
-  buscarDatosUsuario(){
+  obtenerUsuarioDeLaSesion(){
     return this.http.get('http://localhost:8080/agendamlgr-war/rest/usuario',{headers: this.setTokenHeader()}).map(res => res.json());
+  }
+  buscarUsuario(id: string){
+    return this.http.get('http://localhost:8080/agendamlgr-war/rest/usuario/'+id).map(res=>res.json());
   }
 }

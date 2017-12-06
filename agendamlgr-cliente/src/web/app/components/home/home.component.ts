@@ -19,7 +19,7 @@ export class HomeComponent implements OnInit {
   }
 
   listarCategorias(){
-    this.categoriaService.buscarCategorias().subscribe((resultado)=>{
+    this.categoriaService.buscarTodasLasCategorias().subscribe((resultado)=>{
       console.log(resultado);
       this.categorias = resultado;
     });

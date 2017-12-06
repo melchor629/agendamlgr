@@ -23,14 +23,14 @@ export class PerfilComponent implements OnInit {
   }
 
   listarDatosUsuarios(){
-    this.usuarioService.buscarDatosUsuario().subscribe((resultado)=>{
+    this.usuarioService.obtenerUsuarioDeLaSesion().subscribe((resultado)=>{
       console.log(resultado);
       this.usuario = resultado;
     });
   }
 
   listarPreferencias(){
-    this.categoriaService.buscarPreferencias().subscribe((resultado)=>{
+    this.categoriaService.buscarPreferenciasUsuario().subscribe((resultado)=>{
       console.log(resultado);
       this.preferencias = resultado;
     });

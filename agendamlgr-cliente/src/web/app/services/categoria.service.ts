@@ -7,10 +7,16 @@ export class CategoriaService extends AbstractService{
     super(http);
     console.log('Conectado a CategoriaService');
   }
-  buscarCategorias(){
+  buscarCategoria(id: number){
+    return this.http.get('http://localhost:8080/agendamlgr-war/rest/categoria/'+id).map(res=>res.json());
+  }
+  buscarTodasLasCategorias(){
     return this.http.get('http://localhost:8080/agendamlgr-war/rest/categoria').map(res => res.json());
   }
-  buscarPreferencias(){
+  buscarPreferenciasUsuario(){
     return this.http.get('http://localhost:8080/agendamlgr-war/rest/categoria/preferencias',{headers: this.setTokenHeader()}).map(res => res.json());
+  }
+  buscarCategoriasEvento(id: number){
+    return this.http.get('http://localhost:8080/agendamlgr-war/rest/categoria/categoriasEvento/'+id).map(res=>res.json());
   }
 }
