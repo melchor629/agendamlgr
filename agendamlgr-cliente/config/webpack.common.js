@@ -36,7 +36,7 @@ module.exports = {
             {
                 test: /\.css$/,
                 exclude: helpers.root('src', 'web', 'app'),
-                loader: ExtractTextPlugin.extract({ fallback: 'style-loader', loader: 'css-loader?sourceMap' })
+                loader: ExtractTextPlugin.extract({ fallback: 'style-loader', loader: 'css-loader?sourceMap&minimize' })
             },
             {
                 test: /\.css$/,
@@ -48,7 +48,7 @@ module.exports = {
                 exclude: helpers.root('src', 'web', 'app'),
                 use: ExtractTextPlugin.extract({
                     use: [
-                        { loader: "css-loader" , options: { sourceMap: true } },
+                        { loader: "css-loader" , options: { sourceMap: true, minimize: true } },
                         { loader: "sass-loader", options: { sourceMap: true } }
                     ],
                     fallback: 'style-loader'
