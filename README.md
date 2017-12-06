@@ -3,7 +3,7 @@ Aplicación que almacena Eventos - _Reborn? Rework? Rebase?_
 
 ## Breve Introducción
 agendamlgr proporciona un servicio REST, parecido a [agendamlg][1] que nos permite gestionar eventos en Málaga.
-Para mostrar la información acerca de los eventos se proporciona un cliente realizado con **?????**.      
+Para mostrar la información acerca de los eventos se proporciona un cliente realizado con **Angular 2** y **Bootstrap**.      
 
 ## Características
 agendamlg proporciona los siguientes servicios:     
@@ -23,10 +23,13 @@ agendamlg proporciona los siguientes servicios:
 el cliente permite acceder todos los servicios de la lista.
 
 ## Configuración
- 1. Crear la base de datos usando el script que se encuentra en la carpeta /sql/agendamlg.sql (la BD se llama AGENDAMLGR)
+ 1. Crear la base de datos usando los scripts que se encuentra en la carpeta /sql/agendamlg.sql /sql/seed.sql (la BD se llama `AGENDAMLGR`, el usuario y contraseña `agendamlgr`)
  2. Clonar el repositorio
- 3. Colocar token.json en la carpeta `agendamlg-war/src/java/servlet/tokens.json`
- 4. Añadir a .war la carpeta lib (en Netbeans properties>libraries>seleccionar todos los .jar que están en lib)
+ 3. Colocar `token.json` de Google OAuth 2.0 en la carpeta `agendamlg-war/src/java/servlet/tokens.json`
+ 4. Colocar `token.json` del resto de tokens en la carpeta `agendamlg-war/src/java/service/tokens.json`
+ 5. Añadir al proyecto _agendamlr-war_ la carpeta `agendamlgr-war/lib` (en Netbeans properties>libraries>seleccionar todos los .jar que están en lib)
+ 6. Instalar dependencias de node.js del proyecto _agendamlgr-cliente_ con `npm install`
+ 7. Compilar la versión _debug_ (`npm run build-debug`) o _release_ (`npm run build`) del cliente
 
 ## Requisitos
 Hay que tener instalado:
