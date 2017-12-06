@@ -3,6 +3,7 @@ package service;
 import app.ejb.UsuarioFacade;
 import app.entity.Usuario;
 import app.exception.AgendamlgNotFoundException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -31,18 +32,22 @@ public class UsuarioREST {
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public UsuarioProxy obtenerUsuarioDeLaSesion(@HeaderParam("bearer") String token) throws NotAuthenticatedException {
-        String id = TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token));
-        return new UsuarioProxy(usuarioFacade.find(id));
+        DecodedJWT jwt = TokensUtils.decodeJwtToken(token);
+        String id = TokensUtils.getUserIdFromJwtTokenOrThrow(jwt);
+        UsuarioProxy u = new UsuarioProxy(usuarioFacade.find(id));
+        u.image = TokensUtils.getPhotoUrlFromJwtTokenOrThrow(jwt);
+        return u;
     }
 
 
     public static class UsuarioProxy implements Serializable {
 
-        public String id;
-        public short tipo;
-        public String nombre;
-        public String apellidos;
-        public String email;
+        public final String id;
+        public final short tipo;
+        public final String nombre;
+        public final String apellidos;
+        public final String email;
+        public String image;
 
         UsuarioProxy(Usuario usuario) {
             this.id = usuario.getId();

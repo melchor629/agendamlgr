@@ -67,7 +67,7 @@ public class OAuthCallbackServlet extends AbstractAuthorizationCodeCallbackServl
             usuarioFacade.edit(usuario);
         }
 
-        String token = TokensUtils.createJwtTokenForUserId(u.id);
+        String token = TokensUtils.createJwtTokenForUserId(u.id, u.picture);
         String callbackUrl = (String) req.getSession().getAttribute("callbackUrl");
         if(callbackUrl != null) {
             //If we stored the callback URL during the process, return it
