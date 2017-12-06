@@ -26,7 +26,7 @@ build.xml
 out/
 /agendamlgr-cliente/node_modules/
 /agendamlgr-cliente/web/*
-!/agendamlgr-cliente/web/eishf.txt
+!/agendamlgr-cliente/web/WEB-INF/
 
 #Depenencias con Google OAuth 2.0
 tokens.json
