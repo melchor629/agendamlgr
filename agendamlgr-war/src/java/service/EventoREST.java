@@ -47,17 +47,7 @@ public class EventoREST {
     @EJB
     private CategoriaFacade categoriaFacade;
 
-    private static Function<? super Evento, EventoProxyMini> convertToMiniProxyWithFlickr = evento -> {
-        EventoProxyMini miniEvento = new EventoProxyMini(evento);
-        if(evento.getFlickruserid() != null && evento.getFlickralbumid() != null) {
-            try {
-                PhotoSetInfo info = Flickr.Photosets.getInfo(evento.getFlickruserid(), evento.getFlickralbumid());
-                miniEvento.photoUrl = info != null && info.primary != null ? info.primary.mediumSizeUrl : null;
-            } catch (IOException ignore) {}
-        }
-        return miniEvento;
-    };
-
+    
     // Obtener todos los eventos creados por un usuario
     // Esta ruta necesita autenticacion
     @GET
@@ -272,13 +262,24 @@ public class EventoREST {
         solo seran listados para los periodistas
         Lanza la excepcion si se proporciona un token no valido
      */
+    
+    /*  La URL para el filtrado tendra la siguiente pinta: 
+        .../evento/filtrar?ordenarPorDistancia=X&radio=X&latitud=X&longitud=X&mostrarDeMiPreferencia=X&categoriasSeleccionadas=1&categoriasSeleccionadas=2...
+        (Y asi con tantas categorias como se desee)
+    */
     @GET
     @Path("filtrar")
     @Produces({MediaType.APPLICATION_JSON})
-    @Consumes({MediaType.APPLICATION_JSON})
-    public List<EventoProxyMini> filtrarEventos(Filtrado filtro, @HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgException {
+    public List<EventoProxyMini> filtrarEventos(@HeaderParam("bearer") String token,
+            @QueryParam("ordenarPorDistancia") Boolean ordenarPorDistancia,
+            @QueryParam("radio") Integer radio,
+            @QueryParam("latitud") Double latitud,
+            @QueryParam("longitud") Double longitud,
+            @QueryParam("mostrarDeMiPreferencia") Boolean mostrarDeMiPreferencia,
+            @QueryParam("categoriasSeleccionadas") List<Integer> categoriasSeleccionadas) throws NotAuthenticatedException, AgendamlgException {
         // Crear un objeto filtrado acorde a los QueryParam recibidos
-
+        Filtrado filtro = new Filtrado(ordenarPorDistancia, radio, latitud, longitud, mostrarDeMiPreferencia, categoriasSeleccionadas);
+        
         Usuario usuarioSesion = usuarioDesdeToken(token);
 
         // Controlar que no se proporcione un filtro incorrecto, es decir nulo
@@ -405,6 +406,17 @@ public class EventoREST {
 
         return text.substring(0, end) + "...";
     }
+    
+    private static Function<? super Evento, EventoProxyMini> convertToMiniProxyWithFlickr = evento -> {
+        EventoProxyMini miniEvento = new EventoProxyMini(evento);
+        if(evento.getFlickruserid() != null && evento.getFlickralbumid() != null) {
+            try {
+                PhotoSetInfo info = Flickr.Photosets.getInfo(evento.getFlickruserid(), evento.getFlickralbumid());
+                miniEvento.photoUrl = info != null && info.primary != null ? info.primary.mediumSizeUrl : null;
+            } catch (IOException ignore) {}
+        }
+        return miniEvento;
+    };
 
     /**
      * ****************************************************************************
@@ -507,10 +519,7 @@ public class EventoREST {
 
         public Double latitud, longitud;
 
-        // 
-        public String propiedadInventada;
-
-        public EventoProxy(Short tipo, short validado, List<CategoriaREST.CategoriaProxy> categoriaList, String creador, Double latitud, Double longitud, String propiedadInventada, Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion) {
+        public EventoProxy(Short tipo, short validado, List<CategoriaREST.CategoriaProxy> categoriaList, String creador, Double latitud, Double longitud, Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion) {
             super(id, nombre, descripcion, fecha, precio, direccion);
             this.tipo = tipo;
             this.validado = validado;
@@ -518,7 +527,6 @@ public class EventoREST {
             this.creador = creador;
             this.latitud = latitud;
             this.longitud = longitud;
-            this.propiedadInventada = propiedadInventada;
         }
 
         EventoProxy(Evento evento) {
