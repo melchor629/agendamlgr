@@ -282,31 +282,18 @@ public class EventoREST {
     @Path("filtrar")
     @Produces({MediaType.APPLICATION_JSON})
     public List<EventoProxyMini> filtrarEventos(@HeaderParam("bearer") String token,
-            @QueryParam("ordenarPorDistancia") Boolean ordenarPorDistancia,
-            @QueryParam("radio") Integer radio,
-            @QueryParam("latitud") Double latitud,
-            @QueryParam("longitud") Double longitud,
-            @QueryParam("mostrarDeMiPreferencia") Boolean mostrarDeMiPreferencia,
-            @QueryParam("categoriasSeleccionadas") List<Integer> categoriasSeleccionadas) throws NotAuthenticatedException, AgendamlgException {
+            @DefaultValue("false") @QueryParam("ordenarPorDistancia") Boolean ordenarPorDistancia,
+            @DefaultValue("0") @QueryParam("radio") Integer radio,
+            @DefaultValue("0") @QueryParam("latitud") Double latitud,
+            @DefaultValue("0") @QueryParam("longitud") Double longitud,
+            @DefaultValue("false") @QueryParam("mostrarDeMiPreferencia") Boolean mostrarDeMiPreferencia,
+            @DefaultValue("0") @QueryParam("categoriasSeleccionadas") List<Integer> categoriasSeleccionadas) throws NotAuthenticatedException, AgendamlgException {
         // Crear un objeto filtrado acorde a los QueryParam recibidos
         Filtrado filtro = new Filtrado(ordenarPorDistancia, radio, latitud, longitud, mostrarDeMiPreferencia, categoriasSeleccionadas);
         
         Usuario usuarioSesion = usuarioDesdeToken(token);
 
-        // Controlar que no se proporcione un filtro incorrecto, es decir nulo
-        // o con parametros necesarios de este nulos
-        if (filtro == null || filtro.mostrarDeMiPreferencia == null || filtro.ordenarPorDistancia == null) {
-            throw new AgendamlgException("El filtro es nulo o parametros esenciales de este son nulos");
-        }
-
-        // Si se ha decidido ordenar por distancia y faltan latitud longitud y
-        // radio se lanza excepcion
-        if (filtro.mostrarDeMiPreferencia && (filtro.latitud == null || filtro.longitud == null || filtro.radio == null)) {
-            throw new AgendamlgException("Se ha decidido filtrar por distancia,"
-                    + "pero parametros esenciales como radio, latitud y longitud"
-                    + "no se han proporcionado");
-        }
-
+        
         List<Categoria> listaCategorias;
 
         // Dependiendo de si se quieren mostrar los eventos que sean preferencia del usuario
@@ -317,7 +304,7 @@ public class EventoREST {
             // Se van a mostrar de las categorias seleccionadas
 
             // Si no se ha proporcionado ninguna categoria se muestran todas
-            if (filtro.categoriasSeleccionadas == null) {
+            if (filtro.categoriasSeleccionadas.get(0) == 0) {
                 // Todas las categorias
                 listaCategorias = categoriaFacade.findAll();
             } else {
@@ -480,6 +467,11 @@ public class EventoREST {
 
         public String fotoUrl;
 
+        public EventoProxyMini() {
+        }
+        
+        
+
         private EventoProxyMini(Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion) {
             this.id = id;
             this.nombre = nombre;
@@ -520,6 +512,9 @@ public class EventoREST {
 
         public Double latitud, longitud;
 
+        public EventoProxy() {
+        }
+        
         public EventoProxy(Short tipo, boolean validado, List<CategoriaREST.CategoriaProxy> categoriaList, String creador, Double latitud, Double longitud, Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion) {
 
             super(id, nombre, descripcion, fecha, precio, direccion);
