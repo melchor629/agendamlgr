@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Adapted from https://github.com/melchor629/melchor629.github.com/blob/master/assets/js/flickrApi.coffee
@@ -21,7 +22,7 @@ import java.util.Map;
 public class Flickr {
 
     private static final String apiUrl = "https://api.flickr.com/services/rest/";
-    private static final Map<String, CachedResult> cache = new HashMap<>();
+    private static final Map<String, CachedResult> cache = new ConcurrentHashMap<>();
 
     @SuppressWarnings("unchecked")
     private static <T> Map<String, T> doRequest(String method, Map<String, String> params) throws IOException {
