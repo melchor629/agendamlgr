@@ -47,7 +47,18 @@ public class EventoREST {
     @EJB
     private CategoriaFacade categoriaFacade;
 
-    
+
+    private static final Function<? super Evento, EventoProxyMini> convertToMiniProxyWithFlickr = evento -> {
+        EventoProxyMini miniEvento = new EventoProxyMini(evento);
+        if(evento.getFlickruserid() != null && evento.getFlickralbumid() != null) {
+            try {
+                PhotoSetInfo info = Flickr.Photosets.getInfo(evento.getFlickruserid(), evento.getFlickralbumid());
+                miniEvento.fotoUrl = info != null && info.primary != null ? info.primary.mediumSizeUrl : null;
+            } catch (IOException ignore) {}
+        }
+        return miniEvento;
+    };
+
     // Obtener todos los eventos creados por un usuario
     // Esta ruta necesita autenticacion
     @GET
@@ -407,17 +418,7 @@ public class EventoREST {
         return text.substring(0, end) + "...";
     }
     
-    private static Function<? super Evento, EventoProxyMini> convertToMiniProxyWithFlickr = evento -> {
-        EventoProxyMini miniEvento = new EventoProxyMini(evento);
-        if(evento.getFlickruserid() != null && evento.getFlickralbumid() != null) {
-            try {
-                PhotoSetInfo info = Flickr.Photosets.getInfo(evento.getFlickruserid(), evento.getFlickralbumid());
-                miniEvento.photoUrl = info != null && info.primary != null ? info.primary.mediumSizeUrl : null;
-            } catch (IOException ignore) {}
-        }
-        return miniEvento;
-    };
-
+    
     /**
      * ****************************************************************************
      */
@@ -477,7 +478,7 @@ public class EventoREST {
         // Direccion del evento
         public String direccion;
 
-        public String photoUrl;
+        public String fotoUrl;
 
         private EventoProxyMini(Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion) {
             this.id = id;
@@ -508,7 +509,7 @@ public class EventoREST {
         public Short tipo;
 
         // Estado validacion del evento
-        public short validado;
+        public boolean validado;
 
         // Lista de categorias del evento, seran objetos CategoriaProxy, para facilitar
         // la operacion en el lado del cliente
@@ -519,7 +520,8 @@ public class EventoREST {
 
         public Double latitud, longitud;
 
-        public EventoProxy(Short tipo, short validado, List<CategoriaREST.CategoriaProxy> categoriaList, String creador, Double latitud, Double longitud, Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion) {
+        public EventoProxy(Short tipo, boolean validado, List<CategoriaREST.CategoriaProxy> categoriaList, String creador, Double latitud, Double longitud, Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion) {
+
             super(id, nombre, descripcion, fecha, precio, direccion);
             this.tipo = tipo;
             this.validado = validado;
@@ -532,7 +534,7 @@ public class EventoREST {
         EventoProxy(Evento evento) {
             super(evento);
             this.tipo = evento.getTipo();
-            this.validado = evento.getValidado();
+            this.validado = evento.getValidado() == 1;
 
             this.categoriaList = new ArrayList<>();
             // Rellenar de ids la lista de categorias
