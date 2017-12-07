@@ -1,7 +1,7 @@
 //Module imports
 import { NgModule } from '@angular/core';
 import { BrowserModule }  from '@angular/platform-browser';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
 //Component imports
 import { AppComponent } from './app.component';
@@ -20,7 +20,7 @@ const appRoutes: Routes = [
 @NgModule({
     imports: [
         BrowserModule,
-        HttpModule,
+        HttpClientModule,
         RouterModule.forRoot(appRoutes)
     ],
     declarations: [
