@@ -6,7 +6,7 @@ export class AbstractService{
 
   }
   setTokenHeader(){
-    if(window.localStorage.token === null){
+    if(window.localStorage.token === null || window.localStorage.token === undefined){
       return null;
     }else{
       let httpHeader = new HttpHeaders();

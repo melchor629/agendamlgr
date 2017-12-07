@@ -1,4 +1,14 @@
-<p>Hello Worlllllllllllddddd</p>
+<h3>Categorias</h3>
 <div *ngFor="let categoria of categorias">
   {{ categoria.nombre }}
+</div>
+
+<h3>Evento</h3>
+<div *ngFor="let evento of eventos">
+<h5>{{ evento.nombre }}</h5>
+<img [src]="evento.fotoUrl"/><br/>
+{{ evento.descripcion }}<br/>
+{{ evento.fecha }}<br/>
+{{ evento.precio }}<br/>
+{{ evento.direccion }}<br/><br/>
 </div>

@@ -41,7 +41,6 @@ export class PerfilComponent implements OnInit {
 
   listarEventos(){
     this.eventoService.buscarEventosUsuario().subscribe((resultado)=>{
-      console.log(resultado);
       this.eventos = resultado;
     });
   }
