@@ -1,1 +1,23 @@
 <h3>{{ evento.nombre }}</h3>
+Dirección: {{ evento.direccion }}<br/>
+Fecha: {{ evento.fecha }}<br/>
+Precio: {{ evento.precio }}<br/>
+Creador: {{ nombreCreador }}<br/>
+
+Categorias:
+<div *ngFor="let categoria of evento.categoriaList">
+  {{ categoria.nombre }}
+</div><br/>
+
+Imagen Principal:
+<div>
+<img [src]="fotosDeEvento.fotoPrimariaUrl"/><br/>
+</div>
+Imágenes Secundarios:<br/>
+<div *ngFor="let foto of fotos">
+{{ foto.titulo }}<br/>
+<img [src]="foto.url"/><br/>
+</div>
+
+<h4>Descripcion</h4>
+{{ evento.descripcion }}<br/>

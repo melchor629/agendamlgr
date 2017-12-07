@@ -11,5 +11,6 @@ export interface Evento{
   validado: boolean;
   latitud: number;
   longitud: number;
+  creador: string;
   categoriaList: Categoria[];
 }

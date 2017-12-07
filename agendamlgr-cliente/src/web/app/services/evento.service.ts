@@ -3,6 +3,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { AbstractService } from './abstract.service';
 import { Evento } from '../interfaces/evento';
 import { Categoria } from '../interfaces/categoria';
+import { FotosDeEvento } from '../interfaces/fotosDeEvento';
+import { Foto } from '../interfaces/foto';
 @Injectable()
 export class EventoService extends AbstractService{
   constructor(http: HttpClient){
@@ -42,9 +44,7 @@ export class EventoService extends AbstractService{
     categoriasSeleccionadas.forEach(categoria => params = params.append('categoriasSeleccionadas', categoria.id.toString()));
     return this.http.get<Evento[]>('http://localhost:8080/agendamlgr-war/rest/evento/filtrar',{headers: this.setTokenHeader(), params});
   }
-  /*
   buscarFotosParaEvento(id: number){
-    return this.http.get('http://localhost:8080/agendamlgr-war/rest/evento/fotos/'+id,{headers: this.setTokenHeader()});
+    return this.http.get<FotosDeEvento>('http://localhost:8080/agendamlgr-war/rest/evento/fotos/'+id,{headers: this.setTokenHeader()});
   }
-  */
 }
