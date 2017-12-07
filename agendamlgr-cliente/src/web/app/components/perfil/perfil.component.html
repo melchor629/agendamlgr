@@ -1,4 +1,4 @@
-<h4>Datos del Usuario</h4>
+<h3>Datos del Usuario</h3>
 <img [src]="usuario.image"/><br/>
 Nombre: {{ usuario.nombre }}<br/>
 Apellidos: {{ usuario.apellidos }}<br/>
@@ -6,7 +6,17 @@ Email: {{ usuario.email }}<br/>
 Id: {{ usuario.id }}<br/>
 Tipo: {{ usuario.tipo }}<br/>
 
-<h4>Categorias</h4>
+<h3>Categorias</h3>
 <div *ngFor="let categoria of preferencias">
 {{ categoria.nombre }}
+</div>
+
+<h3>Eventos creados</h3>
+<div *ngFor="let evento of eventos">
+<h5>{{ evento.nombre }}</h5>
+<img [src]="evento.fotoUrl"/><br/>
+{{ evento.descripcion }}<br/>
+{{ evento.fecha }}<br/>
+{{ evento.precio }}<br/>
+{{ evento.direccion }}<br/><br/>
 </div>
