@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
@@ -64,7 +65,7 @@ public class TokensUtils {
      * @param token The JWT Token.
      * @return returns the decoded token or {@code null} if it is invalid.
      */
-    public static DecodedJWT decodeJwtToken(String token) {
+    public static DecodedJWT decodeJwtToken(String token) throws NotAuthenticatedException {
         if(token == null) return null;
         JWTVerifier verifier = JWT.require(algorithm)
                 .withIssuer(issuer)
@@ -73,6 +74,8 @@ public class TokensUtils {
             return verifier.verify(token);
         } catch(JWTDecodeException ignore) {
             return null;
+        } catch(TokenExpiredException expired) {
+            throw new NotAuthenticatedException("El token ha expirado", expired);
         }
     }
 

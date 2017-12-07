@@ -129,7 +129,7 @@ public class EventoREST {
             id y campos de flickr
          */
         // Actualizar categorias. Crear lista de categorias
-        List<Categoria> listaCategorias = evento.categoriaList.stream().map(c -> categoriaFacade.find(c.id)).collect(Collectors.toList());
+        List<Categoria> listaCategorias = evento.categoriaList.stream().map(c -> new Categoria(c.id)).collect(Collectors.toList());
 
         // eventoDB.setCategoriaList(listaCategorias);
         // Est se fija en el servidor
@@ -142,10 +142,6 @@ public class EventoREST {
 
         // Fijar el usuario creador del evento
         eventoDB.setCreador(usuario);
-
-        // El evento se establece como validado o no dependiendo del usuario que
-        // lo haya creado
-        eventoDB.setValidado(usuario.getTipo() == 3 ? Short.parseShort("1") : Short.parseShort("0"));
 
         // Rellenar latitud y longitud del evento
         // Obtener lat y long
@@ -209,7 +205,7 @@ public class EventoREST {
             creador, latitud, longitud y campos de flickr
          */
         // Actualizar categorias. Crear lista de categorias
-        List<Categoria> listaCategorias = evento.categoriaList.stream().map(c -> categoriaFacade.find(c.id)).collect(Collectors.toList());
+        List<Categoria> listaCategorias = evento.categoriaList.stream().map(c -> new Categoria(c.id)).collect(Collectors.toList());
 
         // El metodo al que se llama del bean es el encargado de actualizar la
         // lista de categorias
