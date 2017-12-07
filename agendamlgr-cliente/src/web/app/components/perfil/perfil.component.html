@@ -13,7 +13,7 @@ Tipo: {{ usuario.tipo }}<br/>
 
 <h3>Eventos creados</h3>
 <div *ngFor="let evento of eventos">
-<h5>{{ evento.nombre }}</h5>
+<h5><a routerLink="/verEvento/{{evento.id}}">{{ evento.nombre }}</a></h5>
 <img [src]="evento.fotoUrl"/><br/>
 {{ evento.descripcion }}<br/>
 {{ evento.fecha }}<br/>
