@@ -15,8 +15,9 @@ public class NotAuthenticatedExceptionManager implements ExceptionMapper<NotAuth
 
     @Override
     public Response toResponse(NotAuthenticatedException e) {
+        String cause = (e.getCause() != null) ? ("\"" + e.getCause().getMessage() + "\"") : "null";
         return Response.status(Response.Status.UNAUTHORIZED)
-                .entity("{\"error\": {\"message\": \"" + e.getMessage() + "\", \"otherMessage\": null}}")
+                .entity("{\"error\": {\"message\": \"" + e.getMessage() + "\", \"otherMessage\": " + cause + "}}")
                 .build();
     }
 

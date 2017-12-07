@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { AbstractService } from './abstract.service';
 import { Evento } from '../interfaces/evento';
 import { Categoria } from '../interfaces/categoria';
@@ -32,10 +32,15 @@ export class EventoService extends AbstractService{
                  latitud: number,
                  longitud: number,
                  mostrarDeMiPreferencia: string,
-                 categoriasSeleccionadas: Categoria[]){
-    let url = 'http://localhost:8080/agendamlgr-war/rest/evento/filtrar?ordenarPorDistancia='+ordenarPorDistancia+'&radio='+radio+'&latitud='+latitud+'&longitud='+longitud+'&mostrarDeMiPreferencia='+mostrarDeMiPreferencia;
-    url+=categoriasSeleccionadas.reduce((query, categoria) => query+"&categoriasSeleccionadas="+categoria.id, "");
-    return this.http.get<Evento[]>(url,{headers: this.setTokenHeader()});
+                 categoriasSeleccionadas: Categoria[]) {
+    let params = new HttpParams();
+    params = params.append('ordenarPorDistancia', ordenarPorDistancia);
+    if(ordenarPorDistancia === "true") params = params.append('radio', radio.toString());
+    if(ordenarPorDistancia === "true") params = params.append('latitud', latitud.toString());
+    if(ordenarPorDistancia === "true") params = params.append('longitud', longitud.toString());
+    params = params.append('mostrarDeMiPreferencia', mostrarDeMiPreferencia);
+    categoriasSeleccionadas.forEach(categoria => params = params.append('categoriasSeleccionadas', categoria.id.toString()));
+    return this.http.get<Evento[]>('http://localhost:8080/agendamlgr-war/rest/evento/filtrar',{headers: this.setTokenHeader(), params});
   }
   /*
   buscarFotosParaEvento(id: number){
