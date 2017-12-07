@@ -10,6 +10,7 @@ import { PerfilComponent } from './components/perfil/perfil.component';
 //Service imports
 import { CategoriaService } from './services/categoria.service';
 import { UsuarioService } from './services/usuario.service';
+import { EventoService } from './services/evento.service';
 
 const appRoutes: Routes = [
   {path: '', component: HomeComponent},
@@ -29,7 +30,8 @@ const appRoutes: Routes = [
     ],
     providers: [
         CategoriaService,
-        UsuarioService
+        UsuarioService,
+        EventoService
     ],
     bootstrap: [ AppComponent ]
 })
