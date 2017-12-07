@@ -15,7 +15,7 @@ import { EventoService } from './services/evento.service';
 const appRoutes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'perfil', component: PerfilComponent}
-]
+];
 
 @NgModule({
     imports: [
