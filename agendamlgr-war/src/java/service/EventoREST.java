@@ -8,6 +8,10 @@ import app.entity.Evento;
 import app.entity.Usuario;
 import app.exception.AgendamlgException;
 import app.exception.AgendamlgNotFoundException;
+import flickr.Flickr;
+import flickr.Photo;
+import flickr.PhotoSetInfo;
+import flickr.PhotoSetPhotos;
 import geolocation.Geolocation;
 
 import javax.ejb.EJB;
@@ -20,6 +24,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Stateless
@@ -42,6 +47,17 @@ public class EventoREST {
     @EJB
     private CategoriaFacade categoriaFacade;
 
+    private static Function<? super Evento, EventoProxyMini> convertToMiniProxyWithFlickr = evento -> {
+        EventoProxyMini miniEvento = new EventoProxyMini(evento);
+        if(evento.getFlickruserid() != null && evento.getFlickralbumid() != null) {
+            try {
+                PhotoSetInfo info = Flickr.Photosets.getInfo(evento.getFlickruserid(), evento.getFlickralbumid());
+                miniEvento.photoUrl = info != null && info.primary != null ? info.primary.mediumSizeUrl : null;
+            } catch (IOException ignore) {}
+        }
+        return miniEvento;
+    };
+
     // Obtener todos los eventos creados por un usuario
     // Esta ruta necesita autenticacion
     @GET
@@ -49,19 +65,18 @@ public class EventoREST {
     @Path("usuario")
     public List<EventoProxyMini> buscarEventosUsuario(@HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgNotFoundException {
         Usuario usuario = usuarioFacade.find(TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token)));
-        return eventoFacade.buscarEventosUsuario(usuario).stream().map(EventoProxyMini::new).collect(Collectors.toList());
+        return eventoFacade.buscarEventosUsuario(usuario).stream().map(convertToMiniProxyWithFlickr).collect(Collectors.toList());
     }
 
     // Obtener todos los eventos existentes en el sistema
     /* Esta RUTA necesita autenticacion(jwt token) en el caso que el evento a obtener no este validado! */
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    @Path("")
     public List<EventoProxyMini> buscarEventos(@HeaderParam("bearer") String token) throws NotAuthenticatedException {
 
         // Usuario que podria tener la sesion iniciada
         Usuario usuarioSesion = usuarioDesdeToken(token);
-        return eventoFacade.buscarEventosTipoUsuario(usuarioSesion).stream().map(EventoProxyMini::new).collect(Collectors.toList());
+        return eventoFacade.buscarEventosTipoUsuario(usuarioSesion).stream().map(convertToMiniProxyWithFlickr).collect(Collectors.toList());
     }
 
     // Obtener un evento dada una id, pasada por URL
@@ -91,7 +106,6 @@ public class EventoREST {
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    @Path("")
     public EventoProxy crearEvento(EventoProxy evento, @HeaderParam("bearer") String token) throws AgendamlgException, NotAuthenticatedException {
         // Implementacion muy similar a la actualizacion de un evento
 
@@ -163,7 +177,6 @@ public class EventoREST {
     @PUT
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    @Path("")
     public EventoProxy actualizarEvento(EventoProxy evento, @HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgException, AgendamlgNotFoundException {
 
         Usuario usuario = usuarioFacade.find(TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token)));
@@ -306,8 +319,27 @@ public class EventoREST {
         List<Evento> listaEventos = eventoFacade.buscarEventoCategorias(listaCategorias, usuarioSesion, filtro.ordenarPorDistancia, filtro.latitud, filtro.longitud, filtro.radio);
 
         // Crear instancias de EventoProxy para hacer el retorno
-        return listaEventos.stream().map(EventoProxyMini::new).collect(Collectors.toList());
+        return listaEventos.stream().map(convertToMiniProxyWithFlickr).collect(Collectors.toList());
     }
+
+    @GET
+    @Path("fotos/{id}")
+    @Produces({ MediaType.APPLICATION_JSON })
+    public FotosDeEvento buscarFotosParaEvento(@PathParam("id") int eventoId, @HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgNotFoundException, IOException {
+        Usuario usuario = usuarioDesdeToken(token);
+        Evento evento = eventoFacade.find(eventoId);
+        if(evento == null || ((usuario == null || usuario.getTipo() < 3) && evento.getValidado() == 0))
+            throw new AgendamlgNotFoundException("El evento " + eventoId + " no existe");
+
+        if(evento.getFlickruserid() != null && evento.getFlickralbumid() != null) {
+            PhotoSetPhotos photoSetPhotos = Flickr.Photosets.getPhotos(evento.getFlickruserid(), evento.getFlickralbumid());
+            if(photoSetPhotos != null) {
+                return new FotosDeEvento(photoSetPhotos);
+            }
+        }
+        return new FotosDeEvento();
+    }
+
 
     /**
      * ***********************************************************************
@@ -433,11 +465,9 @@ public class EventoREST {
         // Direccion del evento
         public String direccion;
 
-        public EventoProxyMini() {
+        public String photoUrl;
 
-        }
-
-        public EventoProxyMini(Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion) {
+        private EventoProxyMini(Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion) {
             this.id = id;
             this.nombre = nombre;
             this.descripcion = ellipsize(descripcion, MAX_CARACTERES_DESCRIPCION);
@@ -447,7 +477,7 @@ public class EventoREST {
         }
 
         // Acepta un evento en el constructor
-        public EventoProxyMini(Evento evento) {
+        EventoProxyMini(Evento evento) {
             // Construye el evento a partir de un evento ya existente
             this.id = evento.getId();
 
@@ -480,9 +510,6 @@ public class EventoREST {
         // 
         public String propiedadInventada;
 
-        public EventoProxy() {
-        }
-
         public EventoProxy(Short tipo, short validado, List<CategoriaREST.CategoriaProxy> categoriaList, String creador, Double latitud, Double longitud, String propiedadInventada, Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion) {
             super(id, nombre, descripcion, fecha, precio, direccion);
             this.tipo = tipo;
@@ -494,7 +521,7 @@ public class EventoREST {
             this.propiedadInventada = propiedadInventada;
         }
 
-        public EventoProxy(Evento evento) {
+        EventoProxy(Evento evento) {
             super(evento);
             this.tipo = evento.getTipo();
             this.validado = evento.getValidado();
@@ -512,6 +539,29 @@ public class EventoREST {
             this.descripcion = evento.getDescripcion();
         }
 
+    }
+
+    public static class FotosDeEvento implements Serializable {
+        public String fotoPrimariaUrl;
+        public List<Foto> fotos;
+
+        private FotosDeEvento() {
+            fotos = new ArrayList<>();
+        }
+
+        private FotosDeEvento(PhotoSetPhotos photoSetPhotos) {
+            fotoPrimariaUrl = photoSetPhotos.primary.kindLargeSizeUrl;
+            fotos = photoSetPhotos.photos.stream().map(Foto::new).collect(Collectors.toList());
+        }
+    }
+
+    public static class Foto implements Serializable {
+        public String titulo, url;
+
+        private Foto(Photo photo) {
+            titulo = photo.title;
+            url = photo.kindLargeSizeUrl;
+        }
     }
 
 }
