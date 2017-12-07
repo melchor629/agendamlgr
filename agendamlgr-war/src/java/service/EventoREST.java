@@ -66,7 +66,7 @@ public class EventoREST {
     @Path("usuario")
     public List<EventoProxyMini> buscarEventosUsuario(@HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgNotFoundException {
         Usuario usuario = usuarioFacade.find(TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token)));
-        return eventoFacade.buscarEventosUsuario(usuario).stream().map(convertToMiniProxyWithFlickr).collect(Collectors.toList());
+        return eventoFacade.buscarEventosUsuario(usuario).parallelStream().map(convertToMiniProxyWithFlickr).collect(Collectors.toList());
     }
 
     // Obtener todos los eventos existentes en el sistema
@@ -77,7 +77,7 @@ public class EventoREST {
 
         // Usuario que podria tener la sesion iniciada
         Usuario usuarioSesion = usuarioDesdeToken(token);
-        return eventoFacade.buscarEventosTipoUsuario(usuarioSesion).stream().map(convertToMiniProxyWithFlickr).collect(Collectors.toList());
+        return eventoFacade.buscarEventosTipoUsuario(usuarioSesion).parallelStream().map(convertToMiniProxyWithFlickr).collect(Collectors.toList());
     }
 
     // Obtener un evento dada una id, pasada por URL
@@ -331,7 +331,7 @@ public class EventoREST {
         List<Evento> listaEventos = eventoFacade.buscarEventoCategorias(listaCategorias, usuarioSesion, filtro.ordenarPorDistancia, filtro.latitud, filtro.longitud, filtro.radio);
 
         // Crear instancias de EventoProxy para hacer el retorno
-        return listaEventos.stream().map(convertToMiniProxyWithFlickr).collect(Collectors.toList());
+        return listaEventos.parallelStream().map(convertToMiniProxyWithFlickr).collect(Collectors.toList());
     }
 
     @GET
