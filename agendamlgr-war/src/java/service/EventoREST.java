@@ -66,7 +66,7 @@ public class EventoREST {
     @Path("usuario")
     public List<EventoProxyMini> buscarEventosUsuario(@HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgNotFoundException {
         Usuario usuario = usuarioFacade.find(TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token)));
-        return eventoFacade.buscarEventosUsuario(usuario).stream().map(convertToMiniProxyWithFlickr).collect(Collectors.toList());
+        return eventoFacade.buscarEventosUsuario(usuario).parallelStream().map(convertToMiniProxyWithFlickr).collect(Collectors.toList());
     }
 
     // Obtener todos los eventos existentes en el sistema
@@ -77,7 +77,7 @@ public class EventoREST {
 
         // Usuario que podria tener la sesion iniciada
         Usuario usuarioSesion = usuarioDesdeToken(token);
-        return eventoFacade.buscarEventosTipoUsuario(usuarioSesion).stream().map(convertToMiniProxyWithFlickr).collect(Collectors.toList());
+        return eventoFacade.buscarEventosTipoUsuario(usuarioSesion).parallelStream().map(convertToMiniProxyWithFlickr).collect(Collectors.toList());
     }
 
     // Obtener un evento dada una id, pasada por URL
@@ -129,7 +129,7 @@ public class EventoREST {
             id y campos de flickr
          */
         // Actualizar categorias. Crear lista de categorias
-        List<Categoria> listaCategorias = evento.categoriaList.stream().map(c -> categoriaFacade.find(c.id)).collect(Collectors.toList());
+        List<Categoria> listaCategorias = evento.categoriaList.stream().map(c -> new Categoria(c.id)).collect(Collectors.toList());
 
         // eventoDB.setCategoriaList(listaCategorias);
         // Est se fija en el servidor
@@ -142,10 +142,6 @@ public class EventoREST {
 
         // Fijar el usuario creador del evento
         eventoDB.setCreador(usuario);
-
-        // El evento se establece como validado o no dependiendo del usuario que
-        // lo haya creado
-        eventoDB.setValidado(usuario.getTipo() == 3 ? Short.parseShort("1") : Short.parseShort("0"));
 
         // Rellenar latitud y longitud del evento
         // Obtener lat y long
@@ -209,7 +205,7 @@ public class EventoREST {
             creador, latitud, longitud y campos de flickr
          */
         // Actualizar categorias. Crear lista de categorias
-        List<Categoria> listaCategorias = evento.categoriaList.stream().map(c -> categoriaFacade.find(c.id)).collect(Collectors.toList());
+        List<Categoria> listaCategorias = evento.categoriaList.stream().map(c -> new Categoria(c.id)).collect(Collectors.toList());
 
         // El metodo al que se llama del bean es el encargado de actualizar la
         // lista de categorias
@@ -318,7 +314,7 @@ public class EventoREST {
         List<Evento> listaEventos = eventoFacade.buscarEventoCategorias(listaCategorias, usuarioSesion, filtro.ordenarPorDistancia, filtro.latitud, filtro.longitud, filtro.radio);
 
         // Crear instancias de EventoProxy para hacer el retorno
-        return listaEventos.stream().map(convertToMiniProxyWithFlickr).collect(Collectors.toList());
+        return listaEventos.parallelStream().map(convertToMiniProxyWithFlickr).collect(Collectors.toList());
     }
 
     @GET

@@ -8,7 +8,11 @@ import java.io.Serializable;
  */
 public class NotAuthenticatedException extends Exception implements Serializable {
 
-    public NotAuthenticatedException(String message) {
+    NotAuthenticatedException(String message) {
         super(message);
+    }
+
+    NotAuthenticatedException(String message, Throwable cause) {
+        super(message, cause);
     }
 }
