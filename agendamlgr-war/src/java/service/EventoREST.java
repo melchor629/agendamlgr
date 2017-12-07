@@ -152,6 +152,10 @@ public class EventoREST {
 
         eventoDB.setLatitud(new BigDecimal(coords[0]));
         eventoDB.setLongitud(new BigDecimal(coords[1]));
+        
+        // Rellenar los atributos propios de Flickr
+        eventoDB.setFlickralbumid(evento.flickrAlbumID);
+        eventoDB.setFlickruserid(evento.flickrUserID);
 
         // Proceder a borrar el evento
         eventoFacade.crearEventoTipoUsuario(eventoDB, listaCategorias);
@@ -216,6 +220,10 @@ public class EventoREST {
         eventoDB.setPrecio(evento.precio);
         eventoDB.setTipo(evento.tipo);
 
+        // Rellenar los atributos propios de Flickr
+        eventoDB.setFlickralbumid(evento.flickrAlbumID);
+        eventoDB.setFlickruserid(evento.flickrUserID);
+        
         // Proceder a editar el evento
         eventoFacade.editarEventoTipoUsuario(eventoDB, listaCategorias, usuario);
 
@@ -273,6 +281,7 @@ public class EventoREST {
     /*  La URL para el filtrado tendra la siguiente pinta: 
         .../evento/filtrar?ordenarPorDistancia=X&radio=X&latitud=X&longitud=X&mostrarDeMiPreferencia=X&categoriasSeleccionadas=1&categoriasSeleccionadas=2...
         (Y asi con tantas categorias como se desee)
+    ¡¡¡OJO!!! El radio se ofrece en Kilometros
     */
     @GET
     @Path("filtrar")
@@ -507,11 +516,14 @@ public class EventoREST {
         public String creador;
 
         public Double latitud, longitud;
+        
+        // Atributos para la funcionalidad relacionada con Flickr
+        public String flickrUserID, flickrAlbumID;
 
         public EventoProxy() {
         }
         
-        public EventoProxy(Short tipo, boolean validado, List<CategoriaREST.CategoriaProxy> categoriaList, String creador, Double latitud, Double longitud, Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion) {
+        public EventoProxy(Short tipo, boolean validado, List<CategoriaREST.CategoriaProxy> categoriaList, String creador, Double latitud, Double longitud, Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion, String flickrUserID, String flickrAlbumID) {
 
             super(id, nombre, descripcion, fecha, precio, direccion);
             this.tipo = tipo;
@@ -520,12 +532,19 @@ public class EventoREST {
             this.creador = creador;
             this.latitud = latitud;
             this.longitud = longitud;
+            this.flickrAlbumID = flickrAlbumID;
+            this.flickrUserID = flickrUserID;
         }
 
         EventoProxy(Evento evento) {
             super(evento);
             this.tipo = evento.getTipo();
             this.validado = evento.getValidado() == 1;
+            
+            // Flickr
+            this.flickrAlbumID = evento.getFlickralbumid();
+            this.flickrUserID = evento.getFlickruserid();
+            //
 
             this.categoriaList = new ArrayList<>();
             // Rellenar de ids la lista de categorias
