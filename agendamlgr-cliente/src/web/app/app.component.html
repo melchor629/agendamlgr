@@ -1,4 +1,16 @@
-  <a routerLink="/">Home</a>
-  <a href="http://localhost:8080/agendamlgr-war/oauth/init">Login</a>
-  <a routerLink="/perfil">Perfil</a>
-  <router-outlet></router-outlet>
+<a routerLink="/">Home</a>
+<a href="http://localhost:8080/agendamlgr-war/oauth/init">Login</a>
+<a routerLink="/perfil">Perfil</a>
+
+<br/>Opciones de busqueda<br/>
+<h3>Categorias</h3>
+<div *ngFor="let categoria of categorias">
+  {{ categoria.nombre }}
+</div>
+<h3>Preferencias</h3>
+<div *ngFor="let categoria of preferencias">
+  {{ categoria.nombre }}
+</div>
+<button type="submit" (click)="buscar()">Buscar</button>
+
+<router-outlet></router-outlet>

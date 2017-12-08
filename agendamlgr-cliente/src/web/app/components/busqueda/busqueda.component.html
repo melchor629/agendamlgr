@@ -1,11 +1,9 @@
-<h3>Eventos</h3>
-<div *ngFor="let evento of eventos; let i=index">
-<div *ngIf="i<3">
+<h3>Evento</h3>
+<div *ngFor="let evento of eventos">
 <h5><a routerLink="/verEvento/{{evento.id}}">{{ evento.nombre }}</a></h5>
 <img [src]="evento.fotoUrl"/><br/>
 {{ evento.descripcion }}<br/>
 {{ evento.fecha }}<br/>
 {{ evento.precio }}<br/>
 {{ evento.direccion }}<br/><br/>
-</div>
 </div>
