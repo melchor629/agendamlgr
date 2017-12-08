@@ -3,14 +3,25 @@
 <a routerLink="/perfil">Perfil</a>
 
 <br/>Opciones de busqueda<br/>
-<h3>Categorias</h3>
+Categorias
 <div *ngFor="let categoria of categorias">
-  {{ categoria.nombre }}
+  <input type="checkbox" (click)="addOrRemove(categoria.id)">
+  {{categoria.nombre}}
 </div>
-<h3>Preferencias</h3>
-<div *ngFor="let categoria of preferencias">
+MostrarDeMiPreferencia:
+<input type="checkbox" [(ngModel)]="mostrarDeMiPreferencia"><br/>
+Sus preferencias son:
+<b *ngFor="let categoria of preferencias">
   {{ categoria.nombre }}
-</div>
+</b><br/>
+OrdenarPorDistancia:
+<input type="checkbox" [(ngModel)]="ordenarPorDistancia"><br/>
+radio:
+<input type="text" [(ngModel)]="radio"><br/>
+latitud:
+<input type="text" [(ngModel)]="latitud"><br/>
+longitud:
+<input type="text" [(ngModel)]="longitud"><br/>
 <button type="submit" (click)="buscar()">Buscar</button>
 
 <router-outlet></router-outlet>

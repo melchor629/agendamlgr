@@ -3,7 +3,7 @@ Dirección: {{ evento.direccion }}<br/>
 Fecha: {{ evento.fecha }}<br/>
 Precio: {{ evento.precio }}<br/>
 Creador: {{ nombreCreador }}<br/>
-
+<button (click)="validar()">Validar</button><br/>
 Categorias:
 <div *ngFor="let categoria of evento.categoriaList">
   {{ categoria.nombre }}

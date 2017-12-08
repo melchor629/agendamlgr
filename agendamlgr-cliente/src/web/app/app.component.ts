@@ -12,11 +12,11 @@ export class AppComponent implements OnInit{
   categorias: Categoria[];
   preferencias: Categoria[];
 
-  ordenarPorDistancia: string;
+  ordenarPorDistancia: boolean;
   radio: number;
   latitud: number;
   longitud: number;
-  mostrarDeMiPreferencia: string;
+  mostrarDeMiPreferencia: boolean;
   categoriasSeleccionadas: number[];
 
   constructor(private categoriaService: CategoriaService, private router: Router) {
@@ -29,21 +29,36 @@ export class AppComponent implements OnInit{
   }
 
   ngOnInit(){
-    this.ordenarPorDistancia = 'false';
+    this.ordenarPorDistancia = false;
     this.radio = 0;
     this.latitud = 0;
     this.longitud = 0;
-    this.mostrarDeMiPreferencia = 'false';
-    this.categoriasSeleccionadas = [3];
+    this.mostrarDeMiPreferencia = false;
+    this.categoriasSeleccionadas = [];
   }
 
   buscar(){
-    this.router.navigateByUrl('busqueda/'+this.ordenarPorDistancia+"/"+
+    if(this.mostrarDeMiPreferencia){
+      for(let preferencia of this.preferencias){
+        this.categoriasSeleccionadas.push(preferencia.id);
+      }
+    }
+    this.router.navigateByUrl('busqueda/'+this.ordenarPorDistancia.toString()+"/"+
                                           this.radio+"/"+
                                           this.latitud+"/"+
                                           this.longitud+"/"+
-                                          this.mostrarDeMiPreferencia+"/"+
+                                          this.mostrarDeMiPreferencia.toString()+"/"+
                                           this.categoriasSeleccionadas);
+    this.categoriasSeleccionadas = [];
+  }
+
+  addOrRemove(id: number){
+    var index = this.categoriasSeleccionadas.indexOf(id);
+    if(index==-1){
+      this.categoriasSeleccionadas.push(id);
+    }else{
+      this.categoriasSeleccionadas.splice(index,1);
+    }
   }
 
   listarCategorias(){

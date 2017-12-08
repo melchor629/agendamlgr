@@ -42,4 +42,10 @@ export class VerEventoComponent implements OnInit {
     });
   }
 
+  validar(){
+    this.eventoService.validarEvento(this.id).subscribe((resultado)=>{
+      console.log(resultado);
+    });
+  }
+
 }
