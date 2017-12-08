@@ -19,7 +19,7 @@ public class AgendamlgNotFoundExceptionMapper implements ExceptionMapper<Agendam
     public Response toResponse(AgendamlgNotFoundException e) {
         String cause = (e.getCause() != null) ? ("\"" + e.getCause().getMessage() + "\"") : "null";
         return Response.status(Response.Status.NOT_FOUND)
-                .entity("{\"error\": {\"message\": \"" + e.getMessage() + "\", \"otherMessage\": " + cause + "}}")
+                .entity("{\"error\": {\"message\": \"" + e.getMessage() + "\", \"otherMessage\": " + cause + ", \"error_id\": " + e.getErrorId() + "}}")
                 .build();
     }
 

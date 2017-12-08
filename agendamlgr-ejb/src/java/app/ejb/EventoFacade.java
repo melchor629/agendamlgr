@@ -71,11 +71,9 @@ public class EventoFacade extends AbstractFacade<Evento> {
         try {
             Usuario usuario = evento.getCreador();
             if (evento.getTipo() < 1 || evento.getTipo() > 3) {
-                throw new AgendamlgException("Tipo inválido: " + evento.getTipo());
+                throw AgendamlgException.tipoInvalido(evento.getTipo());
             }
-            if (usuario == null) {
-                throw new AgendamlgException("Usuario anónimo no puede crear eventos");
-            } else if (usuario.getTipo() == 1) {
+            if (usuario.getTipo() == 1) {
                 evento.setValidado((short) 0);
                 this.create(evento);
                 this.anadirCategoriaEvento(evento, categoriasEvento);
@@ -87,7 +85,7 @@ public class EventoFacade extends AbstractFacade<Evento> {
             }
             //Tenemos que coger el id del evento que se acaba de añadir (yo no sé si esto es thread safe)
         } catch (ConstraintViolationException e) {
-            throw new AgendamlgException("Hay campos invalidos", e);
+            throw AgendamlgException.eventoCamposInvalidos(e);
         }
     }
 
@@ -103,7 +101,7 @@ public class EventoFacade extends AbstractFacade<Evento> {
             q.setParameter("id", usuario.getId());
             return (List) q.getResultList();
         } else {
-            throw new AgendamlgNotFoundException("No existe ese usuario");
+            throw AgendamlgNotFoundException.usuarioNoExiste();
         }
     }
 
@@ -190,9 +188,7 @@ public class EventoFacade extends AbstractFacade<Evento> {
     }
 
     public void validarEvento(Usuario usuario, int idEvento) throws AgendamlgException, AgendamlgNotFoundException {
-        if (usuario == null) {
-            throw new AgendamlgException("Un usuario anónimo no puede validar eventos");
-        } else if (usuario.getTipo() == 3) {
+        if (usuario.getTipo() == 3) {
             Evento evento = this.find(idEvento);
             if (evento != null) {
                 if (evento.getValidado() == 0) {
@@ -200,13 +196,13 @@ public class EventoFacade extends AbstractFacade<Evento> {
                     enviarCorreoInteresados(evento);
                     enviarCorreoCreador(evento, evento.getCreador());
                 } else {
-                    throw new AgendamlgException("El evento ya ha sido validado");
+                    throw AgendamlgException.eventoYaValidado();
                 }
             } else {
-                throw new AgendamlgNotFoundException("No existe un evento con el identificador " + idEvento);
+                throw AgendamlgNotFoundException.eventoNoExiste(idEvento);
             }
         } else {
-            throw new AgendamlgException("El usuario " + usuario.getId() + " no tiene permisos para realizar esta acción");
+            throw AgendamlgException.sinPermisos(usuario.getNombre());
         }
     }
 
@@ -219,25 +215,15 @@ public class EventoFacade extends AbstractFacade<Evento> {
         return Haversine.distance(x, y, eventoX, eventoY);
     }
 
-    /*
-    Esto ya no sirve, hemos pasado de vivir en un mundo plano a vivir en uno
-    esferico
-    // Dados dos punto de la forma (x1,y1),(x2,y2) calcula la distancia entre ambos
-    private double distanciaEntreDosPuntos(double x1, double y1, double x2, double y2) {
-        return Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
-    }
-    */
     public void borrarEvento(Usuario usuario, int idEvento) throws AgendamlgException, AgendamlgNotFoundException {
-        if (usuario == null) {
-            throw new AgendamlgException("Un usuario anónimo no puede borrar eventos");
-        } else if (usuario.getTipo() == 3) {
+        if (usuario.getTipo() == 3) {
             Evento evento = find(idEvento);
             if (evento == null) {
-                throw new AgendamlgNotFoundException("No existe el evento con identificador " + idEvento);
+                throw AgendamlgNotFoundException.eventoNoExiste(idEvento);
             }
             remove(evento);
         } else {
-            throw new AgendamlgException("El usuario '" + usuario.getId() + "' no tiene permisos para borrar eventos");
+            throw AgendamlgException.sinPermisos(usuario.getNombre());
         }
     }
 
@@ -251,17 +237,15 @@ public class EventoFacade extends AbstractFacade<Evento> {
             // categoriaList a null y es por ello que hay que obtener desde el entity manager
             // un evento "de verdad"
             if (evento.getTipo() < 1 || evento.getTipo() > 3) {
-                throw new AgendamlgException("Tipo inválido: " + evento.getTipo());
+                throw AgendamlgException.tipoInvalido(evento.getTipo());
             }
-            if (usuarioQueEdita == null) {
-                throw new AgendamlgException("Usuario anónimo no puede editar eventos");
-            } else if (usuarioQueEdita.getTipo() == 3) {
+            if (usuarioQueEdita.getTipo() == 3) {
                 this.actualizarCategoriaEvento(evento, categoriasEvento);
             } else {
-                throw new AgendamlgException("El usuario '" + usuarioQueEdita.getId() + "' no tiene permisos para editar eventos");
+                throw AgendamlgException.sinPermisos(usuarioQueEdita.getNombre());
             }
         } catch (ConstraintViolationException e) {
-            throw new AgendamlgException("Hay campos invalidos", e);
+            throw AgendamlgException.eventoCamposInvalidos(e);
         }
     }
 
@@ -270,7 +254,7 @@ public class EventoFacade extends AbstractFacade<Evento> {
         //No se puede modificar el creador ni el validado
         Evento original = find(evento.getId());
         if (original == null) {
-            throw new AgendamlgNotFoundException("El evento original debe existir");
+            throw AgendamlgNotFoundException.eventoNoExiste(evento.getId());
         }
         evento.setCreador(original.getCreador());
         evento.setValidado(original.getValidado());
@@ -314,8 +298,8 @@ public class EventoFacade extends AbstractFacade<Evento> {
 
         private static final int EARTH_RADIUS = 6371; // Approx Earth radius in KM
 
-        public static double distance(double startLat, double startLong,
-                double endLat, double endLong) {
+        static double distance(double startLat, double startLong,
+                               double endLat, double endLong) {
 
             double dLat = Math.toRadians((endLat - startLat));
             double dLong = Math.toRadians((endLong - startLong));
@@ -329,7 +313,7 @@ public class EventoFacade extends AbstractFacade<Evento> {
             return EARTH_RADIUS * c; // <-- d
         }
 
-        public static double haversin(double val) {
+        static double haversin(double val) {
             return Math.pow(Math.sin(val / 2), 2);
         }
     }

@@ -25,7 +25,7 @@ public class UsuarioREST {
     @Produces({MediaType.APPLICATION_JSON})
     public UsuarioProxy buscarUsuario(@PathParam("id") String id) throws AgendamlgNotFoundException {
         Usuario usuario = usuarioFacade.find(id);
-        if(usuario == null) throw new AgendamlgNotFoundException("Usuario con id " + id + " no existe");
+        if(usuario == null) throw AgendamlgNotFoundException.usuarioNoExiste(id);
         return new UsuarioProxy(usuario);
     }
 

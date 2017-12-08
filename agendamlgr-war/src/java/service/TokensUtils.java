@@ -44,7 +44,7 @@ public class TokensUtils {
     /**
      * Creates a JWT token using a User ID.
      * @param id User ID.
-     * @param picture
+     * @param picture User picture.
      * @return The JWT Token.
      */
     public static String createJwtTokenForUserId(String id, String picture) {
@@ -75,7 +75,7 @@ public class TokensUtils {
         } catch(JWTDecodeException ignore) {
             return null;
         } catch(TokenExpiredException expired) {
-            throw new NotAuthenticatedException("El token ha expirado", expired);
+            throw NotAuthenticatedException.expirado(expired);
         }
     }
 
@@ -86,9 +86,9 @@ public class TokensUtils {
      * @throws NotAuthenticatedException if the DecodedJWT is null or the JWT doesn't contain the {@code userId}.
      */
     public static String getUserIdFromJwtTokenOrThrow(DecodedJWT decodedJWT) throws NotAuthenticatedException {
-        if(decodedJWT == null) throw new NotAuthenticatedException("Tienes que estar autenticado para usar este servicio");
+        if(decodedJWT == null) throw NotAuthenticatedException.noAutenticado();
         Claim c =  decodedJWT.getClaim("userId");
-        if(c != null) return c.asString(); else throw new NotAuthenticatedException("Tienes que estar autenticado para usar este servicio");
+        if(c != null) return c.asString(); else throw NotAuthenticatedException.noAutenticado();
     }
 
     /**
@@ -98,9 +98,9 @@ public class TokensUtils {
      * @throws NotAuthenticatedException if the DecodedJWT is null or the JWT doesn't contain the {@code photoUrl}.
      */
     public static String getPhotoUrlFromJwtTokenOrThrow(DecodedJWT decodedJWT) throws NotAuthenticatedException {
-        if(decodedJWT == null) throw new NotAuthenticatedException("Tienes que estar autenticado para usar este servicio");
+        if(decodedJWT == null) throw NotAuthenticatedException.noAutenticado();
         Claim c = decodedJWT.getClaim("photoUrl");
-        if(c != null) return c.asString(); else throw new NotAuthenticatedException("Tienes que estar autenticado para usar este servicio");
+        if(c != null) return c.asString(); else throw NotAuthenticatedException.noAutenticado();
     }
 
 }

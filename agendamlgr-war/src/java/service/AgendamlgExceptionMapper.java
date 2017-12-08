@@ -19,7 +19,7 @@ public class AgendamlgExceptionMapper implements ExceptionMapper<AgendamlgExcept
     public Response toResponse(AgendamlgException e) {
         String cause = (e.getCause() != null) ? ("\"" + e.getCause().getMessage() + "\"") : "null";
         return Response.status(Response.Status.BAD_REQUEST)
-                .entity("{\"error\": {\"message\": \"" + e.getMessage() + "\", \"otherMessage\": " + cause + "}}")
+                .entity("{\"error\": {\"message\": \"" + e.getMessage() + "\", \"otherMessage\": " + cause + ", \"error_id\": " + e.getErrorId() + "}}")
                 .build();
     }
 

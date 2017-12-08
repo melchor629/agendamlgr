@@ -50,7 +50,7 @@ public class CategoriaREST{
     public CategoriaProxy buscarCategoria(@PathParam("id") Integer id) throws AgendamlgNotFoundException{
         Categoria categoria = categoriaFacade.find(id);
         if(categoria == null){
-            throw new AgendamlgNotFoundException("Categoria no encontrado");
+            throw AgendamlgNotFoundException.categoriaNoExiste(id);
         }else{
             return new CategoriaProxy(categoria);
         }
@@ -69,7 +69,7 @@ public class CategoriaREST{
         String idUsuario = TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token));
         Usuario usuario = usuarioFacade.find(idUsuario);
         if(usuario == null){
-            throw new AgendamlgNotFoundException("Usuario no existe");
+            throw AgendamlgNotFoundException.usuarioNoExiste();
         }
         return categoriaFacade.buscarPreferenciasUsuario(usuario).stream().map(CategoriaProxy::new).collect(Collectors.toList());
     }
@@ -80,7 +80,7 @@ public class CategoriaREST{
     public List<CategoriaProxy> buscarCategoriasEvento(@PathParam("idEvento") int idEvento) throws AgendamlgNotFoundException{
         Evento evento = eventoFacade.find(idEvento);
         if(evento == null){
-            throw new AgendamlgNotFoundException("Evento no existe");
+            throw AgendamlgNotFoundException.eventoNoExiste(idEvento);
         }
         return categoriaFacade.buscarCategoriasEvento(evento).stream().map(CategoriaProxy::new).collect(Collectors.toList());
     }

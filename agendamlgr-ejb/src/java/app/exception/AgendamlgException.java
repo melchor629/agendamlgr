@@ -9,22 +9,50 @@ import java.io.Serializable;
 public class AgendamlgException extends Exception implements Serializable {
 
     private Throwable cause;
+    private int errorId;
 
-    public AgendamlgException(String mensajeError) {
+    private AgendamlgException(String mensajeError, int errorId) {
         super(mensajeError);
+        this.errorId = errorId;
     }
 
-    public AgendamlgException(String mensajeError, Throwable t) {
+    private AgendamlgException(String mensajeError, int errorId, Throwable t) {
         super(mensajeError, t);
         cause = t;
-    }
-
-    public AgendamlgException(Throwable t) {
-        super(t.getMessage(), t);
+        this.errorId = errorId;
     }
 
     @Override
     public Throwable getCause() {
         return cause;
     }
+
+    public int getErrorId() {
+        return errorId;
+    }
+
+    public static AgendamlgException tipoInvalido(short tipo) {
+        return new AgendamlgException("Tipo de evento inválido" + tipo, 1);
+    }
+
+    public static AgendamlgException eventoYaValidado() {
+        return new AgendamlgException("El evento ya ha sido validado", 2);
+    }
+
+    public static AgendamlgException sinPermisos(String usuario) {
+        return new AgendamlgException("El usuario '" + usuario + "' no tiene permisos para realizar esta acción", 3);
+    }
+
+    public static AgendamlgException eventoCamposInvalidos() {
+        return new AgendamlgException("Hay campos vacíos en el evento", 4);
+    }
+
+    public static AgendamlgException eventoCamposInvalidos(Throwable t) {
+        return new AgendamlgException("Hay campos inválidos en el evento", 4, t);
+    }
+
+    public static AgendamlgException otroError(String mensaje, Throwable t) {
+        return new AgendamlgException(mensaje, 1000, t);
+    }
+
 }

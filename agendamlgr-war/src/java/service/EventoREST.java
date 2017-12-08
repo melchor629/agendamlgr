@@ -95,7 +95,7 @@ public class EventoREST {
         Evento evento = eventoFacade.find(id);
 
         if (!(evento != null && (periodista || evento.getValidado() == 1))) {
-            throw new AgendamlgNotFoundException("Evento con id " + id + " no existe");
+            throw AgendamlgNotFoundException.eventoNoExiste(id);
         }
 
         return new EventoProxy(evento);
@@ -116,7 +116,7 @@ public class EventoREST {
         // Si cualquiera de los campos del evento recibido es nulo, se devuelve
         // una excepcion
         if (evento == null || evento.categoriaList == null || evento.descripcion == null || evento.direccion == null || evento.fecha == null || evento.nombre == null || evento.tipo == null) {
-            throw new AgendamlgException("Hay parametros a null a la hora de crear el evento");
+            throw AgendamlgException.eventoCamposInvalidos();
         }
 
         // Evento que sera persistido
@@ -183,22 +183,17 @@ public class EventoREST {
 
         Usuario usuario = usuarioFacade.find(TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token)));
 
-        // Si el usuario no es periodista lanzar excepcion
-        if (usuario.getTipo() != 3) {
-            throw new AgendamlgException("Solo un periodista puede editar eventos");
-        }
-
         // Si cualquiera de los campos del evento recibido es nulo, se devuelve
         // una excepcion
         if (evento == null || evento.id == null || evento.categoriaList == null || evento.descripcion == null || evento.direccion == null || evento.fecha == null || evento.nombre == null || evento.tipo == null) {
-            throw new AgendamlgException("Hay parametros a null a la hora de editar el evento");
+            throw AgendamlgException.eventoCamposInvalidos();
         }
 
         Evento eventoDB = eventoFacade.find(evento.id);
 
         // Comprobar si se ha encontrado el evento o lanzar excepcion
         if (eventoDB == null) {
-            throw new AgendamlgNotFoundException("Evento a editar no encontrado");
+            throw AgendamlgNotFoundException.eventoNoExiste(evento.id);
         }
 
         // Trasladar los campos del evento que se ha recibido en el json al
@@ -292,7 +287,7 @@ public class EventoREST {
             @DefaultValue("0") @QueryParam("latitud") Double latitud,
             @DefaultValue("0") @QueryParam("longitud") Double longitud,
             @DefaultValue("false") @QueryParam("mostrarDeMiPreferencia") Boolean mostrarDeMiPreferencia,
-            @DefaultValue("0") @QueryParam("categoriasSeleccionadas") List<Integer> categoriasSeleccionadas) throws NotAuthenticatedException, AgendamlgException {
+            @DefaultValue("0") @QueryParam("categoriasSeleccionadas") List<Integer> categoriasSeleccionadas) throws NotAuthenticatedException {
         // Crear un objeto filtrado acorde a los QueryParam recibidos
         Filtrado filtro = new Filtrado(ordenarPorDistancia, radio, latitud, longitud, mostrarDeMiPreferencia, categoriasSeleccionadas);
         
@@ -333,7 +328,7 @@ public class EventoREST {
         Usuario usuario = usuarioDesdeToken(token);
         Evento evento = eventoFacade.find(eventoId);
         if(evento == null || ((usuario == null || usuario.getTipo() < 3) && evento.getValidado() == 0))
-            throw new AgendamlgNotFoundException("El evento " + eventoId + " no existe");
+            throw AgendamlgNotFoundException.eventoNoExiste(eventoId);
 
         if(evento.getFlickruserid() != null && evento.getFlickralbumid() != null) {
             PhotoSetPhotos photoSetPhotos = Flickr.Photosets.getPhotos(evento.getFlickruserid(), evento.getFlickralbumid());
@@ -355,7 +350,7 @@ public class EventoREST {
         try {
             return Geolocation.encontrarCoordenadas(direccion);
         } catch (IOException ex) {
-            throw new AgendamlgException("Coordenadas no encontradas - Dirección Inválida", ex);
+            throw AgendamlgException.otroError("Coordenadas no encontradas - Dirección Inválida", ex);
         }
     }
 
