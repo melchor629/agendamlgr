@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -255,15 +256,14 @@ public class EventoREST {
        Devuelve el evento que acaba de ser validado
      */
     @PUT
-    @Path("validar/{id}")
+    @Path("validar")
+    @Consumes({ MediaType.APPLICATION_JSON })
     @Produces({MediaType.APPLICATION_JSON})
-    public EventoProxy validarEvento(@PathParam("id") int id, @HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgNotFoundException, AgendamlgException {
+    public EventoProxy validarEvento(Map<String, String> json, @HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgNotFoundException, AgendamlgException {
         Usuario usuario = usuarioFacade.find(TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token)));
-
+        int id = Integer.parseUnsignedInt(json.getOrDefault("id", "0"));
         eventoFacade.validarEvento(usuario, id);
-
-        Evento evento = eventoFacade.find(id);
-        return new EventoProxy(evento);
+        return new EventoProxy(eventoFacade.find(id));
     }
 
     // Filtrado de eventos

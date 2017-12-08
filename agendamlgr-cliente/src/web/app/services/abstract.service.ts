@@ -23,7 +23,7 @@ export class AbstractService{
   }
 
   put(seccion: string, ruta: string | number = '', objeto: any, opciones: { headers?: HttpHeaders, params?: HttpParams } = {}) {
-    return this.http.post(`${AbstractService.BASE_URL}/${seccion}/${ruta}`, objeto, {
+    return this.http.put(`${AbstractService.BASE_URL}/${seccion}/${ruta}`, objeto, {
       headers: AbstractService.setTokenHeader(opciones.headers),
       params: opciones.params
     });

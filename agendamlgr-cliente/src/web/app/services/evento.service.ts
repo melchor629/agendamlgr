@@ -37,7 +37,7 @@ export class EventoService extends AbstractService{
   }
 
   validarEvento(id: number){
-    return this.put('evento',`validar/${id}`, { id });
+    return this.put('evento',`validar`, { id });
   }
 
   filtrarEventos(ordenarPorDistancia: string,
