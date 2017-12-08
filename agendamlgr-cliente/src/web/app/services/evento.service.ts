@@ -4,34 +4,42 @@ import { AbstractService } from './abstract.service';
 import { Evento } from '../interfaces/evento';
 import { Categoria } from '../interfaces/categoria';
 import { FotosDeEvento } from '../interfaces/fotosDeEvento';
-import { Foto } from '../interfaces/foto';
+
 @Injectable()
 export class EventoService extends AbstractService{
   constructor(http: HttpClient){
     super(http);
     console.log('Conectado a EventoService');
   }
+
   buscarEventosUsuario(){
-    return this.http.get<Evento[]>('http://localhost:8080/agendamlgr-war/rest/evento/usuario',{headers: this.setTokenHeader()});
+    return this.get<Evento[]>('evento', 'usuario');
   }
+
   buscarEventos(){
-    return this.http.get<Evento[]>('http://localhost:8080/agendamlgr-war/rest/evento',{headers: this.setTokenHeader()});
+    return this.get<Evento[]>('evento');
   }
+
   buscarEvento(id: number){
-    return this.http.get<Evento>('http://localhost:8080/agendamlgr-war/rest/evento/'+id,{headers: this.setTokenHeader()});
+    return this.get<Evento>('evento', id);
   }
+
   crearEvento(evento: Evento){
-    return this.http.post('http://localhost:8080/agendamlgr-war/rest/evento',evento,{headers: this.setTokenHeader()});
+    return this.post('evento', '', evento);
   }
+
   actualizarEvento(evento: Evento){
-    return this.http.put('http://localhost:8080/agendamlgr-war/rest/evento',evento,{headers: this.setTokenHeader()});
+    return this.put('evento', '', evento);
   }
+
   borrarEvento(id: number){
-    return this.http.delete('http://localhost:8080/agendamlgr-war/rest/evento/'+id,{headers: this.setTokenHeader()});
+    return this.delete('evento', id);
   }
+
   validarEvento(id: number){
-    return this.http.put('http://localhost:8080/agendamlgr-war/rest/evento/validar/'+id, {},{headers: this.setTokenHeader()});
+    return this.put('evento',`validar/${id}`, { id });
   }
+
   filtrarEventos(ordenarPorDistancia: string,
                  radio: number,
                  latitud: number,
@@ -45,9 +53,10 @@ export class EventoService extends AbstractService{
     if(ordenarPorDistancia === "true") params = params.append('longitud', longitud.toString());
     params = params.append('mostrarDeMiPreferencia', mostrarDeMiPreferencia);
     categoriasSeleccionadas.forEach(categoria => params = params.append('categoriasSeleccionadas', categoria.id.toString()));
-    return this.http.get<Evento[]>('http://localhost:8080/agendamlgr-war/rest/evento/filtrar',{headers: this.setTokenHeader(), params});
+    return this.get<Evento[]>('evento', 'filtrar',{ params });
   }
+
   buscarFotosParaEvento(id: number){
-    return this.http.get<FotosDeEvento>('http://localhost:8080/agendamlgr-war/rest/evento/fotos/'+id,{headers: this.setTokenHeader()});
+    return this.get<FotosDeEvento>('evento' , `fotos/${id}`);
   }
 }
