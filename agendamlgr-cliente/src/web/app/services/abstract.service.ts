@@ -6,12 +6,12 @@ export class AbstractService{
 
   }
   setTokenHeader(){
-    if(window.localStorage.token === null || window.localStorage.token === undefined){
+    let token = window.localStorage.getItem('token');
+    if(token === null || token === undefined){
       return null;
     }else{
       let httpHeader = new HttpHeaders();
-      let tokenHeader = httpHeader.append('bearer', window.localStorage.token);
-      return tokenHeader;
+      return httpHeader.append('bearer', window.localStorage.token);
     }
   }
 }

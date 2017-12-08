@@ -30,7 +30,7 @@ export class EventoService extends AbstractService{
     return this.http.delete('http://localhost:8080/agendamlgr-war/rest/evento/'+id,{headers: this.setTokenHeader()});
   }
   validarEvento(id: number){
-    return this.http.put('http://localhost:8080/agendamlgr-war/rest/evento/validar/'+id,{headers: this.setTokenHeader()});
+    return this.http.put('http://localhost:8080/agendamlgr-war/rest/evento/validar/'+id, {},{headers: this.setTokenHeader()});
   }
   filtrarEventos(ordenarPorDistancia: string,
                  radio: number,
