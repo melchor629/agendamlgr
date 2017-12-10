@@ -25,19 +25,19 @@ export class EventoService extends AbstractService{
   }
 
   crearEvento(evento: Evento){
-    return this.post('evento', '', evento);
+    return this.post<Evento>('evento', '', evento);
   }
 
   actualizarEvento(evento: Evento){
-    return this.put('evento', '', evento);
+    return this.put<Evento>('evento', '', evento);
   }
 
   borrarEvento(id: number){
-    return this.delete('evento', id);
+    return this.delete<{status:string}>('evento', id);
   }
 
   validarEvento(id: number){
-    return this.put('evento',`validar`, { id });
+    return this.put<Evento>('evento',`validar`, { id });
   }
 
   filtrarEventos(ordenarPorDistancia: string,

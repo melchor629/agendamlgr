@@ -15,22 +15,22 @@ export class AbstractService{
     });
   }
 
-  post(seccion: string, ruta: string | number = '', objeto: any, opciones: { headers?: HttpHeaders, params?: HttpParams } = {}) {
-    return this.http.post(`${AbstractService.BASE_URL}/${seccion}/${ruta}`, objeto, {
+  post<T>(seccion: string, ruta: string | number = '', objeto: any, opciones: { headers?: HttpHeaders, params?: HttpParams } = {}) {
+    return this.http.post<T>(`${AbstractService.BASE_URL}/${seccion}/${ruta}`, objeto, {
       headers: AbstractService.setTokenHeader(opciones.headers),
       params: opciones.params
     });
   }
 
-  put(seccion: string, ruta: string | number = '', objeto: any, opciones: { headers?: HttpHeaders, params?: HttpParams } = {}) {
-    return this.http.put(`${AbstractService.BASE_URL}/${seccion}/${ruta}`, objeto, {
+  put<T>(seccion: string, ruta: string | number = '', objeto: any, opciones: { headers?: HttpHeaders, params?: HttpParams } = {}) {
+    return this.http.put<T>(`${AbstractService.BASE_URL}/${seccion}/${ruta}`, objeto, {
       headers: AbstractService.setTokenHeader(opciones.headers),
       params: opciones.params
     });
   }
 
-  delete(seccion: string, ruta: string | number = '', opciones: { headers?: HttpHeaders, params?: HttpParams } = {}) {
-    return this.http.delete(`${AbstractService.BASE_URL}/${seccion}/${ruta}`, {
+  delete<T>(seccion: string, ruta: string | number = '', opciones: { headers?: HttpHeaders, params?: HttpParams } = {}) {
+    return this.http.delete<T>(`${AbstractService.BASE_URL}/${seccion}/${ruta}`, {
       headers: AbstractService.setTokenHeader(opciones.headers),
       params: opciones.params
     });
