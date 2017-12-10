@@ -11,6 +11,7 @@ import { PerfilComponent } from './components/perfil/perfil.component';
 import { VerEventoComponent } from './components/verEvento/verEvento.component';
 import { BusquedaComponent } from './components/busqueda/busqueda.component';
 import { EditarEventoComponent } from "./components/editarEvento/editarEvento.component";
+import { CrearEventoComponent } from "./components/crearEvento/crearEvento.component";
 //Service imports
 import { CategoriaService } from './services/categoria.service';
 import { UsuarioService } from './services/usuario.service';
@@ -21,7 +22,8 @@ const appRoutes: Routes = [
     {path: 'perfil', component: PerfilComponent},
     {path: 'verEvento/:id', component: VerEventoComponent},
     {path: 'busqueda/:ordenarPorDistancia/:radio/:latitud/:longitud/:mostrarDeMiPreferencia/:categoriasSeleccionadas', component: BusquedaComponent},
-    { path: 'editarEvento/:id', component: EditarEventoComponent }
+    { path: 'editarEvento/:id', component: EditarEventoComponent },
+    { path: 'crearEvento', component: CrearEventoComponent }
 ];
 
 @NgModule({
@@ -37,7 +39,8 @@ const appRoutes: Routes = [
         PerfilComponent,
         VerEventoComponent,
         BusquedaComponent,
-        EditarEventoComponent
+        EditarEventoComponent,
+        CrearEventoComponent
     ],
     providers: [
         CategoriaService,
