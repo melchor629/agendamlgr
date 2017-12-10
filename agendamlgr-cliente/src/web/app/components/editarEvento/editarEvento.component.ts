@@ -20,7 +20,8 @@ export class EditarEventoComponent implements OnInit {
     private urlFlickr: string;
     private fecha: string;
 
-    private regex = new RegExp('https:\\/\\/www\\.flickr\\.com\\/photos\\/([0-9@a-zA-Z]*)\\/albums\\/(\\d*)', 'g');
+    private flickrRegexString = 'https:\\/\\/www\\.flickr\\.com\\/photos\\/([0-9@a-zA-Z]*)\\/albums\\/(\\d*)';
+    private flickrRegex = new RegExp(this.flickrRegexString, 'g');
 
     constructor(private categoriaService: CategoriaService,
                 private eventoService: EventoService,
@@ -48,8 +49,8 @@ export class EditarEventoComponent implements OnInit {
         this.evento.fecha = new Date(Date.parse(this.fecha)).toISOString();
         if(this.urlFlickr) {
             //La primera vez parece que no va el regex, a si que lo apaño llamandolo una vez antes de usarlo
-            this.regex.exec(this.urlFlickr);
-            let result = this.regex.exec(this.urlFlickr);
+            this.flickrRegex.exec(this.urlFlickr);
+            let result = this.flickrRegex.exec(this.urlFlickr);
             if(result && result.length === 3) {
                 this.evento.flickrAlbumID = result[2];
                 this.evento.flickrUserID = result[1];
