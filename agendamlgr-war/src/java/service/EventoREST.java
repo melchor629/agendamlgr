@@ -541,11 +541,7 @@ public class EventoREST {
             this.flickrUserID = evento.getFlickruserid();
             //
 
-            this.categoriaList = new ArrayList<>();
-            // Rellenar de ids la lista de categorias
-            for (Categoria categoria : evento.getCategoriaList()) {
-                this.categoriaList.add(new CategoriaREST.CategoriaProxy(categoria));
-            }
+            this.categoriaList = evento.getCategoriaList().stream().map(CategoriaREST.CategoriaProxy::new).collect(Collectors.toList());
 
             this.latitud = evento.getLatitud() != null ? evento.getLatitud().doubleValue() : null;
             this.longitud = evento.getLongitud() != null ? evento.getLongitud().doubleValue() : null;

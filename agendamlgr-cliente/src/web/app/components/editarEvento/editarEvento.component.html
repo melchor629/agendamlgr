@@ -1,0 +1,58 @@
+<ngForm>
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            <label for="tipo">Tipo</label>
+            <select id="tipo" class="form-control" name="tipo" [(ngModel)]="evento.tipo">
+                <option [value]="1">Una vez</option>
+                <option [value]="2">Recurrente</option>
+                <option [value]="3">Persistente</option>
+            </select>
+        </div>
+        <div class="form-group col-md-4">
+            <label for="fecha">Fecha</label>
+            <input type="datetime-local" id="fecha" class="form-control" name="fecha" [(ngModel)]="fecha" />
+        </div>
+        <div class="form-group col-md-4">
+            <label for="categorias">Categorias</label>
+            <select multiple id="categorias" class="form-control" [(ngModel)]="categoriasEvento" name="categorias">
+                <option *ngFor="let categoria of categorias" [value]="categoria.id">
+                    {{ categoria.nombre }}
+                </option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input id="nombre" class="form-control" required max="45" placeholder="Título del evento" name="nombre" [(ngModel)]="evento.nombre" />
+    </div>
+
+    <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <textarea
+                id="descripcion"
+                class="form-control"
+                required maxlength="16000000"
+                placeholder="Pon una descripción del evento"
+                name="descripcion"
+                [(ngModel)]="evento.descripcion"></textarea>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            <label for="precio">Precio <small>(opcional)</small></label>
+            <div class="input-group">
+                <input type="number" class="form-control" id="precio" min="0" step="0.01" name="precio" [(ngModel)]="evento.precio" />
+                <div class="input-group-addon">€</div>
+            </div>
+        </div>
+        <div class="form-group col-md-8">
+            <label for="flickr">Flickr <small>(opcional)</small></label>
+            <input type="url" id="flickr" class="form-control" name="flickr"
+                   [(ngModel)]="urlFlickr" [pattern]="regex" />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" (click)="onEdit()">Guardar</button>
+    <button type="submit" class="btn btn-secondary" (click)="onCancel()">Cancelar</button>
+</ngForm>

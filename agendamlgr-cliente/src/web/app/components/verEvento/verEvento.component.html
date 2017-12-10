@@ -4,6 +4,7 @@ Fecha: {{ evento.fecha }}<br/>
 Precio: {{ evento.precio }}<br/>
 Creador: {{ nombreCreador }}<br/>
 <button (click)="validar()">Validar</button><br/>
+<a routerLink="/editarEvento/{{ evento.id }}" class="btn btn-warning">Editar</a><br/>
 Categorias:
 <div *ngFor="let categoria of evento.categoriaList">
   {{ categoria.nombre }}
