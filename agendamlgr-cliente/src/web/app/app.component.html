@@ -1,5 +1,6 @@
 <a routerLink="/">Home</a>
-<a href="http://localhost:8080/agendamlgr-war/oauth/init">Login</a>
+<a href="http://localhost:8080/agendamlgr-war/oauth/init" *ngIf="userLoggedIn == false">Login</a>
+<button (click)="logout()" *ngIf="userLoggedIn">Logout</button>
 <a routerLink="/perfil">Perfil</a>
 
 <br/>Opciones de busqueda<br/>
