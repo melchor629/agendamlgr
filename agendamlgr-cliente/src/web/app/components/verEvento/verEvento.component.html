@@ -25,7 +25,7 @@
 </div>
 
 <h4>Fecha</h4>
-<p class="lead">{{ fechaAmigable }}</p>
+<p class="lead">{{ evento.fecha | parseDateString | date:'EEEE d \'de\' MMMM (y), HH:mm':'':'es' }}</p>
 
 <h4>Descripcion</h4>
 <p>
