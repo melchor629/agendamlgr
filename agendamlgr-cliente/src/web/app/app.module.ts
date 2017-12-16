@@ -22,6 +22,7 @@ const appRoutes: Routes = [
     {path: 'perfil', component: PerfilComponent},
     {path: 'verEvento/:id', component: VerEventoComponent},
     {path: 'busqueda/:ordenarPorDistancia/:radio/:latitud/:longitud/:mostrarDeMiPreferencia/:categoriasSeleccionadas', component: BusquedaComponent},
+    { path: 'buscar', component: BusquedaComponent },
     { path: 'editarEvento/:id', component: EditarEventoComponent },
     { path: 'crearEvento', component: CrearEventoComponent }
 ];

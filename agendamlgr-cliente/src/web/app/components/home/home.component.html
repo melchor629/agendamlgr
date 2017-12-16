@@ -1,11 +1,14 @@
-<h3>Eventos</h3>
-<div *ngFor="let evento of eventos; let i=index">
-<div *ngIf="i<3">
-<h5><a routerLink="/verEvento/{{evento.id}}">{{ evento.nombre }}</a></h5>
-<img [src]="evento.fotoUrl"/><br/>
-{{ evento.descripcion }}<br/>
-{{ evento.fecha }}<br/>
-{{ evento.precio }}<br/>
-{{ evento.direccion }}<br/><br/>
-</div>
+<div class="card-columns">
+    <div *ngFor="let evento of eventos.slice(page * 10, (page + 1) * 10)" class="card w-lg-50">
+        <img *ngIf="evento.fotoUrl" [src]="evento.fotoUrl" class="card-img-top" alt="{{ evento.nombre }}" />
+        <div class="card-body">
+            <h4>{{ evento.nombre }}</h4>
+            <h6 class="card-subtitle mb-2 text-muted">{{ evento.fecha }}</h6>
+            <p class="card-text">
+                {{ evento.descripcion }}
+            </p>
+            <a routerLink="/verEvento/{{evento.id}}" class="card-link">Ver más</a> &nbsp;
+            <a href="#" class="card-link" *ngIf="evento.precio">Comprar tickets ({{ evento.precio }} €)</a>
+        </div>
+    </div>
 </div>

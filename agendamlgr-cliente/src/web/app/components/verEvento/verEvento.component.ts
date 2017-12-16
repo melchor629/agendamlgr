@@ -19,6 +19,7 @@ export class VerEventoComponent implements OnInit {
   nombreCreador: string;
   fotosDeEvento: FotosDeEvento;
   fotos: Foto[];
+  private fechaAmigable: string;
 
   constructor(private categoriaService: CategoriaService,
               private eventoService: EventoService,
@@ -32,6 +33,8 @@ export class VerEventoComponent implements OnInit {
   ngOnInit(){
     this.eventoService.buscarEvento(this.id).subscribe((resultado)=>{
       this.evento = resultado;
+      this.evento.fecha = this.evento.fecha.replace("[UTC]", "");
+      this.fechaAmigable = new Date(Date.parse(this.evento.fecha)).toLocaleString();
       this.usuarioService.buscarUsuario(this.evento.creador).subscribe((resultado2)=>{
           this.nombreCreador = resultado2.nombre;
       });

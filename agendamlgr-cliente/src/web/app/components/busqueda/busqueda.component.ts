@@ -11,11 +11,13 @@ import { Categoria } from '../../interfaces/categoria';
 })
 export class BusquedaComponent{
 
-  eventos: Evento[];
+  eventos: Evento[] = [];
   palabraFiltro: string;
+  private page = 0;
+  private totalPages = 1;
 
   constructor(private eventoService: EventoService, private route: ActivatedRoute, private router: Router) {
-    route.params.subscribe(val=>{
+    route.params.subscribe(() =>{
       this.listar();
     });
   }
@@ -34,7 +36,7 @@ export class BusquedaComponent{
     let longitud = this.route.snapshot.params['longitud'];
     let mostrarDeMiPreferencia = this.route.snapshot.params['mostrarDeMiPreferencia'];
     let categoriasIds = this.route.snapshot.params['categoriasSeleccionadas'].split(",").map(Number);;
-    var categoriasSeleccionadas = [];
+    let categoriasSeleccionadas = [];
     for(let i=0; i<categoriasIds.length; i++){
       let c = {
         id: categoriasIds[i],
@@ -48,6 +50,7 @@ export class BusquedaComponent{
   listarEventos(){
     this.eventoService.buscarEventos().subscribe((resultado)=>{
       this.eventos = resultado;
+      this.totalPages = Math.round(this.eventos.length / 10);
     });
   }
 
@@ -59,6 +62,7 @@ export class BusquedaComponent{
                          categoriasSeleccionadas: Categoria[]){
     this.eventoService.filtrarEventos(ordenarPorDistancia,radio,latitud,longitud,mostrarDeMiPreferencia,categoriasSeleccionadas).subscribe((resultado)=>{
       this.eventos = resultado;
+        this.totalPages = Math.round(this.eventos.length / 10);
     });
   }
 }

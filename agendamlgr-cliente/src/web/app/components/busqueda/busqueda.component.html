@@ -1,9 +1,37 @@
-<h3>Evento</h3>
-<div *ngFor="let evento of eventos">
-<h5><a routerLink="/verEvento/{{evento.id}}">{{ evento.nombre }}</a></h5>
-<img [src]="evento.fotoUrl"/><br/>
-{{ evento.descripcion }}<br/>
-{{ evento.fecha }}<br/>
-{{ evento.precio }}<br/>
-{{ evento.direccion }}<br/><br/>
+<br/>Opciones de busqueda<br/>
+Categorias
+<div *ngFor="let categoria of categorias">
+    <input type="checkbox" (click)="addOrRemove(categoria.id)">
+    {{categoria.nombre}}
+</div>
+MostrarDeMiPreferencia:
+<input type="checkbox" [(ngModel)]="mostrarDeMiPreferencia"><br/>
+Sus preferencias son:
+<b *ngFor="let categoria of preferencias">
+    {{ categoria.nombre }}
+</b><br/>
+OrdenarPorDistancia:
+<input type="checkbox" [(ngModel)]="ordenarPorDistancia"><br/>
+radio:
+<input type="text" [(ngModel)]="radio"><br/>
+latitud:
+<input type="text" [(ngModel)]="latitud"><br/>
+longitud:
+<input type="text" [(ngModel)]="longitud"><br/>
+<button type="submit" (click)="buscar()">Buscar</button>
+
+<h2>Resultado de la búsqueda</h2>
+<div class="card-columns">
+    <div *ngFor="let evento of eventos.slice(page * 10, (page + 1) * 10)" class="card w-lg-50">
+        <img *ngIf="evento.fotoUrl" [src]="evento.fotoUrl" class="card-img-top" alt="{{ evento.nombre }}" />
+        <div class="card-body">
+            <h4>{{ evento.nombre }}</h4>
+            <h6 class="card-subtitle mb-2 text-muted">{{ evento.fecha }}</h6>
+            <p class="card-text">
+                {{ evento.descripcion }}
+            </p>
+            <a routerLink="/verEvento/{{evento.id}}" class="card-link">Ver más</a> &nbsp;
+            <a href="#" class="card-link" *ngIf="evento.precio">Comprar tickets ({{ evento.precio }} €)</a>
+        </div>
+    </div>
 </div>

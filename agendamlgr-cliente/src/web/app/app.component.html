@@ -1,30 +1,36 @@
-<a routerLink="/">Home</a>
-<a href="http://localhost:8080/agendamlgr-war/oauth/init" *ngIf="userLoggedIn == false">Login</a>
-<button (click)="logout()" *ngIf="userLoggedIn">Logout</button>
-<a routerLink="/perfil">Perfil</a>
+<nav class="navbar navbar-expand-sm navbar-light bg-light fixed-top">
+    <a class="navbar-brand" href="#">Agendamlgr</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Muestra/Oculta la navegación">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-<br/>Opciones de busqueda<br/>
-Categorias
-<div *ngFor="let categoria of categorias">
-  <input type="checkbox" (click)="addOrRemove(categoria.id)">
-  {{categoria.nombre}}
-</div>
-MostrarDeMiPreferencia:
-<input type="checkbox" [(ngModel)]="mostrarDeMiPreferencia"><br/>
-Sus preferencias son:
-<b *ngFor="let categoria of preferencias">
-  {{ categoria.nombre }}
-</b><br/>
-OrdenarPorDistancia:
-<input type="checkbox" [(ngModel)]="ordenarPorDistancia"><br/>
-radio:
-<input type="text" [(ngModel)]="radio"><br/>
-latitud:
-<input type="text" [(ngModel)]="latitud"><br/>
-longitud:
-<input type="text" [(ngModel)]="longitud"><br/>
-<button type="submit" (click)="buscar()">Buscar</button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item" [class]="routerUrl === '/' ? 'active' : ''">
+                <a class="nav-link" routerLink="/">Inicio</a>
+            </li>
+            <li class="nav-item" [class]="routerUrl === '/perfil' ? 'active' : ''" *ngIf="userLoggedIn">
+                <a class="nav-link" routerLink="/perfil">Perfil</a>
+            </li>
+            <li class="nav-item" [class]="routerUrl && routerUrl.startsWith('/bus') ? 'active' : ''">
+                <a class="nav-link" routerLink="/buscar">Buscar</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item" *ngIf="!userLoggedIn">
+                <a class="nav-link" href="http://localhost:8080/agendamlgr-war/oauth/init">Iniciar sesión</a>
+            </li>
+            <li class="nav-item" *ngIf="userLoggedIn">
+                <a class="nav-link" (click)="logout()" href="#">Cerrar sesión</a>
+            </li>
+        </ul>
+        <!--<form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>-->
+    </div>
+</nav>
 
 <div class="container">
-  <router-outlet></router-outlet>
+    <router-outlet></router-outlet>
 </div>

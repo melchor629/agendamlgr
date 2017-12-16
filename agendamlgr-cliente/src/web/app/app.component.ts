@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import {CategoriaService} from './services/categoria.service';
 import {Categoria} from './interfaces/categoria';
 
@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
     mostrarDeMiPreferencia: boolean;
     categoriasSeleccionadas: number[];
     userLoggedIn: boolean;
+    private routerUrl: string;
 
     constructor(private categoriaService: CategoriaService, private router: Router) {
         let token = window.location.search.substr(1).split("&").map(e => e.split("=")).reduce((x, e) => {
@@ -42,6 +43,12 @@ export class AppComponent implements OnInit {
         this.categoriasSeleccionadas = [];
 
         this.userLoggedIn = Boolean(window.localStorage.getItem('token'));
+
+        this.router.events.subscribe(e => {
+            if(e instanceof NavigationEnd) {
+                this.routerUrl = (<NavigationEnd>e).urlAfterRedirects;
+            }
+        });
     }
 
     buscar() {
