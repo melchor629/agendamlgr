@@ -51,6 +51,10 @@ public class AgendamlgException extends Exception implements Serializable {
         return new AgendamlgException("Hay campos inválidos en el evento", 4, t);
     }
 
+    public static AgendamlgException flickrUsernameInvalido(String username) {
+        return new AgendamlgException("El usuario de Flickr " + username + " no se ha podido encontrar", 5);
+    }
+
     public static AgendamlgException otroError(String mensaje, Throwable t) {
         return new AgendamlgException(mensaje, 1000, t);
     }

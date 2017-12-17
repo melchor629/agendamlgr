@@ -10,15 +10,6 @@ import {Categoria} from './interfaces/categoria';
 })
 export class AppComponent implements OnInit {
 
-    categorias: Categoria[];
-    preferencias: Categoria[];
-
-    ordenarPorDistancia: boolean;
-    radio: number;
-    latitud: number;
-    longitud: number;
-    mostrarDeMiPreferencia: boolean;
-    categoriasSeleccionadas: number[];
     userLoggedIn: boolean;
     private routerUrl: string;
 
@@ -30,60 +21,14 @@ export class AppComponent implements OnInit {
         if (token) {
             window.localStorage.setItem('token', token);
         }
-        this.listarCategorias();
-        this.listarPreferencias();
     }
 
     ngOnInit() {
-        this.ordenarPorDistancia = false;
-        this.radio = 0;
-        this.latitud = 0;
-        this.longitud = 0;
-        this.mostrarDeMiPreferencia = false;
-        this.categoriasSeleccionadas = [];
-
         this.userLoggedIn = Boolean(window.localStorage.getItem('token'));
-
         this.router.events.subscribe(e => {
             if(e instanceof NavigationEnd) {
                 this.routerUrl = (<NavigationEnd>e).urlAfterRedirects;
             }
-        });
-    }
-
-    buscar() {
-        if (this.mostrarDeMiPreferencia) {
-            for (let preferencia of this.preferencias) {
-                this.categoriasSeleccionadas.push(preferencia.id);
-            }
-        }
-        this.router.navigateByUrl('busqueda/' + this.ordenarPorDistancia.toString() + "/" +
-            this.radio + "/" +
-            this.latitud + "/" +
-            this.longitud + "/" +
-            this.mostrarDeMiPreferencia.toString() + "/" +
-            this.categoriasSeleccionadas);
-        this.categoriasSeleccionadas = [];
-    }
-
-    addOrRemove(id: number) {
-        var index = this.categoriasSeleccionadas.indexOf(id);
-        if (index == -1) {
-            this.categoriasSeleccionadas.push(id);
-        } else {
-            this.categoriasSeleccionadas.splice(index, 1);
-        }
-    }
-
-    listarCategorias() {
-        this.categoriaService.buscarTodasLasCategorias().subscribe((resultado) => {
-            this.categorias = resultado;
-        });
-    }
-
-    listarPreferencias() {
-        this.categoriaService.buscarPreferenciasUsuario().subscribe((resultado) => {
-            this.preferencias = resultado;
         });
     }
 

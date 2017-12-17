@@ -1,17 +1,17 @@
-<br/>Opciones de busqueda<br/>
-Categorias
+<h2>Opciones de busqueda</h2>
+<h3>Categorias:</h3>
 <div *ngFor="let categoria of categorias">
     <input type="checkbox" (click)="addOrRemove(categoria.id)">
     {{categoria.nombre}}
 </div>
-MostrarDeMiPreferencia:
-<input type="checkbox" [(ngModel)]="mostrarDeMiPreferencia"><br/>
+<h3>Preferencias:</h3>
+<input type="checkbox" [(ngModel)]="mostrarDeMiPreferencia"> ¿Mostrar de mi preferencia?<br/>
 Sus preferencias son:
 <b *ngFor="let categoria of preferencias">
     {{ categoria.nombre }}
-</b><br/>
-OrdenarPorDistancia:
-<input type="checkbox" [(ngModel)]="ordenarPorDistancia"><br/>
+</b>
+<h3>Distancias:</h3>
+<input type="checkbox" [(ngModel)]="ordenarPorDistancia"> ¿Ordenar por distancia?<br/>
 radio:
 <input type="text" [(ngModel)]="radio"><br/>
 latitud:
@@ -21,19 +21,4 @@ longitud:
 <button type="submit" (click)="buscar()">Buscar</button>
 
 <h2>Resultado de la búsqueda</h2>
-<div class="card-columns">
-    <div *ngFor="let evento of eventos.slice(page * 10, (page + 1) * 10)" class="card w-lg-50">
-        <img *ngIf="evento.fotoUrl" [src]="evento.fotoUrl" class="card-img-top" alt="{{ evento.nombre }}" />
-        <div class="card-body">
-            <h4>{{ evento.nombre }}</h4>
-            <h6 class="card-subtitle mb-2 text-muted">
-                {{ evento.fecha | parseDateString | date:'EEEE d \'de\' MMMM (y), HH:mm':'':'es' }}
-            </h6>
-            <p class="card-text">
-                {{ evento.descripcion }}
-            </p>
-            <a routerLink="/verEvento/{{evento.id}}" class="card-link">Ver más</a> &nbsp;
-            <a href="#" class="card-link" *ngIf="evento.precio">Comprar tickets ({{ evento.precio }} €)</a>
-        </div>
-    </div>
-</div>
+<listado-eventos [eventos]="eventos"></listado-eventos>

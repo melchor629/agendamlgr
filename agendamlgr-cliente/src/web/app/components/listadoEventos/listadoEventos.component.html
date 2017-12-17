@@ -1,0 +1,60 @@
+<div class="d-flex justify-content-center">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li [class]="page === 0 ? 'page-item disabled' : 'page-item'">
+                <a class="page-link" href="#" aria-label="Anterior" (click)="goToPreviousPage()">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Anterior</span>
+                </a>
+            </li>
+            <li *ngFor="let i of range(0, totalPages)" [class]="page === i ? 'page-item active' : 'page-item'">
+                <a class="page-link" href="#" (click)="goToPage(i)">{{ i + 1 }}</a>
+            </li>
+            <li [class]="page === totalPages - 1 ? 'page-item disabled' : 'page-item'">
+                <a class="page-link" href="#" aria-label="Siguiente" (click)="goToNextPage()">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Siguiente</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div class="card-columns">
+    <div *ngFor="let evento of eventos.slice(page * eventosPorPagina, (page + 1) * eventosPorPagina)" class="card w-lg-50">
+        <img *ngIf="evento.fotoUrl" [src]="evento.fotoUrl" class="card-img-top" alt="{{ evento.nombre }}" />
+        <div class="card-body">
+            <h4>{{ evento.nombre }}</h4>
+            <h6 class="card-subtitle mb-2 text-muted">
+                {{ evento.fecha | parseDateString | date:'EEEE d \'de\' MMMM (y), HH:mm':'':'es' }}
+            </h6>
+            <p class="card-text">
+                {{ evento.descripcion }}
+            </p>
+            <a routerLink="/verEvento/{{evento.id}}" class="card-link">Ver más</a> &nbsp;
+            <a href="#" class="card-link" *ngIf="evento.precio">Comprar tickets ({{ evento.precio }} €)</a>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-center">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li [class]="page === 0 ? 'page-item disabled' : 'page-item'">
+                <a class="page-link" href="#" aria-label="Anterior" (click)="goToPreviousPage()">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Anterior</span>
+                </a>
+            </li>
+            <li *ngFor="let i of range(0, totalPages)" [class]="page === i ? 'page-item active' : 'page-item'">
+                <a class="page-link" href="#" (click)="goToPage(i)">{{ i + 1 }}</a>
+            </li>
+            <li [class]="page === totalPages - 1 ? 'page-item disabled' : 'page-item'">
+                <a class="page-link" href="#" aria-label="Siguiente" (click)="goToNextPage()">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Siguiente</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>

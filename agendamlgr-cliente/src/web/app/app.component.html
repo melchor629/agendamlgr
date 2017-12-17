@@ -1,6 +1,3 @@
-<!--
-<button (click)="logout()" *ngIf="userLoggedIn">Logout</button>
--->
 <nav class="navbar navbar-expand-sm navbar-light bg-light fixed-top">
     <a class="navbar-brand" href="#">Agendamlgr</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Muestra/Oculta la navegación">
@@ -14,6 +11,9 @@
             </li>
             <li class="nav-item" [class]="routerUrl === '/perfil' ? 'active' : ''" *ngIf="userLoggedIn">
                 <a class="nav-link" routerLink="/perfil">Perfil</a>
+            </li>
+            <li class="nav-item" [class]="routerUrl === '/crearEvento' ? 'active' : ''" *ngIf="userLoggedIn">
+                <a class="nav-link" routerLink="/crearEvento">Crear nuevo evento</a>
             </li>
             <li class="nav-item" [class]="routerUrl && routerUrl.startsWith('/bus') ? 'active' : ''">
                 <a class="nav-link" routerLink="/buscar">Buscar</a>

@@ -12,6 +12,7 @@ import { VerEventoComponent } from './components/verEvento/verEvento.component';
 import { BusquedaComponent } from './components/busqueda/busqueda.component';
 import { EditarEventoComponent } from "./components/editarEvento/editarEvento.component";
 import { CrearEventoComponent } from "./components/crearEvento/crearEvento.component";
+import { ListadoEventosComponent } from "./components/listadoEventos/listadoEventos.component";
 //Service imports
 import { CategoriaService } from './services/categoria.service';
 import { UsuarioService } from './services/usuario.service';
@@ -24,6 +25,7 @@ import { registerLocaleData } from "@angular/common";
 const appRoutes: Routes = [
     {path: '', component: HomeComponent},
     {path: 'perfil', component: PerfilComponent},
+    { path: 'perfil/:id', component: PerfilComponent },
     {path: 'verEvento/:id', component: VerEventoComponent},
     {path: 'busqueda/:ordenarPorDistancia/:radio/:latitud/:longitud/:mostrarDeMiPreferencia/:categoriasSeleccionadas', component: BusquedaComponent},
     { path: 'buscar', component: BusquedaComponent },
@@ -46,6 +48,7 @@ const appRoutes: Routes = [
         BusquedaComponent,
         EditarEventoComponent,
         CrearEventoComponent,
+        ListadoEventosComponent,
         ParseDateStringPipe
     ],
     providers: [
