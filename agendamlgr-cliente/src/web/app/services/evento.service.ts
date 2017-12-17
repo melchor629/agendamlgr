@@ -12,8 +12,8 @@ export class EventoService extends AbstractService{
     console.log('Conectado a EventoService');
   }
 
-  buscarEventosUsuario(){
-    return this.get<Evento[]>('evento', 'usuario');
+  buscarEventosUsuario(userId?: string){
+    return this.get<Evento[]>('evento', 'usuario' + (userId ? `/${userId}` : ''));
   }
 
   buscarEventos(){

@@ -60,14 +60,32 @@ public class EventoREST {
         return miniEvento;
     };
 
+    @GET
+    @Produces({ MediaType.APPLICATION_JSON })
+    @Path("usuario")
+    public List<EventoProxyMini> buscarEventosUsuario(@HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgNotFoundException {
+        String userId = TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token));
+        Usuario user = usuarioFacade.find(userId);
+        return eventoFacade.buscarEventosUsuario(user, true)
+                .parallelStream()
+                .map(convertToMiniProxyWithFlickr)
+                .collect(Collectors.toList());
+    }
+
     // Obtener todos los eventos creados por un usuario
     // Esta ruta necesita autenticacion
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    @Path("usuario")
-    public List<EventoProxyMini> buscarEventosUsuario(@HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgNotFoundException {
-        Usuario usuario = usuarioFacade.find(TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token)));
-        return eventoFacade.buscarEventosUsuario(usuario).parallelStream().map(convertToMiniProxyWithFlickr).collect(Collectors.toList());
+    @Path("usuario/{id}")
+    public List<EventoProxyMini> buscarEventosUsuario(
+            @PathParam("id") String userId,
+            @HeaderParam("bearer") String token
+    ) throws AgendamlgNotFoundException {
+        Usuario usuario = usuarioFacade.find(userId);
+        return eventoFacade.buscarEventosUsuario(usuario, false)
+                .parallelStream()
+                .map(convertToMiniProxyWithFlickr)
+                .collect(Collectors.toList());
     }
 
     // Obtener todos los eventos existentes en el sistema
