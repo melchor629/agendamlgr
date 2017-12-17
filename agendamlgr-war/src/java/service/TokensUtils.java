@@ -44,16 +44,14 @@ public class TokensUtils {
     /**
      * Creates a JWT token using a User ID.
      * @param id User ID.
-     * @param picture User picture.
      * @return The JWT Token.
      */
-    public static String createJwtTokenForUserId(String id, String picture) {
+    public static String createJwtTokenForUserId(String id) {
         try {
             return JWT.create()
                     .withIssuer(issuer)
                     .withExpiresAt(Date.from(Instant.ofEpochMilli(System.currentTimeMillis() + 1000 * 3600)))
                     .withClaim("userId", id)
-                    .withClaim("photoUrl", picture)
                     .sign(algorithm);
         } catch(JWTCreationException e) {
             throw new RuntimeException(e);
@@ -88,18 +86,6 @@ public class TokensUtils {
     public static String getUserIdFromJwtTokenOrThrow(DecodedJWT decodedJWT) throws NotAuthenticatedException {
         if(decodedJWT == null) throw NotAuthenticatedException.noAutenticado();
         Claim c =  decodedJWT.getClaim("userId");
-        if(c != null) return c.asString(); else throw NotAuthenticatedException.noAutenticado();
-    }
-
-    /**
-     * From a DecodedJWT, returns the photo url or throws if there isn't a token, or is invalid
-     * @param decodedJWT A DecodedJWT token.
-     * @return the photo url.
-     * @throws NotAuthenticatedException if the DecodedJWT is null or the JWT doesn't contain the {@code photoUrl}.
-     */
-    public static String getPhotoUrlFromJwtTokenOrThrow(DecodedJWT decodedJWT) throws NotAuthenticatedException {
-        if(decodedJWT == null) throw NotAuthenticatedException.noAutenticado();
-        Claim c = decodedJWT.getClaim("photoUrl");
         if(c != null) return c.asString(); else throw NotAuthenticatedException.noAutenticado();
     }
 

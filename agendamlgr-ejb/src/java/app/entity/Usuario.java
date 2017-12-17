@@ -65,6 +65,9 @@ public class Usuario implements Serializable {
     @Size(min = 1, max = 45)
     @Column(name = "EMAIL")
     private String email;
+    @Size(min = 1, max = 500)
+    @Column(name = "IMAGEN")
+    private String imagen;
     @ManyToMany(mappedBy = "usuarioList")
     private List<Categoria> categoriaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "creador")
@@ -123,6 +126,14 @@ public class Usuario implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
     }
 
     @XmlTransient

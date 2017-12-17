@@ -1,9 +1,9 @@
-INSERT INTO AGENDAMLGR.USUARIO (ID, TIPO, NOMBRE, APELLIDOS, EMAIL) 
-	VALUES ('113090457812971237278', 3, 'Melchor Alejo', 'Garau Madrigal', 'melchor9000@gmail.com');
-INSERT INTO AGENDAMLGR.USUARIO (ID, TIPO, NOMBRE, APELLIDOS, EMAIL) 
-	VALUES ('107740629189585787589', 2, 'John Carlo', 'Purihin Enriquez', 'johncarlo.purihin@gmail.com');
-INSERT INTO AGENDAMLGR.USUARIO (ID, TIPO, NOMBRE, APELLIDOS, EMAIL) 
-	VALUES ('117448827855359481250', 1, 'Antonio Ángel', 'Cruzado Castillo', 'a.angelcruzado@gmail.com');
+INSERT INTO AGENDAMLGR.USUARIO (ID, TIPO, NOMBRE, APELLIDOS, EMAIL, IMAGEN)
+	VALUES ('113090457812971237278', 3, 'Melchor Alejo', 'Garau Madrigal', 'melchor9000@gmail.com', 'https://lh6.googleusercontent.com/-1BhWEle9e0o/AAAAAAAAAAI/AAAAAAAABMY/q0XcujFGVF4/photo.jpg');
+INSERT INTO AGENDAMLGR.USUARIO (ID, TIPO, NOMBRE, APELLIDOS, EMAIL, 'IMAGEN')
+	VALUES ('107740629189585787589', 2, 'John Carlo', 'Purihin Enriquez', 'johncarlo.purihin@gmail.com', 'https://lh6.googleusercontent.com/-1wGmdHFkIlo/AAAAAAAAAAI/AAAAAAAAAWY/6IvBOUNYN_8/photo.jpg');
+INSERT INTO AGENDAMLGR.USUARIO (ID, TIPO, NOMBRE, APELLIDOS, EMAIL, 'IMAGEN')
+	VALUES ('117448827855359481250', 1, 'Antonio Ángel', 'Cruzado Castillo', 'a.angelcruzado@gmail.com', 'https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg');
 INSERT INTO AGENDAMLGR.CATEGORIA (NOMBRE) VALUES ('Teatro');
 INSERT INTO AGENDAMLGR.CATEGORIA (NOMBRE) VALUES ('Cine');
 INSERT INTO AGENDAMLGR.CATEGORIA (NOMBRE) VALUES ('Música');

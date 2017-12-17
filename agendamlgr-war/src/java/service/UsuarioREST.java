@@ -34,9 +34,7 @@ public class UsuarioREST {
     public UsuarioProxy obtenerUsuarioDeLaSesion(@HeaderParam("bearer") String token) throws NotAuthenticatedException {
         DecodedJWT jwt = TokensUtils.decodeJwtToken(token);
         String id = TokensUtils.getUserIdFromJwtTokenOrThrow(jwt);
-        UsuarioProxy u = new UsuarioProxy(usuarioFacade.find(id));
-        u.image = TokensUtils.getPhotoUrlFromJwtTokenOrThrow(jwt);
-        return u;
+        return new UsuarioProxy(usuarioFacade.find(id));
     }
 
 
@@ -55,6 +53,7 @@ public class UsuarioREST {
             this.nombre = usuario.getNombre();
             this.apellidos = usuario.getApellidos();
             this.email = usuario.getEmail();
+            this.image = usuario.getImagen();
         }
 
     }

@@ -58,16 +58,18 @@ public class OAuthCallbackServlet extends AbstractAuthorizationCodeCallbackServl
             usuario.setApellidos(u.familyName);
             usuario.setEmail(u.email);
             usuario.setTipo((short) 1); //By default, will be registering with type 1 (normal user)
+            usuario.setImagen(u.picture);
             usuarioFacade.create(usuario);
         } else {
             //If the user has changed something, reflect that into the DB
             usuario.setNombre(u.givenName);
             usuario.setApellidos(u.familyName);
             usuario.setEmail(u.email);
+            usuario.setImagen(u.picture);
             usuarioFacade.edit(usuario);
         }
 
-        String token = TokensUtils.createJwtTokenForUserId(u.id, u.picture);
+        String token = TokensUtils.createJwtTokenForUserId(u.id);
         String callbackUrl = (String) req.getSession().getAttribute("callbackUrl");
         if(callbackUrl != null) {
             //If we stored the callback URL during the process, return it
