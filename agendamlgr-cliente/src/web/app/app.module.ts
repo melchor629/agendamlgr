@@ -12,6 +12,7 @@ import { VerEventoComponent } from './components/verEvento/verEvento.component';
 import { BusquedaComponent } from './components/busqueda/busqueda.component';
 import { EditarEventoComponent } from "./components/editarEvento/editarEvento.component";
 import { CrearEventoComponent } from "./components/crearEvento/crearEvento.component";
+import { ListadoEventosComponent } from "./components/listadoEventos/listadoEventos.component";
 //Service imports
 import { CategoriaService } from './services/categoria.service';
 import { UsuarioService } from './services/usuario.service';
@@ -46,6 +47,7 @@ const appRoutes: Routes = [
         BusquedaComponent,
         EditarEventoComponent,
         CrearEventoComponent,
+        ListadoEventosComponent,
         ParseDateStringPipe
     ],
     providers: [

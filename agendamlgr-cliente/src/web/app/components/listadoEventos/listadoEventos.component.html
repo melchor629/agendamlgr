@@ -1,0 +1,16 @@
+<div class="card-columns">
+    <div *ngFor="let evento of eventos.slice(page * eventosPorPagina, (page + 1) * eventosPorPagina)" class="card w-lg-50">
+        <img *ngIf="evento.fotoUrl" [src]="evento.fotoUrl" class="card-img-top" alt="{{ evento.nombre }}" />
+        <div class="card-body">
+            <h4>{{ evento.nombre }}</h4>
+            <h6 class="card-subtitle mb-2 text-muted">
+                {{ evento.fecha | parseDateString | date:'EEEE d \'de\' MMMM (y), HH:mm':'':'es' }}
+            </h6>
+            <p class="card-text">
+                {{ evento.descripcion }}
+            </p>
+            <a routerLink="/verEvento/{{evento.id}}" class="card-link">Ver más</a> &nbsp;
+            <a href="#" class="card-link" *ngIf="evento.precio">Comprar tickets ({{ evento.precio }} €)</a>
+        </div>
+    </div>
+</div>

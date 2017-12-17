@@ -13,8 +13,6 @@ export class BusquedaComponent{
 
   eventos: Evento[] = [];
   palabraFiltro: string;
-  private page = 0;
-  private totalPages = 1;
 
   constructor(private eventoService: EventoService, private route: ActivatedRoute, private router: Router) {
     route.params.subscribe(() =>{
@@ -50,7 +48,6 @@ export class BusquedaComponent{
   listarEventos(){
     this.eventoService.buscarEventos().subscribe((resultado)=>{
       this.eventos = resultado;
-      this.totalPages = Math.round(this.eventos.length / 10);
     });
   }
 
@@ -62,7 +59,6 @@ export class BusquedaComponent{
                          categoriasSeleccionadas: Categoria[]){
     this.eventoService.filtrarEventos(ordenarPorDistancia,radio,latitud,longitud,mostrarDeMiPreferencia,categoriasSeleccionadas).subscribe((resultado)=>{
       this.eventos = resultado;
-        this.totalPages = Math.round(this.eventos.length / 10);
     });
   }
 }

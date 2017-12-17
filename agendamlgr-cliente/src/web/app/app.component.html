@@ -12,6 +12,9 @@
             <li class="nav-item" [class]="routerUrl === '/perfil' ? 'active' : ''" *ngIf="userLoggedIn">
                 <a class="nav-link" routerLink="/perfil">Perfil</a>
             </li>
+            <li class="nav-item" [class]="routerUrl === '/crearEvento' ? 'active' : ''" *ngIf="userLoggedIn">
+                <a class="nav-link" routerLink="/crearEvento">Crear nuevo evento</a>
+            </li>
             <li class="nav-item" [class]="routerUrl && routerUrl.startsWith('/bus') ? 'active' : ''">
                 <a class="nav-link" routerLink="/buscar">Buscar</a>
             </li>
