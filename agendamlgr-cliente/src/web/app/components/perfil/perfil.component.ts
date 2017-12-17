@@ -28,9 +28,11 @@ export class PerfilComponent implements OnInit {
   }
 
   listarDatosUsuarios(){
-    if(this.route.snapshot.params['id']) {
-      this.usuarioService.buscarUsuario(this.route.snapshot.params['id'])
+    let userId = this.route.snapshot.params['id'];
+    if(userId) {
+      this.usuarioService.buscarUsuario(userId)
           .subscribe(usuario => this.usuario = usuario, error => console.error(error));
+      this.eventoService.buscarEventosUsuario(userId).subscribe(resultado => this.eventos = resultado);
     } else {
       this.usuarioService.obtenerUsuarioDeLaSesion().subscribe(resultado => this.usuario = resultado);
       this.categoriaService.buscarPreferenciasUsuario().subscribe(resultado => this.preferencias = resultado);
