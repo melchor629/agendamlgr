@@ -80,9 +80,10 @@ public class EventoREST {
     public List<EventoProxyMini> buscarEventosUsuario(
             @PathParam("id") String userId,
             @HeaderParam("bearer") String token
-    ) throws AgendamlgNotFoundException {
+    ) throws AgendamlgNotFoundException, NotAuthenticatedException {
+        Usuario userIdSesion = usuarioDesdeToken(token);
         Usuario usuario = usuarioFacade.find(userId);
-        return eventoFacade.buscarEventosUsuario(usuario, false)
+        return eventoFacade.buscarEventosUsuario(usuario, userIdSesion.equals(usuario))
                 .parallelStream()
                 .map(convertToMiniProxyWithFlickr)
                 .collect(Collectors.toList());

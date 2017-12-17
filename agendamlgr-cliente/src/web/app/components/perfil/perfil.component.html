@@ -16,7 +16,7 @@
                 <div class="list-group">
                     <a class="list-group-item list-group-item-action"
                        *ngFor="let categoria of preferencias"
-                       routerLink="/busqueda/false/0/0/0/false/{{ categoria.id }}">
+                       routerLink="/buscar/{{ categoria.id }}">
                         {{ categoria.nombre }}
                     </a>
                 </div>

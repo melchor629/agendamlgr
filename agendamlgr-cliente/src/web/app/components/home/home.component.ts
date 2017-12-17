@@ -9,7 +9,7 @@ import { Evento } from '../../interfaces/evento';
 })
 export class HomeComponent implements OnInit {
 
-  eventos: Evento[] = [];
+  eventos: Evento[];
 
   constructor(private eventoService: EventoService) {}
 

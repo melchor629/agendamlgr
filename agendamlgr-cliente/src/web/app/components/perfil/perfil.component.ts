@@ -16,7 +16,7 @@ export class PerfilComponent implements OnInit {
 
   usuario: Usuario;
   preferencias: Categoria[] = [];
-  eventos: Evento[] = [];
+  eventos: Evento[];
 
   constructor(private categoriaService: CategoriaService,
               private usuarioService: UsuarioService,
