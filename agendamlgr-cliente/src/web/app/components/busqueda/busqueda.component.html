@@ -1,17 +1,17 @@
-<br/>Opciones de busqueda<br/>
-Categorias
+<h2>Opciones de busqueda</h2>
+<h3>Categorias:</h3>
 <div *ngFor="let categoria of categorias">
     <input type="checkbox" (click)="addOrRemove(categoria.id)">
     {{categoria.nombre}}
 </div>
-MostrarDeMiPreferencia:
-<input type="checkbox" [(ngModel)]="mostrarDeMiPreferencia"><br/>
+<h3>Preferencias:</h3>
+<input type="checkbox" [(ngModel)]="mostrarDeMiPreferencia"> ¿Mostrar de mi preferencia?<br/>
 Sus preferencias son:
 <b *ngFor="let categoria of preferencias">
     {{ categoria.nombre }}
-</b><br/>
-OrdenarPorDistancia:
-<input type="checkbox" [(ngModel)]="ordenarPorDistancia"><br/>
+</b>
+<h3>Distancias:</h3>
+<input type="checkbox" [(ngModel)]="ordenarPorDistancia"> ¿Ordenar por distancia?<br/>
 radio:
 <input type="text" [(ngModel)]="radio"><br/>
 latitud:
