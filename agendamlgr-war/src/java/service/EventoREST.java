@@ -127,7 +127,7 @@ public class EventoREST {
         // de la entidad son modificados
         /*
             Los campos no actualizables de un evento son:
-            id y campos de flickr
+            id
          */
         // Actualizar categorias. Crear lista de categorias
         List<Categoria> listaCategorias = evento.categoriaList.stream().map(c -> new Categoria(c.id)).collect(Collectors.toList());
@@ -155,8 +155,7 @@ public class EventoREST {
         eventoDB.setLongitud(new BigDecimal(coords[1]));
         
         // Rellenar los atributos propios de Flickr
-        eventoDB.setFlickralbumid(evento.flickrAlbumID);
-        eventoDB.setFlickruserid(evento.flickrUserID);
+        modificarDatosFlickr(eventoDB, evento.flickrUserID, evento.flickrAlbumID);
 
         // Proceder a borrar el evento
         eventoFacade.crearEventoTipoUsuario(eventoDB, listaCategorias);
@@ -215,10 +214,7 @@ public class EventoREST {
         eventoDB.setNombre(evento.nombre);
         eventoDB.setPrecio(evento.precio);
         eventoDB.setTipo(evento.tipo);
-
-        // Rellenar los atributos propios de Flickr
-        eventoDB.setFlickralbumid(evento.flickrAlbumID);
-        eventoDB.setFlickruserid(evento.flickrUserID);
+        modificarDatosFlickr(eventoDB, evento.flickrUserID, evento.flickrAlbumID);
         
         // Proceder a editar el evento
         eventoFacade.editarEventoTipoUsuario(eventoDB, listaCategorias, usuario);
@@ -403,6 +399,29 @@ public class EventoREST {
         } while (textWidth(text.substring(0, newEnd) + "...") < max);
 
         return text.substring(0, end) + "...";
+    }
+
+    private static void modificarDatosFlickr(Evento evento, String userId, String albumId) throws AgendamlgException {
+        if(albumId == null || !albumId.equals(evento.getFlickralbumid())) {
+            evento.setFlickralbumid(albumId);
+        }
+
+        if(userId == null || !userId.equals(evento.getFlickruserid())) {
+            evento.setFlickruserid(userId);
+
+            if(userId != null && !userId.matches("\\d+@N\\d\\d")) {
+                try {
+                    evento.setFlickruserid(
+                            Flickr.Urls.lookupUser(String.format("http://www.flickr.com/photos/%s/", userId))
+                    );
+                    if (evento.getFlickruserid() == null) {
+                        throw AgendamlgException.flickrUsernameInvalido(userId);
+                    }
+                } catch (IOException n) {
+                    throw AgendamlgException.otroError("Error al obtener el `user_id' de Flickr", n);
+                }
+            }
+        }
     }
     
     

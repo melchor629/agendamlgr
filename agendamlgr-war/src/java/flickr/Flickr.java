@@ -108,6 +108,31 @@ public class Flickr {
 
     }
 
+    public static class Urls {
+
+        /**
+         * Given an flickr url, returns the user id for that. Only valid if the url doesn't
+         * contain the user id.<br/>
+         * FE.: <code>http://www.flickr.com/photos/metropolis462/</code> will return
+         * <code>133842466@N08</code>.
+         * @param url The flickr url, must start with {@code http://www.flickr.com/photos/{username}}
+         * @return The user id or {@code null} if could not find it
+         * @throws IOException IO Problems
+         * @see <a href="https://www.flickr.com/services/api/flickr.urls.lookupUser.html">flickr.urls.lookupUser</a>
+         * @see <a href="https://www.flickr.com/groups/51035612836@N01/discuss/72157677282702992/">The answer</a>
+         */
+        @SuppressWarnings("unchecked")
+        public static String lookupUser(String url) throws IOException {
+            Map<String, Object> res = doRequest(
+                    "flickr.urls.lookupUser",
+                    fromPairedArgs("url", url)
+            );
+            Map<String, Object> user = (Map<String, Object>) res.get("user");
+            return user != null ? (String) user.get("id") : null;
+        }
+
+    }
+
     private static class CachedResult {
         private Map<String, Object> result;
         private long validUntil;
