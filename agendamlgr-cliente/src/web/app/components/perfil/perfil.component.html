@@ -24,11 +24,9 @@
         </div>
     </div>
 
-    <div *ngIf="eventos.length > 0">
-        <div class="espacio"></div>
-        <h3>Eventos creados</h3>
-        <listado-eventos [eventos]="eventos"></listado-eventos>
-    </div>
+    <div class="espacio"></div>
+    <h3>Eventos creados</h3>
+    <listado-eventos [eventos]="eventos"></listado-eventos>
 </div>
 
 <div *ngIf="!usuario && usuario === null">
