@@ -27,7 +27,7 @@ const appRoutes: Routes = [
     {path: 'perfil', component: PerfilComponent},
     { path: 'perfil/:id', component: PerfilComponent },
     {path: 'verEvento/:id', component: VerEventoComponent},
-    {path: 'busqueda/:ordenarPorDistancia/:radio/:latitud/:longitud/:mostrarDeMiPreferencia/:categoriasSeleccionadas', component: BusquedaComponent},
+    {path: 'busqueda/:categoriasSeleccionadas', component: BusquedaComponent},
     { path: 'buscar', component: BusquedaComponent },
     { path: 'editarEvento/:id', component: EditarEventoComponent },
     { path: 'crearEvento', component: CrearEventoComponent }
@@ -60,4 +60,4 @@ const appRoutes: Routes = [
 })
 export class AppModule { }
 
-registerLocaleData(localeEs, 'es');
+registerLocaleData(localeEs, 'es')

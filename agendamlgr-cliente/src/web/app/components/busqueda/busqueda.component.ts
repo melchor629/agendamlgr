@@ -3,6 +3,7 @@ import { EventoService } from '../../services/evento.service';
 import { CategoriaService } from '../../services/categoria.service';
 import { Evento } from '../../interfaces/evento';
 import { Categoria } from '../../interfaces/categoria';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-busqueda',
@@ -22,7 +23,12 @@ export class BusquedaComponent implements OnInit {
   eventos: Evento[] = [];
   palabraFiltro: string;
 
-  constructor(private eventoService: EventoService, private categoriaService: CategoriaService) {
+  constructor(private eventoService: EventoService, private categoriaService: CategoriaService, private route: ActivatedRoute, private router: Router) {
+    if(this.route.snapshot.params['categoriasSeleccionadas']){
+      route.params.subscribe(val=>{
+        this.listar();
+      });
+    }
   }
 
   ngOnInit() {
@@ -36,19 +42,35 @@ export class BusquedaComponent implements OnInit {
     this.listarPreferencias();
   }
 
+  listar() {
+    console.log(this.route.snapshot.params['categoriasSeleccionadas']);
+    let categoriasIds = this.route.snapshot.params['categoriasSeleccionadas'].split(",").map(Number);;
+    var categoriasSeleccionadas = [];
+    for(let i=0; i<categoriasIds.length; i++){
+      let c = {
+        id: categoriasIds[i],
+        nombre: ''
+      };
+      categoriasSeleccionadas.push(c);
+    }
+    this.listarEventosFiltrados('false',0,0,0,'false',categoriasSeleccionadas);
+  }
+
   buscar() {
       if (this.mostrarDeMiPreferencia) {
         for (let preferencia of this.preferencias) {
           this.categoriasIds.push(preferencia.id);
         }
-      }else{
-        for (let preferencia of this.preferencias) {
-          var index = this.categoriasIds.indexOf(preferencia.id);
-          if(index != -1){
-            this.categoriasIds.splice(index, 1);
-          }
-        }
       }
+      var categoriasSet = new Set<number>();
+      for(let categoriaId of this.categoriasIds){
+        categoriasSet.add(categoriaId);
+      }
+      this.categoriasIds = [];
+      for(let categoriaId in categoriasSet){
+        this.categoriasIds.push(+categoriaId);
+      }
+      console.log(this.categoriasIds);
       let categoriasSeleccionadas = [];
       for(let i=0; i<this.categoriasIds.length; i++){
         let c = {
