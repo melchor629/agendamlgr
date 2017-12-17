@@ -25,6 +25,7 @@ import { registerLocaleData } from "@angular/common";
 const appRoutes: Routes = [
     {path: '', component: HomeComponent},
     {path: 'perfil', component: PerfilComponent},
+    { path: 'perfil/:id', component: PerfilComponent },
     {path: 'verEvento/:id', component: VerEventoComponent},
     {path: 'busqueda/:ordenarPorDistancia/:radio/:latitud/:longitud/:mostrarDeMiPreferencia/:categoriasSeleccionadas', component: BusquedaComponent},
     { path: 'buscar', component: BusquedaComponent },

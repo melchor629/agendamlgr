@@ -1,15 +1,40 @@
-<h3>Datos del Usuario</h3>
-<img [src]="usuario.image"/><br/>
-Nombre: {{ usuario.nombre }}<br/>
-Apellidos: {{ usuario.apellidos }}<br/>
-Email: {{ usuario.email }}<br/>
-Id: {{ usuario.id }}<br/>
-Tipo: {{ usuario.tipo }}<br/>
+<div *ngIf="usuario">
+    <h3>{{ usuario.nombre }} {{ usuario.apellidos }}</h3>
+    <div class="row">
+        <div class="col-md-auto col-xs-12">
+            <img [src]="usuario.image" class="rounded img-fluid" />
+        </div>
+        <div class="col-md-auto col-xs-12">
+            <div class="espacio d-block d-md-none"></div>
+            <p>
+                <b>Email</b> <a href="mailto:{{ usuario.email }}">{{ usuario.email }}</a>
+                <br />
+                <b>Tipo</b> {{ [null,'Normal','Super Usuario','Periodista'][usuario.tipo] }}
+            </p>
+            <div *ngIf="preferencias.length > 0">
+                <b>Preferencias</b>
+                <div class="list-group">
+                    <a class="list-group-item list-group-item-action"
+                       *ngFor="let categoria of preferencias"
+                       routerLink="/busqueda/false/0/0/0/false/{{ categoria.id }}">
+                        {{ categoria.nombre }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<h3>Categorias</h3>
-<div *ngFor="let categoria of preferencias">
-{{ categoria.nombre }}
+    <div *ngIf="eventos.length > 0">
+        <div class="espacio"></div>
+        <h3>Eventos creados</h3>
+        <listado-eventos [eventos]="eventos"></listado-eventos>
+    </div>
 </div>
 
-<h3>Eventos creados</h3>
-<listado-eventos [eventos]="eventos"></listado-eventos>
+<div *ngIf="!usuario && usuario === null">
+    <h3>No existe este usuario</h3>
+    <p class="lead">
+        No sabemos como has llegado hasta aquí, pero eso signfica que ha ocurrido algo raro y has llegado
+        a parar a una situación extraña
+    </p>
+</div>
