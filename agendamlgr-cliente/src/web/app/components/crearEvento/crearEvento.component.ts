@@ -13,7 +13,6 @@ import {Error} from "../../interfaces/error";
 })
 export class CrearEventoComponent implements OnInit {
 
-    private id: number;
     private evento: Evento;
     private categorias: Categoria[] = [];
     private categoriasEvento: number[] = [];

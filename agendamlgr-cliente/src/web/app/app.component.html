@@ -2,6 +2,7 @@
 <a href="http://localhost:8080/agendamlgr-war/oauth/init" *ngIf="userLoggedIn == false">Login</a>
 <button (click)="logout()" *ngIf="userLoggedIn">Logout</button>
 <a routerLink="/perfil">Perfil</a>
+<a routerLink="/crearEvento" *ngIf="userLoggedIn">Crear evento</a>
 
 <br/>Opciones de busqueda<br/>
 Categorias
