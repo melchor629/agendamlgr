@@ -109,11 +109,11 @@ public class EventoFacade extends AbstractFacade<Evento> {
     public List<Evento> buscarEventosTipoUsuario(Usuario usuario) {
         Date ahora = new Date(System.currentTimeMillis());
         if (usuario != null && usuario.getTipo() == 3) {
-            Query q = this.em.createQuery("select e from Evento e where e.fecha > :hoy");
+            Query q = this.em.createQuery("select e from Evento e where e.fecha > :hoy ORDER BY e.fecha ASC");
             q.setParameter("hoy", ahora, TemporalType.TIMESTAMP);
             return (List) q.getResultList();
         } else {
-            Query q = this.em.createQuery("select e from Evento e where e.fecha > :hoy and e.validado = 1");
+            Query q = this.em.createQuery("select e from Evento e where e.fecha > :hoy and e.validado = 1 ORDER BY e.fecha ASC");
             q.setParameter("hoy", ahora, TemporalType.TIMESTAMP);
             return (List) q.getResultList();
         }

@@ -20,7 +20,7 @@ export class EditarEventoComponent implements OnInit {
     private urlFlickr: string;
     private fecha: string;
 
-    private flickrRegexString = 'https:\\/\\/www\\.flickr\\.com\\/photos\\/([0-9@a-zA-Z]*)\\/albums\\/(\\d*)';
+    private flickrRegexString = '/https:\\/\\/www\\.flickr\\.com\\/photos\\/([0-9@a-zA-Z]*)\\/(albums|sets)\\/(\\d*)/g';
     private flickrRegex = new RegExp(this.flickrRegexString, 'g');
 
     constructor(private categoriaService: CategoriaService,
@@ -49,13 +49,13 @@ export class EditarEventoComponent implements OnInit {
         this.evento.fecha = new Date(Date.parse(this.fecha)).toISOString();
         if(this.urlFlickr) {
             //La primera vez parece que no va el regex, a si que lo apaño llamandolo una vez antes de usarlo
-            this.flickrRegex.exec(this.urlFlickr);
+            // this.flickrRegex.exec(this.urlFlickr);
             let result = this.flickrRegex.exec(this.urlFlickr);
             if(result && result.length === 3) {
                 this.evento.flickrAlbumID = result[2];
                 this.evento.flickrUserID = result[1];
             } else {
-                alert("Mu mal, la URL es incorrecta");
+                alert("Mu mal, la URL es incorrea probando actualizacion servjlkjer 3");
                 return;
             }
         }
