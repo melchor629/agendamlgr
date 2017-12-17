@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component,OnInit } from '@angular/core';
 import { EventoService } from '../../services/evento.service';
+import { CategoriaService } from '../../services/categoria.service';
 import { Evento } from '../../interfaces/evento';
 import { Categoria } from '../../interfaces/categoria';
 
@@ -9,46 +9,77 @@ import { Categoria } from '../../interfaces/categoria';
   templateUrl: './busqueda.component.html',
   styleUrls: ['./busqueda.component.scss']
 })
-export class BusquedaComponent{
+export class BusquedaComponent implements OnInit {
 
+  categorias: Categoria[];
+  preferencias: Categoria[];
+  ordenarPorDistancia: boolean;
+  radio: number;
+  latitud: number;
+  longitud: number;
+  mostrarDeMiPreferencia: boolean;
+  categoriasIds: number[];
   eventos: Evento[] = [];
   palabraFiltro: string;
 
-  constructor(private eventoService: EventoService, private route: ActivatedRoute, private router: Router) {
-    route.params.subscribe(() =>{
-      this.listar();
-    });
+  constructor(private eventoService: EventoService, private categoriaService: CategoriaService) {
   }
 
-  listar() {
-    console.log(this.route.snapshot.params['ordenarPorDistancia']);
-    console.log(this.route.snapshot.params['radio']);
-    console.log(this.route.snapshot.params['latitud']);
-    console.log(this.route.snapshot.params['longitud']);
-    console.log(this.route.snapshot.params['mostrarDeMiPreferencia']);
-    console.log(this.route.snapshot.params['categoriasSeleccionadas']);
-    //this.listarEventos();
-    let ordenarPorDistancia = this.route.snapshot.params['ordenarPorDistancia'];
-    let radio = this.route.snapshot.params['radio'];
-    let latitud = this.route.snapshot.params['latitud'];
-    let longitud = this.route.snapshot.params['longitud'];
-    let mostrarDeMiPreferencia = this.route.snapshot.params['mostrarDeMiPreferencia'];
-    let categoriasIds = this.route.snapshot.params['categoriasSeleccionadas'].split(",").map(Number);;
-    let categoriasSeleccionadas = [];
-    for(let i=0; i<categoriasIds.length; i++){
-      let c = {
-        id: categoriasIds[i],
-        nombre: ''
-      };
-      categoriasSeleccionadas.push(c);
-    }
-    this.listarEventosFiltrados(ordenarPorDistancia,radio,latitud,longitud,mostrarDeMiPreferencia,categoriasSeleccionadas);
+  ngOnInit() {
+    this.ordenarPorDistancia = false;
+    this.radio = 0;
+    this.latitud = 0;
+    this.longitud = 0;
+    this.mostrarDeMiPreferencia = false;
+    this.categoriasIds = [];
+    this.listarCategorias();
+    this.listarPreferencias();
   }
 
-  listarEventos(){
-    this.eventoService.buscarEventos().subscribe((resultado)=>{
-      this.eventos = resultado;
-    });
+  buscar() {
+      if (this.mostrarDeMiPreferencia) {
+        for (let preferencia of this.preferencias) {
+          this.categoriasIds.push(preferencia.id);
+        }
+      }else{
+        for (let preferencia of this.preferencias) {
+          var index = this.categoriasIds.indexOf(preferencia.id);
+          if(index != -1){
+            this.categoriasIds.splice(index, 1);
+          }
+        }
+      }
+      let categoriasSeleccionadas = [];
+      for(let i=0; i<this.categoriasIds.length; i++){
+        let c = {
+          id: this.categoriasIds[i],
+          nombre: ''
+        };
+        categoriasSeleccionadas.push(c);
+      }
+      this.listarEventosFiltrados(this.ordenarPorDistancia.toString(),this.radio,this.latitud,this.longitud,this.mostrarDeMiPreferencia.toString(),categoriasSeleccionadas);
+  }
+
+  addOrRemove(id: number) {
+      var index = this.categoriasIds.indexOf(id);
+      if (index == -1) {
+          this.categoriasIds.push(id);
+      } else {
+          this.categoriasIds.splice(index, 1);
+      }
+      console.log(this.categoriasIds);
+  }
+
+  listarCategorias() {
+      this.categoriaService.buscarTodasLasCategorias().subscribe((resultado) => {
+          this.categorias = resultado;
+      });
+  }
+
+  listarPreferencias() {
+      this.categoriaService.buscarPreferenciasUsuario().subscribe((resultado) => {
+          this.preferencias = resultado;
+      });
   }
 
   listarEventosFiltrados(ordenarPorDistancia: string,
