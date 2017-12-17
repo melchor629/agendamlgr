@@ -1,24 +1,48 @@
-<h3>{{ evento.nombre }}</h3>
-Dirección: {{ evento.direccion }}<br/>
-Fecha: {{ evento.fecha }}<br/>
-Precio: {{ evento.precio }}<br/>
-Creador: {{ nombreCreador }}<br/>
-<button (click)="validar()">Validar</button><br/>
-<a routerLink="/editarEvento/{{ evento.id }}" class="btn btn-warning">Editar</a><br/>
-Categorias:
-<div *ngFor="let categoria of evento.categoriaList">
-  {{ categoria.nombre }}
-</div><br/>
+<h2>{{ evento.nombre }} <small>por <a routerLink="/perfil/{{ evento.creador }}">{{ nombreCreador }}</a></small></h2>
 
-Imagen Principal:
-<div>
-<img [src]="fotosDeEvento.fotoPrimariaUrl"/><br/>
+<p style="font-size: 11px;">
+    <span *ngFor="let categoria of evento.categoriaList">
+        <a routerLink="/busqueda/false/0/0/0/false/{{ categoria.id }}">{{ categoria.nombre }}</a>
+    </span>
+</p>
+
+<div class="w-100">
+    <div id="carouselEventPictures" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            <div [class]="i === 0 ? 'carousel-item active' : 'carousel-item'" *ngFor="let foto of fotos; let i = index">
+                <img class="d-block w-100" [src]="foto.url" [alt]="foto.titulo" />
+            </div>
+        </div>
+        <a class="carousel-control-prev" href="#carouselEventPictures" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Anterior</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselEventPictures" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Siguiente</span>
+        </a>
+    </div>
 </div>
-Imágenes Secundarios:<br/>
-<div *ngFor="let foto of fotos">
-{{ foto.titulo }}<br/>
-<img [src]="foto.url"/><br/>
-</div>
+
+<h4>Fecha</h4>
+<p class="lead">{{ evento.fecha | parseDateString | date:'EEEE d \'de\' MMMM (y), HH:mm':'':'es' }}</p>
 
 <h4>Descripcion</h4>
-{{ evento.descripcion }}<br/>
+<p>
+    {{ evento.descripcion }}
+</p>
+
+<h4>Ubicación</h4>
+<p>
+    AQUI DEBE IR EL MAPA DE GOOGLE MAPS<br />
+    {{ evento.direccion }}
+</p>
+
+<hr />
+<div class="d-flex justify-content-center">
+    <a href="#" (click)="validar()" class="btn btn-info">Validar</a>
+    <span>&nbsp;</span>
+    <a routerLink="/editarEvento/{{ evento.id }}" class="btn btn-warning">Editar</a>
+    <span>&nbsp;</span>
+    <a href="#" class="btn btn-success" *ngIf="evento.precio">Comprar entradas ({{ evento.precio }}€)</a>
+</div>

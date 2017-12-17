@@ -1,11 +1,75 @@
-@import "~bootstrap/dist/css/bootstrap.css";
+@import "~bootstrap/scss/bootstrap";
 
-/* Estilos validacion formularios */
+//Loading spinner
+//From https://codepen.io/mrrocks/pen/EiplA
+$offset: 187;
+$duration: 1.4s;
 
-.ng-touched.ng-valid[required], .ng-valid.required  {
-  border-left: 5px solid #42A948;
+html, body { height: 100% }
+
+.spinner-container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.ng-touched.ng-invalid:not(form)  {
-  border-left: 5px solid chocolate;
+.spinner {
+    animation: rotator $duration linear infinite;
+}
+
+@keyframes rotator {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(270deg); }
+}
+
+.path {
+    stroke-dasharray: $offset;
+    stroke-dashoffset: 0;
+    transform-origin: center;
+    animation:
+            dash $duration ease-in-out infinite,
+            colors ($duration*4) ease-in-out infinite;
+}
+
+@keyframes colors {
+    0% { stroke: #4285F4; }
+    25% { stroke: #DE3E35; }
+    50% { stroke: #F7C223; }
+    75% { stroke: #1B9A59; }
+    100% { stroke: #4285F4; }
+}
+
+@keyframes dash {
+    0% { stroke-dashoffset: $offset; }
+    50% {
+        stroke-dashoffset: $offset/4;
+        transform:rotate(135deg);
+    }
+    100% {
+        stroke-dashoffset: $offset;
+        transform:rotate(450deg);
+    }
+}
+
+///End loading spinner
+
+body > my-app > .container {
+    margin-top: 20px + 56px;
+    margin-bottom: 30px;
+}
+
+.card-columns {
+    @include media-breakpoint-only(xs) {
+        column-count: 1;
+    }
+    @include media-breakpoint-only(sm) {
+        column-count: 1;
+    }
+    @include media-breakpoint-only(lg) {
+        column-count: 2;
+    }
+    @include media-breakpoint-only(xl) {
+        column-count: 3;
+    }
 }
