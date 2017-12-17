@@ -166,11 +166,18 @@ public class EventoREST {
         // Obtener lat y long
         String coordenadas = buscarCoordenadas(evento.direccion);
 
+        if(coordenadas != null){
         // Separar coordenadas devueltas en latitud y longitud
         String[] coords = coordenadas.split(",");
 
         eventoDB.setLatitud(new BigDecimal(coords[0]));
         eventoDB.setLongitud(new BigDecimal(coords[1]));
+        }
+        else{
+            // las coordenadas son nulas, se le ponen las coordenadas del centro de Malaga
+            eventoDB.setLatitud(new BigDecimal("36.7212411"));
+            eventoDB.setLongitud(new BigDecimal("-4.4214114999999765"));
+        }
         
         // Rellenar los atributos propios de Flickr
         modificarDatosFlickr(eventoDB, evento.flickrUserID, evento.flickrAlbumID);
@@ -301,7 +308,8 @@ public class EventoREST {
             @DefaultValue("0") @QueryParam("latitud") Double latitud,
             @DefaultValue("0") @QueryParam("longitud") Double longitud,
             @DefaultValue("false") @QueryParam("mostrarDeMiPreferencia") Boolean mostrarDeMiPreferencia,
-            @DefaultValue("0") @QueryParam("categoriasSeleccionadas") List<Integer> categoriasSeleccionadas) throws NotAuthenticatedException {
+            @DefaultValue("0") @QueryParam("categoriasSeleccionadas") List<Integer> categoriasSeleccionadas,
+            @QueryParam("textoTitulo") String textoTitulo) throws NotAuthenticatedException {
         // Crear un objeto filtrado acorde a los QueryParam recibidos
         Filtrado filtro = new Filtrado(ordenarPorDistancia, radio, latitud, longitud, mostrarDeMiPreferencia, categoriasSeleccionadas);
         
@@ -329,9 +337,9 @@ public class EventoREST {
             }
         }
 
-        List<Evento> listaEventos = eventoFacade.buscarEventoCategorias(listaCategorias, usuarioSesion, filtro.ordenarPorDistancia, filtro.latitud, filtro.longitud, filtro.radio);
+        List<Evento> listaEventos = eventoFacade.buscarEventoCategorias(listaCategorias, usuarioSesion, filtro.ordenarPorDistancia, filtro.latitud, filtro.longitud, filtro.radio, textoTitulo);
 
-        // Crear instancias de EventoProxy para hacer el retorno
+        // Crear instancias de EventoProxyMini para hacer el retorno
         return listaEventos.parallelStream().map(convertToMiniProxyWithFlickr).collect(Collectors.toList());
     }
 

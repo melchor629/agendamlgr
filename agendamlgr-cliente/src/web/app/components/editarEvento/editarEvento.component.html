@@ -1,8 +1,9 @@
-<ngForm>
+<header><h2>Editando un evento</h2></header>
+<form #formulario="ngForm">
     <div class="form-row">
         <div class="form-group col-md-4">
             <label for="tipo">Tipo</label>
-            <select id="tipo" class="form-control" name="tipo" [(ngModel)]="evento.tipo">
+            <select id="tipo" class="form-control" name="tipo" [(ngModel)]="evento.tipo" required>
                 <option [value]="1">Una vez</option>
                 <option [value]="2">Recurrente</option>
                 <option [value]="3">Persistente</option>
@@ -10,11 +11,11 @@
         </div>
         <div class="form-group col-md-4">
             <label for="fecha">Fecha</label>
-            <input type="datetime-local" id="fecha" class="form-control" name="fecha" [(ngModel)]="fecha" />
+            <input type="datetime-local" id="fecha" class="form-control" name="fecha" [(ngModel)]="fecha" required/>
         </div>
         <div class="form-group col-md-4">
             <label for="categorias">Categorias</label>
-            <select multiple id="categorias" class="form-control" [(ngModel)]="categoriasEvento" name="categorias">
+            <select multiple id="categorias" class="form-control" [(ngModel)]="categoriasEvento" name="categorias" required>
                 <option *ngFor="let categoria of categorias" [value]="categoria.id">
                     {{ categoria.nombre }}
                 </option>
@@ -24,7 +25,7 @@
 
     <div class="form-group">
         <label for="nombre">Nombre</label>
-        <input id="nombre" class="form-control" required max="45" placeholder="Título del evento" name="nombre" [(ngModel)]="evento.nombre" />
+        <input id="nombre" class="form-control" required max="45" placeholder="Título del evento" name="nombre" [(ngModel)]="evento.nombre"/>
     </div>
 
     <div class="form-group">
@@ -58,6 +59,6 @@
         </div>
     </div>
 
-    <button type="submit" class="btn btn-primary" (click)="onEdit()">Guardar</button>
+    <button type="submit" class="btn btn-primary" (click)="onEdit()" [disabled]="formulario.invalid">Guardar</button>
     <button type="submit" class="btn btn-secondary" (click)="onCancel()">Cancelar</button>
-</ngForm>
+</form>

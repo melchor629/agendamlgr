@@ -121,32 +121,57 @@ public class EventoFacade extends AbstractFacade<Evento> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Evento> buscarEventoCategorias(List<Categoria> categorias, Usuario usuario, boolean filtroCercania, double x, double y, double radio) {
+    public List<Evento> buscarEventoCategorias(List<Categoria> categorias, Usuario usuario, boolean filtroCercania, double x, double y, double radio, String textoTitulo) {
         // Dado que una de las columnas es de tipo LONGVARCHAR, JPQL no permite usar
         // distinct para evitar obtener filas repetidas, de ahí que se
         // haga el procesamiento a mano para lograr esto
+        
+        // Si se decide filtrar ademas por nombre, se constriye aqui mismo el
+        // trozo de consulta que permite hacer eso mismo
+        String filtroNombre;
+        boolean filtroNombreValido = textoTitulo != null && !textoTitulo.trim().isEmpty();
+        if(filtroNombreValido){
+            filtroNombre =  " and (0 < LOCATE(:textoTitulo, e.nombre)) ";
+        }
+        else{
+            filtroNombre = " ";
+        }
+        
         List<Evento> listaEventos;
 
         Date ahora = new Date(System.currentTimeMillis());
         if (usuario != null && usuario.getTipo() == 3) {
+            // Usuario con sesion iniciada y periodista
             Query q;
             if (categorias != null && categorias.size() > 0) {
-                q = this.em.createQuery("select e from Evento e join e.categoriaList c where c in :categorias and e.fecha > :hoy ORDER BY e.fecha ASC");
+                q = this.em.createQuery("select e from Evento e join e.categoriaList c where c in :categorias and e.fecha > :hoy"+filtroNombre+"ORDER BY e.fecha ASC");
                 q.setParameter("categorias", categorias);
             } else {
-                q = em.createQuery("SELECT e FROM Evento e WHERE e.fecha > :hoy ORDER BY e.fecha ASC");
+                q = em.createQuery("SELECT e FROM Evento e WHERE e.fecha > :hoy"+filtroNombre+"ORDER BY e.fecha ASC");
             }
             q.setParameter("hoy", ahora, TemporalType.TIMESTAMP);
+            
+            // Si no se ha proporcionado un filtro de nombre nulo
+            if(filtroNombreValido){
+                q.setParameter("textoTitulo", textoTitulo);
+            }
+            
             listaEventos = q.getResultList();
         } else {
+            // Usuario no logueado o no periodista
             Query q;
             if (categorias != null && categorias.size() > 0) {
-                q = this.em.createQuery("select e from Evento e join e.categoriaList c where c in :categorias and e.fecha > :hoy and e.validado = 1 ORDER BY e.fecha ASC");
+                q = this.em.createQuery("select e from Evento e join e.categoriaList c where c in :categorias and e.fecha > :hoy and e.validado = 1"+filtroNombre+"ORDER BY e.fecha ASC");
                 q.setParameter("categorias", categorias);
             } else {
-                q = em.createQuery("SELECT e FROM Evento e WHERE e.fecha > :hoy AND e.validado = 1 ORDER BY e.fecha ASC");
+                q = em.createQuery("SELECT e FROM Evento e WHERE e.fecha > :hoy AND e.validado = 1"+filtroNombre+"ORDER BY e.fecha ASC");
             }
             q.setParameter("hoy", ahora, TemporalType.TIMESTAMP);
+            
+            if(filtroNombreValido){
+                q.setParameter("textoTitulo", textoTitulo);
+            }
+            
             listaEventos = q.getResultList();
         }
 

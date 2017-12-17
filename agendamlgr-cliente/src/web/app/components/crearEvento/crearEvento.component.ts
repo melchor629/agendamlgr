@@ -5,6 +5,7 @@ import {UsuarioService} from "../../services/usuario.service";
 import {Evento, eventoVacio} from "../../interfaces/evento";
 import {Categoria} from "../../interfaces/categoria";
 import {Error} from "../../interfaces/error";
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'crear-evento',
@@ -19,14 +20,15 @@ export class CrearEventoComponent implements OnInit {
     private urlFlickr: string;
     private fecha: string;
 
-    private flickrRegexString = 'https:\\/\\/www\\.flickr\\.com\\/photos\\/([0-9@a-zA-Z]*)\\/albums\\/(\\d*)';
+    private flickrRegexString = 'https://www\\.flickr\\.com/photos/([0-9@a-zA-Z]*)/(?:albums|sets)/(\\d*)';
     private flickrRegex = new RegExp(this.flickrRegexString, 'g');
 
     constructor(private categoriaService: CategoriaService,
                 private eventoService: EventoService,
-                private usuarioService: UsuarioService) {
+                private usuarioService: UsuarioService,
+                private router: Router) {
         this.evento = eventoVacio();
-        this.fecha = new Date().toISOString();
+        this.fecha = this.eventoService.corregirFecha();
     }
 
     ngOnInit(): void {
@@ -35,21 +37,19 @@ export class CrearEventoComponent implements OnInit {
 
     private onCreate(): void {
         this.evento.categoriaList = this.categoriasEvento.map(id => <Categoria>{ id, nombre: null });
-        this.evento.fecha = new Date(Date.parse(this.fecha)).toISOString();
+        this.evento.fecha = this.fecha;
         if(this.urlFlickr) {
-            //La primera vez parece que no va el regex, a si que lo apaño llamandolo una vez antes de usarlo
-            this.flickrRegex.exec(this.urlFlickr);
             let result = this.flickrRegex.exec(this.urlFlickr);
             if(result && result.length === 3) {
                 this.evento.flickrAlbumID = result[2];
                 this.evento.flickrUserID = result[1];
             } else {
-                alert("Mu mal, la URL es incorrecta");
+                alert("URL de flickr incorrecta...");
                 return;
             }
         }
         this.eventoService.crearEvento(this.evento).subscribe(
-            evento => window.location.assign(`verEvento/${evento.id}`),
+            evento => this.router.navigateByUrl(`/verEvento/${evento.id}`),
             error => alert(JSON.stringify(<Error>error.error))
         );
     }
