@@ -1,17 +1,17 @@
-<div class="d-flex justify-content-center">
+<div class="d-flex justify-content-center" *ngIf="eventos && eventos.length !== 0">
     <nav aria-label="Page navigation example">
         <ul class="pagination">
             <li [class]="page === 0 ? 'page-item disabled' : 'page-item'">
-                <a class="page-link" href="#" aria-label="Anterior" (click)="goToPreviousPage()">
+                <a class="page-link" href="javascript:window.Boolean(0)" aria-label="Anterior" (click)="goToPreviousPage()">
                     <span aria-hidden="true">&laquo;</span>
                     <span class="sr-only">Anterior</span>
                 </a>
             </li>
             <li *ngFor="let i of range(0, totalPages)" [class]="page === i ? 'page-item active' : 'page-item'">
-                <a class="page-link" href="#" (click)="goToPage(i)">{{ i + 1 }}</a>
+                <a class="page-link" href="javascript:window.Boolean(0)" (click)="goToPage(i)">{{ i + 1 }}</a>
             </li>
             <li [class]="page === totalPages - 1 ? 'page-item disabled' : 'page-item'">
-                <a class="page-link" href="#" aria-label="Siguiente" (click)="goToNextPage()">
+                <a class="page-link" href="javascript:window.Boolean(0)" aria-label="Siguiente" (click)="goToNextPage()">
                     <span aria-hidden="true">&raquo;</span>
                     <span class="sr-only">Siguiente</span>
                 </a>
@@ -20,8 +20,8 @@
     </nav>
 </div>
 
-<div class="card-columns">
-    <div *ngFor="let evento of eventos.slice(page * eventosPorPagina, (page + 1) * eventosPorPagina)" class="card w-lg-50">
+<div class="card-columns" *ngIf="eventos">
+    <div *ngFor="let evento of eventos.slice(page * eventosPorPagina, (page + 1) * eventosPorPagina)" class="card">
         <img *ngIf="evento.fotoUrl" [src]="evento.fotoUrl" class="card-img-top" alt="{{ evento.nombre }}" />
         <div class="card-body">
             <h4>{{ evento.nombre }}</h4>
@@ -37,20 +37,34 @@
     </div>
 </div>
 
-<div class="d-flex justify-content-center">
+<div class="d-flex justify-content-center" *ngIf="!eventos">
+    <p class="lead text-muted text-center">
+        <svg class="spinner" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+            <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+        </svg>
+        <br /><br />
+        Cargando eventos...
+    </p>
+</div>
+
+<div class="d-flex justify-content-center" *ngIf="eventos && eventos.length === 0">
+    <p class="lead">No hay eventos para mostrate</p>
+</div>
+
+<div class="d-flex justify-content-center" *ngIf="eventos && eventos.length !== 0">
     <nav aria-label="Page navigation example">
         <ul class="pagination">
             <li [class]="page === 0 ? 'page-item disabled' : 'page-item'">
-                <a class="page-link" href="#" aria-label="Anterior" (click)="goToPreviousPage()">
+                <a class="page-link" href="javascript:window.Boolean(0)" aria-label="Anterior" (click)="goToPreviousPage()">
                     <span aria-hidden="true">&laquo;</span>
                     <span class="sr-only">Anterior</span>
                 </a>
             </li>
             <li *ngFor="let i of range(0, totalPages)" [class]="page === i ? 'page-item active' : 'page-item'">
-                <a class="page-link" href="#" (click)="goToPage(i)">{{ i + 1 }}</a>
+                <a class="page-link" href="javascript:window.Boolean(0)" (click)="goToPage(i)">{{ i + 1 }}</a>
             </li>
             <li [class]="page === totalPages - 1 ? 'page-item disabled' : 'page-item'">
-                <a class="page-link" href="#" aria-label="Siguiente" (click)="goToNextPage()">
+                <a class="page-link" href="javascript:window.Boolean(0)" aria-label="Siguiente" (click)="goToNextPage()">
                     <span aria-hidden="true">&raquo;</span>
                     <span class="sr-only">Siguiente</span>
                 </a>

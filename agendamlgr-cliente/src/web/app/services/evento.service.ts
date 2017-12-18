@@ -6,6 +6,7 @@ import {Categoria} from '../interfaces/categoria';
 import {FotosDeEvento} from '../interfaces/fotosDeEvento';
 
 @Injectable()
+
 export class EventoService extends AbstractService {
     constructor(http: HttpClient) {
         super(http);
@@ -40,18 +41,18 @@ export class EventoService extends AbstractService {
         return this.put<Evento>('evento', `validar`, {id});
     }
 
-    filtrarEventos(ordenarPorDistancia: string,
+    filtrarEventos(ordenarPorDistancia: boolean,
                    radio: number,
                    latitud: number,
                    longitud: number,
-                   mostrarDeMiPreferencia: string,
+                   mostrarDeMiPreferencia: boolean,
                    categoriasSeleccionadas: Categoria[]) {
         let params = new HttpParams();
-        params = params.append('ordenarPorDistancia', ordenarPorDistancia);
-        if (ordenarPorDistancia === "true") params = params.append('radio', radio.toString());
-        if (ordenarPorDistancia === "true") params = params.append('latitud', latitud.toString());
-        if (ordenarPorDistancia === "true") params = params.append('longitud', longitud.toString());
-        params = params.append('mostrarDeMiPreferencia', mostrarDeMiPreferencia);
+        params = params.append('ordenarPorDistancia', ordenarPorDistancia ? 'true' : 'false');
+        if (ordenarPorDistancia) params = params.append('radio', radio.toString());
+        if (ordenarPorDistancia) params = params.append('latitud', latitud.toString());
+        if (ordenarPorDistancia) params = params.append('longitud', longitud.toString());
+        params = params.append('mostrarDeMiPreferencia', mostrarDeMiPreferencia ? 'true' : 'false');
         categoriasSeleccionadas.forEach(categoria => params = params.append('categoriasSeleccionadas', categoria.id.toString()));
         return this.get<Evento[]>('evento', 'filtrar', {params});
     }
@@ -60,7 +61,7 @@ export class EventoService extends AbstractService {
         return this.get<FotosDeEvento>('evento', `fotos/${id}`);
     }
 
-    corregirFecha(fecha = new Date().toISOString()): string{
+    corregirFecha(fecha = new Date().toISOString()): string {
         // Dependiendo de si la fecha acaba en UTC o no hay que quitarle la Z
 
         fecha = fecha.replace("Z[UTC]", "");

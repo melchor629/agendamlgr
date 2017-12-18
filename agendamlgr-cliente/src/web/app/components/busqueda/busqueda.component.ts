@@ -3,6 +3,7 @@ import { EventoService } from '../../services/evento.service';
 import { CategoriaService } from '../../services/categoria.service';
 import { Evento } from '../../interfaces/evento';
 import { Categoria } from '../../interfaces/categoria';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-busqueda',
@@ -13,42 +14,42 @@ export class BusquedaComponent implements OnInit {
 
   categorias: Categoria[];
   preferencias: Categoria[];
-  ordenarPorDistancia: boolean;
-  radio: number;
-  latitud: number;
-  longitud: number;
-  mostrarDeMiPreferencia: boolean;
-  categoriasIds: number[];
+  ordenarPorDistancia: boolean = false;
+  radio: number = 0.1;
+  latitud: number = null;
+  longitud: number = null;
+  mostrarDeMiPreferencia: boolean = false;
+  categoriasIds: number[] = [];
   eventos: Evento[] = [];
   palabraFiltro: string;
 
-  constructor(private eventoService: EventoService, private categoriaService: CategoriaService) {
+  constructor(private eventoService: EventoService, private categoriaService: CategoriaService, private route: ActivatedRoute) {
+    if(this.route.snapshot.params['categoriasSeleccionadas']){
+      route.params.subscribe(() => {
+        this.listar();
+      });
+    }
   }
 
   ngOnInit() {
-    this.ordenarPorDistancia = false;
-    this.radio = 0;
-    this.latitud = 0;
-    this.longitud = 0;
-    this.mostrarDeMiPreferencia = false;
-    this.categoriasIds = [];
     this.listarCategorias();
     this.listarPreferencias();
   }
 
+  listar() {
+    this.route.snapshot.params['categoriasSeleccionadas'].split(",").map(Number).forEach((c: number) => this.categoriasIds.push(c));
+    let categoriasSeleccionadas = [];
+    for(let i=0; i<this.categoriasIds.length; i++){
+      let c = {
+        id: this.categoriasIds[i],
+        nombre: ''
+      };
+      categoriasSeleccionadas.push(c);
+    }
+    this.listarEventosFiltrados(false,0,0,0,false,categoriasSeleccionadas);
+  }
+
   buscar() {
-      if (this.mostrarDeMiPreferencia) {
-        for (let preferencia of this.preferencias) {
-          this.categoriasIds.push(preferencia.id);
-        }
-      }else{
-        for (let preferencia of this.preferencias) {
-          var index = this.categoriasIds.indexOf(preferencia.id);
-          if(index != -1){
-            this.categoriasIds.splice(index, 1);
-          }
-        }
-      }
       let categoriasSeleccionadas = [];
       for(let i=0; i<this.categoriasIds.length; i++){
         let c = {
@@ -57,17 +58,7 @@ export class BusquedaComponent implements OnInit {
         };
         categoriasSeleccionadas.push(c);
       }
-      this.listarEventosFiltrados(this.ordenarPorDistancia.toString(),this.radio,this.latitud,this.longitud,this.mostrarDeMiPreferencia.toString(),categoriasSeleccionadas);
-  }
-
-  addOrRemove(id: number) {
-      var index = this.categoriasIds.indexOf(id);
-      if (index == -1) {
-          this.categoriasIds.push(id);
-      } else {
-          this.categoriasIds.splice(index, 1);
-      }
-      console.log(this.categoriasIds);
+      this.listarEventosFiltrados(this.ordenarPorDistancia,this.radio,this.latitud,this.longitud,this.mostrarDeMiPreferencia,categoriasSeleccionadas);
   }
 
   listarCategorias() {
@@ -82,14 +73,22 @@ export class BusquedaComponent implements OnInit {
       });
   }
 
-  listarEventosFiltrados(ordenarPorDistancia: string,
+  listarEventosFiltrados(ordenarPorDistancia: boolean,
                          radio: number,
                          latitud: number,
                          longitud: number,
-                         mostrarDeMiPreferencia: string,
+                         mostrarDeMiPreferencia: boolean,
                          categoriasSeleccionadas: Categoria[]){
+    this.eventos = null;
     this.eventoService.filtrarEventos(ordenarPorDistancia,radio,latitud,longitud,mostrarDeMiPreferencia,categoriasSeleccionadas).subscribe((resultado)=>{
       this.eventos = resultado;
     });
   }
+
+  comprobarPermisosUbicacion(): void {
+    if(this.ordenarPorDistancia) {
+      //TODO Comprobar el tema de la posición
+    }
+  }
+
 }

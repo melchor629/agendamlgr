@@ -19,6 +19,8 @@ export class VerEventoComponent implements OnInit {
   nombreCreador: string;
   fotosDeEvento: FotosDeEvento;
   fotos: Foto[];
+  private validable: boolean = false;
+  private editable: boolean = false;
 
   constructor(private categoriaService: CategoriaService,
               private eventoService: EventoService,
@@ -32,13 +34,17 @@ export class VerEventoComponent implements OnInit {
   ngOnInit(){
     this.eventoService.buscarEvento(this.id).subscribe((resultado)=>{
       this.evento = resultado;
+      this.usuarioService.obtenerUsuarioDeLaSesion().subscribe(usuario => {
+        this.validable = !this.evento.validado && usuario.tipo == 3;
+        this.editable = this.evento.creador === usuario.id || usuario.tipo == 3;
+      });
       this.usuarioService.buscarUsuario(this.evento.creador).subscribe((resultado2)=>{
           this.nombreCreador = resultado2.nombre;
       });
-      this.eventoService.buscarFotosParaEvento(this.evento.id).subscribe((resultado3)=>{
-          this.fotosDeEvento = resultado3;
-          this.fotos = this.fotosDeEvento.fotos;
-      });
+    });
+    this.eventoService.buscarFotosParaEvento(this.id).subscribe((resultado3)=>{
+      this.fotosDeEvento = resultado3;
+      this.fotos = this.fotosDeEvento.fotos;
     });
   }
 

@@ -16,7 +16,7 @@
                 <div class="list-group">
                     <a class="list-group-item list-group-item-action"
                        *ngFor="let categoria of preferencias"
-                       routerLink="/busqueda/false/0/0/0/false/{{ categoria.id }}">
+                       routerLink="/buscar/{{ categoria.id }}">
                         {{ categoria.nombre }}
                     </a>
                 </div>
@@ -24,11 +24,9 @@
         </div>
     </div>
 
-    <div *ngIf="eventos.length > 0">
-        <div class="espacio"></div>
-        <h3>Eventos creados</h3>
-        <listado-eventos [eventos]="eventos"></listado-eventos>
-    </div>
+    <div class="espacio"></div>
+    <h3>Eventos creados</h3>
+    <listado-eventos [eventos]="eventos"></listado-eventos>
 </div>
 
 <div *ngIf="!usuario && usuario === null">

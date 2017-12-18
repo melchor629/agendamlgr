@@ -1,24 +1,45 @@
 <h2>Opciones de busqueda</h2>
-<h3>Categorias:</h3>
-<div *ngFor="let categoria of categorias">
-    <input type="checkbox" (click)="addOrRemove(categoria.id)">
-    {{categoria.nombre}}
-</div>
-<h3>Preferencias:</h3>
-<input type="checkbox" [(ngModel)]="mostrarDeMiPreferencia"> ¿Mostrar de mi preferencia?<br/>
-Sus preferencias son:
-<b *ngFor="let categoria of preferencias">
-    {{ categoria.nombre }}
-</b>
-<h3>Distancias:</h3>
-<input type="checkbox" [(ngModel)]="ordenarPorDistancia"> ¿Ordenar por distancia?<br/>
-radio:
-<input type="text" [(ngModel)]="radio"><br/>
-latitud:
-<input type="text" [(ngModel)]="latitud"><br/>
-longitud:
-<input type="text" [(ngModel)]="longitud"><br/>
-<button type="submit" (click)="buscar()">Buscar</button>
+<ngForm>
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            <label for="categorias">Categorias</label>
+            <select multiple id="categorias" class="form-control" [(ngModel)]="categoriasIds" name="categorias">
+                <option *ngFor="let categoria of categorias" [value]="categoria.id">
+                    {{ categoria.nombre }}
+                </option>
+            </select>
+        </div>
+        <div class="form-group col-md-4">
+            <label>
+                <input type="checkbox" [(ngModel)]="ordenarPorDistancia" name="ordenarPorDistancia" (change)="comprobarPermisosUbicacion">
+                ¿Ordenar por distancia?
+            </label>
+            <div *ngIf="ordenarPorDistancia">
+                <label for="radio">Radio</label>
+                <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                    <input type="number" class="form-control" min="0.1" step="0.1" id="radio" [(ngModel)]="radio" name="radio">
+                    <div class="input-group-addon">Km</div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-md-4">
+            <label>
+                <input type="checkbox" [(ngModel)]="mostrarDeMiPreferencia" name="mostrarDeMiPreferencia"> ¿Mostrar de mi preferencia?
+            </label>
+            <p class="ultimaComaFuera">
+                Sus preferencias son:
+                <b *ngFor="let categoria of preferencias">
+                    {{ categoria.nombre }}<span>,</span>
+                </b>
+            </p>
+        </div>
+    </div>
+    <div class="text-center">
+        <button type="submit" class="btn btn-success" (click)="buscar()">Buscar</button>
+    </div>
+</ngForm>
+
+<div class="espacio"></div>
 
 <h2>Resultado de la búsqueda</h2>
 <listado-eventos [eventos]="eventos"></listado-eventos>

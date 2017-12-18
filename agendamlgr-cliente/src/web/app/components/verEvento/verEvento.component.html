@@ -2,7 +2,7 @@
 
 <p style="font-size: 11px;">
     <span *ngFor="let categoria of evento.categoriaList">
-        <a routerLink="/busqueda/false/0/0/0/false/{{ categoria.id }}">{{ categoria.nombre }}</a>
+        <a routerLink="/buscar/{{ categoria.id }}">{{ categoria.nombre }}</a>
     </span>
 </p>
 
@@ -40,9 +40,9 @@
 
 <hr />
 <div class="d-flex justify-content-center">
-    <a href="#" (click)="validar()" class="btn btn-info">Validar</a>
+    <a href="#" (click)="validar()" class="btn btn-info" *ngIf="validable">Validar</a>
     <span>&nbsp;</span>
-    <a routerLink="/editarEvento/{{ evento.id }}" class="btn btn-warning">Editar</a>
+    <a routerLink="/editarEvento/{{ evento.id }}" class="btn btn-warning" *ngIf="editable">Editar</a>
     <span>&nbsp;</span>
     <a href="#" class="btn btn-success" *ngIf="evento.precio">Comprar entradas ({{ evento.precio }}€)</a>
 </div>
