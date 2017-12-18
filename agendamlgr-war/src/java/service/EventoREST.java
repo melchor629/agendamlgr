@@ -48,20 +48,24 @@ public class EventoREST {
     @EJB
     private CategoriaFacade categoriaFacade;
 
+    // Coordenadas por defecto
+    public static double LATITUD_DEFECTO = 36.7212411;
+    public static double LONGITUD_DEFECTO = -4.4214114999999765;
 
     private static final Function<? super Evento, EventoProxyMini> convertToMiniProxyWithFlickr = evento -> {
         EventoProxyMini miniEvento = new EventoProxyMini(evento);
-        if(evento.getFlickruserid() != null && evento.getFlickralbumid() != null) {
+        if (evento.getFlickruserid() != null && evento.getFlickralbumid() != null) {
             try {
                 PhotoSetInfo info = Flickr.Photosets.getInfo(evento.getFlickruserid(), evento.getFlickralbumid());
                 miniEvento.fotoUrl = info != null && info.primary != null ? info.primary.mediumSizeUrl : null;
-            } catch (IOException ignore) {}
+            } catch (IOException ignore) {
+            }
         }
         return miniEvento;
     };
 
     @GET
-    @Produces({ MediaType.APPLICATION_JSON })
+    @Produces({MediaType.APPLICATION_JSON})
     @Path("usuario")
     public List<EventoProxyMini> buscarEventosUsuario(@HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgNotFoundException {
         String userId = TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token));
@@ -166,19 +170,18 @@ public class EventoREST {
         // Obtener lat y long
         String coordenadas = buscarCoordenadas(evento.direccion);
 
-        if(coordenadas != null){
-        // Separar coordenadas devueltas en latitud y longitud
-        String[] coords = coordenadas.split(",");
+        if (coordenadas != null) {
+            // Separar coordenadas devueltas en latitud y longitud
+            String[] coords = coordenadas.split(",");
 
-        eventoDB.setLatitud(new BigDecimal(coords[0]));
-        eventoDB.setLongitud(new BigDecimal(coords[1]));
-        }
-        else{
+            eventoDB.setLatitud(new BigDecimal(coords[0]));
+            eventoDB.setLongitud(new BigDecimal(coords[1]));
+        } else {
             // las coordenadas son nulas, se le ponen las coordenadas del centro de Malaga
-            eventoDB.setLatitud(new BigDecimal("36.7212411"));
-            eventoDB.setLongitud(new BigDecimal("-4.4214114999999765"));
+            eventoDB.setLatitud(new BigDecimal(LATITUD_DEFECTO));
+            eventoDB.setLongitud(new BigDecimal(LONGITUD_DEFECTO));
         }
-        
+
         // Rellenar los atributos propios de Flickr
         modificarDatosFlickr(eventoDB, evento.flickrUserID, evento.flickrAlbumID);
 
@@ -240,7 +243,7 @@ public class EventoREST {
         eventoDB.setPrecio(evento.precio);
         eventoDB.setTipo(evento.tipo);
         modificarDatosFlickr(eventoDB, evento.flickrUserID, evento.flickrAlbumID);
-        
+
         // Proceder a editar el evento
         eventoFacade.editarEventoTipoUsuario(eventoDB, listaCategorias, usuario);
 
@@ -273,7 +276,7 @@ public class EventoREST {
      */
     @PUT
     @Path("validar")
-    @Consumes({ MediaType.APPLICATION_JSON })
+    @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public EventoProxy validarEvento(Map<String, String> json, @HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgNotFoundException, AgendamlgException {
         Usuario usuario = usuarioFacade.find(TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token)));
@@ -293,12 +296,11 @@ public class EventoREST {
         solo seran listados para los periodistas
         Lanza la excepcion si se proporciona un token no valido
      */
-    
-    /*  La URL para el filtrado tendra la siguiente pinta: 
+ /*  La URL para el filtrado tendra la siguiente pinta: 
         .../evento/filtrar?ordenarPorDistancia=X&radio=X&latitud=X&longitud=X&mostrarDeMiPreferencia=X&categoriasSeleccionadas=1&categoriasSeleccionadas=2...
         (Y asi con tantas categorias como se desee)
     ¡¡¡OJO!!! El radio se ofrece en Kilometros
-    */
+     */
     @GET
     @Path("filtrar")
     @Produces({MediaType.APPLICATION_JSON})
@@ -312,10 +314,9 @@ public class EventoREST {
             @QueryParam("textoTitulo") String textoTitulo) throws NotAuthenticatedException {
         // Crear un objeto filtrado acorde a los QueryParam recibidos
         Filtrado filtro = new Filtrado(ordenarPorDistancia, radio, latitud, longitud, mostrarDeMiPreferencia, categoriasSeleccionadas);
-        
+
         Usuario usuarioSesion = usuarioDesdeToken(token);
 
-        
         List<Categoria> listaCategorias;
 
         // Dependiendo de si se quieren mostrar los eventos que sean preferencia del usuario
@@ -345,23 +346,57 @@ public class EventoREST {
 
     @GET
     @Path("fotos/{id}")
-    @Produces({ MediaType.APPLICATION_JSON })
+    @Produces({MediaType.APPLICATION_JSON})
     public FotosDeEvento buscarFotosParaEvento(@PathParam("id") int eventoId, @HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgNotFoundException, IOException {
         Usuario usuario = usuarioDesdeToken(token);
         Evento evento = eventoFacade.find(eventoId);
-        if(evento == null || ((usuario == null || usuario.getTipo() < 3) && evento.getValidado() == 0))
+        if (evento == null || ((usuario == null || usuario.getTipo() < 3) && evento.getValidado() == 0)) {
             throw AgendamlgNotFoundException.eventoNoExiste(eventoId);
+        }
 
-        if(evento.getFlickruserid() != null && evento.getFlickralbumid() != null) {
+        if (evento.getFlickruserid() != null && evento.getFlickralbumid() != null) {
             PhotoSetPhotos photoSetPhotos = Flickr.Photosets.getPhotos(evento.getFlickruserid(), evento.getFlickralbumid());
-            if(photoSetPhotos != null) {
+            if (photoSetPhotos != null) {
                 return new FotosDeEvento(photoSetPhotos);
             }
         }
         return new FotosDeEvento();
     }
 
+    // Esta ruta permite, dada una direccion obtener las coordenadas en un objeto
+    // JSON del tipo: {"encontrado":X, latitud":X, "longitud":x}
+    // Solo puede ser usada por usuarios logueados!
+    @GET
+    @Path("coordenadas/{direccion}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Coordenadas obtenerCoordenadas(@PathParam("direccion") String direccion, @HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgException {
+        String id = TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token));
+        // Si no se proporciona token o este no es valido se lanzara una excepcion
 
+        // Se procede a obtener las coordenadas como un par (latitud,longitud)
+        String coordenadas = buscarCoordenadas(direccion);
+        double latitud, longitud;
+        boolean encontrado = true;
+
+        if (coordenadas != null) {
+            // Separar coordenadas devueltas en latitud y longitud
+            String[] coords = coordenadas.split(",");
+
+            latitud = Double.parseDouble(coords[0]);
+            longitud = Double.parseDouble(coords[1]);
+        } else {
+            // Se indica que no se han encontrado las coordenadas y se mandan
+            // las de Malaga
+            encontrado = false;
+            // Las coordenadas son nulas, se le ponen las coordenadas del centro de Malaga
+            latitud = LATITUD_DEFECTO;
+            longitud = LONGITUD_DEFECTO;
+        }
+
+        return new Coordenadas(encontrado, latitud, longitud);
+    }
+    
+    
     /**
      * ***********************************************************************
      */
@@ -428,14 +463,14 @@ public class EventoREST {
     }
 
     private static void modificarDatosFlickr(Evento evento, String userId, String albumId) throws AgendamlgException {
-        if(albumId == null || !albumId.equals(evento.getFlickralbumid())) {
+        if (albumId == null || !albumId.equals(evento.getFlickralbumid())) {
             evento.setFlickralbumid(albumId);
         }
 
-        if(userId == null || !userId.equals(evento.getFlickruserid())) {
+        if (userId == null || !userId.equals(evento.getFlickruserid())) {
             evento.setFlickruserid(userId);
 
-            if(userId != null && !userId.matches("\\d+@N\\d\\d")) {
+            if (userId != null && !userId.matches("\\d+@N\\d\\d")) {
                 try {
                     evento.setFlickruserid(
                             Flickr.Urls.lookupUser(String.format("http://www.flickr.com/photos/%s/", userId))
@@ -449,8 +484,7 @@ public class EventoREST {
             }
         }
     }
-    
-    
+
     /**
      * ****************************************************************************
      */
@@ -514,8 +548,6 @@ public class EventoREST {
 
         public EventoProxyMini() {
         }
-        
-        
 
         private EventoProxyMini(Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion) {
             this.id = id;
@@ -556,13 +588,13 @@ public class EventoREST {
         public String creador;
 
         public Double latitud, longitud;
-        
+
         // Atributos para la funcionalidad relacionada con Flickr
         public String flickrUserID, flickrAlbumID;
 
         public EventoProxy() {
         }
-        
+
         public EventoProxy(Short tipo, boolean validado, List<CategoriaREST.CategoriaProxy> categoriaList, String creador, Double latitud, Double longitud, Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion, String flickrUserID, String flickrAlbumID) {
 
             super(id, nombre, descripcion, fecha, precio, direccion);
@@ -580,7 +612,7 @@ public class EventoREST {
             super(evento);
             this.tipo = evento.getTipo();
             this.validado = evento.getValidado() == 1;
-            
+
             // Flickr
             this.flickrAlbumID = evento.getFlickralbumid();
             this.flickrUserID = evento.getFlickruserid();
@@ -598,6 +630,7 @@ public class EventoREST {
     }
 
     public static class FotosDeEvento implements Serializable {
+
         public String fotoPrimariaUrl;
         public List<Foto> fotos;
 
@@ -612,11 +645,28 @@ public class EventoREST {
     }
 
     public static class Foto implements Serializable {
+
         public String titulo, url;
 
         private Foto(Photo photo) {
             titulo = photo.title;
             url = photo.kindLargeSizeUrl;
+        }
+    }
+
+    // Devolucion de coordenadas para una direccion dada
+    public static class Coordenadas implements Serializable {
+
+        public boolean encontrado;
+        public double latitud, longitud;
+
+        public Coordenadas() {
+        }
+
+        public Coordenadas(boolean encontrado, double latitud, double longitud) {
+            this.encontrado = encontrado;
+            this.latitud = latitud;
+            this.longitud = longitud;
         }
     }
 
