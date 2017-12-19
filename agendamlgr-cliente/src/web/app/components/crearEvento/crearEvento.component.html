@@ -41,6 +41,15 @@
                 [(ngModel)]="evento.descripcion"></textarea>
     </div>
 
+    <div class="vista-previa">
+        <a class="btn btn-primary btn-sm" data-toggle="collapse" href="#collapseMarkdown" aria-expanded="false" aria-controls="collapseMarkdown">
+            Mostrar/Ocultar vista previa de descripción
+        </a>
+        <div class="collapse" id="collapseMarkdown">
+            <div class="card card-body" [innerHTML]="evento.descripcion | md"></div>
+        </div>
+    </div>
+
     <div class="form-group">
         <label for="direccion">Dirección</label>
         <input id="direccion" class="form-control" required max="250" placeholder="Dirección del evento" name="direccion" [(ngModel)]="evento.direccion" />

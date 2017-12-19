@@ -29,9 +29,7 @@
 <p class="lead">{{ evento.fecha | parseDateString | date:'EEEE d \'de\' MMMM (y), HH:mm':'':'es' }}</p>
 
 <h4>Descripcion</h4>
-<p>
-    {{ evento.descripcion }}
-</p>
+<p [innerHTML]="evento.descripcion | md"></p>
 
 <h4>Ubicación</h4>
 <p>

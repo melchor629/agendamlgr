@@ -12,6 +12,7 @@ import 'rxjs';
 window['$'] = window['jQuery'] = require('jquery');
 window['Popper'] = require('popper.js');
 require('bootstrap');
+require('commonmark');
 
 // Base scss
 import './assets/scss/base.scss';

@@ -18,7 +18,9 @@ import { MostrarErrorComponent } from "./components/mostrarError/mostrarError.co
 import { CategoriaService } from './services/categoria.service';
 import { UsuarioService } from './services/usuario.service';
 import { EventoService } from './services/evento.service';
+//Pipe imports
 import { ParseDateStringPipe } from "./pipes/parseDateString.pipe";
+import { MarkdownPipe } from "./pipes/markdown.pipe";
 
 import localeEs from '@angular/common/locales/es';
 import { registerLocaleData } from "@angular/common";
@@ -51,7 +53,8 @@ const appRoutes: Routes = [
         CrearEventoComponent,
         ListadoEventosComponent,
         MostrarErrorComponent,
-        ParseDateStringPipe
+        ParseDateStringPipe,
+        MarkdownPipe
     ],
     providers: [
         CategoriaService,

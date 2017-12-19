@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import {CategoriaService} from './services/categoria.service';
-import {Categoria} from './interfaces/categoria';
 
 @Component({
     selector: 'my-app',
