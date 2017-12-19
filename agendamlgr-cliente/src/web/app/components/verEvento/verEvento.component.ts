@@ -15,7 +15,7 @@ import { Foto } from '../../interfaces/foto';
 })
 export class VerEventoComponent implements OnInit {
 
-  errorResponse: HttpErrorResponse = new HttpErrorResponse({});
+  errorResponse: HttpErrorResponse;
   id: number;
   evento: Evento;
   nombreCreador: string;

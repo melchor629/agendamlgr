@@ -15,7 +15,7 @@ import {Router} from "@angular/router";
 })
 export class CrearEventoComponent implements OnInit {
 
-    errorResponse: HttpErrorResponse = new HttpErrorResponse({});
+    errorResponse: HttpErrorResponse;
     private evento: Evento;
     private categorias: Categoria[] = [];
     private categoriasEvento: number[] = [];

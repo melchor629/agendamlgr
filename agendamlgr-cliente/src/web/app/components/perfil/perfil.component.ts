@@ -15,7 +15,7 @@ import { ActivatedRoute } from "@angular/router";
 })
 export class PerfilComponent implements OnInit {
 
-  errorResponse: HttpErrorResponse = new HttpErrorResponse({});
+  errorResponse: HttpErrorResponse;
   usuario: Usuario;
   preferencias: Categoria[] = [];
   eventos: Evento[];
@@ -37,6 +37,7 @@ export class PerfilComponent implements OnInit {
       });
       this.eventoService.buscarEventosUsuario(userId).subscribe(resultado => this.eventos = resultado,(errorResponse) =>{
         this.errorResponse = errorResponse;
+        this.eventos = [];
       });
     } else {
       this.usuarioService.obtenerUsuarioDeLaSesion().subscribe(resultado => this.usuario = resultado,(errorResponse) =>{
@@ -47,6 +48,7 @@ export class PerfilComponent implements OnInit {
       });
       this.eventoService.buscarEventosUsuario().subscribe(resultado => this.eventos = resultado,(errorResponse) =>{
         this.errorResponse = errorResponse;
+        this.eventos = [];
       });
     }
   }

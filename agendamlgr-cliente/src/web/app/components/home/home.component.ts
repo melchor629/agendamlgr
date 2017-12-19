@@ -10,7 +10,7 @@ import { Evento } from '../../interfaces/evento';
 })
 export class HomeComponent implements OnInit {
 
-  errorResponse: HttpErrorResponse = new HttpErrorResponse({});
+  errorResponse: HttpErrorResponse;
   eventos: Evento[];
 
   constructor(private eventoService: EventoService) {}
@@ -24,6 +24,7 @@ export class HomeComponent implements OnInit {
       this.eventos = resultado;
     },(errorResponse) =>{
       this.errorResponse = errorResponse;
+      this.eventos = [];
     });
   }
 }

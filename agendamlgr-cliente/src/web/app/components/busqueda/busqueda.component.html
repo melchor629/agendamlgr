@@ -28,13 +28,16 @@
         </div>
         <div class="form-group col-md-4">
             <label>
-                <input type="checkbox" [(ngModel)]="mostrarDeMiPreferencia" name="mostrarDeMiPreferencia"> ¿Mostrar de mi preferencia?
+                <input type="checkbox" [(ngModel)]="mostrarDeMiPreferencia" name="mostrarDeMiPreferencia" [disabled]="!categoriaList"> ¿Mostrar de mi preferencia?
             </label>
-            <p class="ultimaComaFuera">
+            <p class="ultimaComaFuera" *ngIf="categoriaList">
                 Sus preferencias son:
                 <b *ngFor="let categoria of preferencias">
                     {{ categoria.nombre }}<span>,</span>
                 </b>
+            </p>
+            <p class="text-muted" *ngIf="!categoriaList">
+                Debe iniciar sesión para poder seleccionar sus preferencias
             </p>
         </div>
     </div>

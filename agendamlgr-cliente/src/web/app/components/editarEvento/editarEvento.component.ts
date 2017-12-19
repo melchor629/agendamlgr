@@ -14,7 +14,7 @@ import {Categoria} from "../../interfaces/categoria";
 })
 export class EditarEventoComponent implements OnInit {
 
-    errorResponse: HttpErrorResponse = new HttpErrorResponse({});
+    errorResponse: HttpErrorResponse;
     private id: number;
     private evento: Evento;
     private categorias: Categoria[] = [];
