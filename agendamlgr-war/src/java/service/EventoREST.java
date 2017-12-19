@@ -307,7 +307,7 @@ public class EventoREST {
     @Produces({MediaType.APPLICATION_JSON})
     public List<EventoProxyMini> filtrarEventos(@HeaderParam("bearer") String token,
             @DefaultValue("false") @QueryParam("ordenarPorDistancia") Boolean ordenarPorDistancia,
-            @DefaultValue("0") @QueryParam("radio") Integer radio,
+            @DefaultValue("0") @QueryParam("radio") Double radio,
             @DefaultValue("0") @QueryParam("latitud") Double latitud,
             @DefaultValue("0") @QueryParam("longitud") Double longitud,
             @DefaultValue("false") @QueryParam("mostrarDeMiPreferencia") Boolean mostrarDeMiPreferencia,
@@ -497,7 +497,7 @@ public class EventoREST {
     public static class Filtrado implements Serializable {
 
         public Boolean ordenarPorDistancia;
-        public Integer radio;
+        public Double radio;
         public Double latitud;
         public Double longitud;
         public Boolean mostrarDeMiPreferencia;
@@ -506,7 +506,7 @@ public class EventoREST {
         public Filtrado() {
         }
 
-        public Filtrado(boolean ordenarPorDistancia, int radio, double latitud, double longitud, boolean mostrarDeMiPreferencia, List<Integer> categoriasSeleccionadas) {
+        public Filtrado(boolean ordenarPorDistancia, double radio, double latitud, double longitud, boolean mostrarDeMiPreferencia, List<Integer> categoriasSeleccionadas) {
             this.ordenarPorDistancia = ordenarPorDistancia;
             this.radio = radio;
             this.latitud = latitud;

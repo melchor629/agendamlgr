@@ -16,9 +16,13 @@
                 <a class="nav-link" routerLink="/crearEvento">Crear nuevo evento</a>
             </li>
             <li class="nav-item" [class]="routerUrl && routerUrl.startsWith('/bus') ? 'active' : ''">
-                <a class="nav-link" routerLink="/buscar">Buscar</a>
+                <a class="nav-link" routerLink="/buscar">Búsqueda avanzada</a>
             </li>
         </ul>
+        <form class="form-inline my-2 my-lg-0 ml-auto">
+            <input class="form-control mr-sm-2" type="search" placeholder="Buscar por titulo..." aria-label="Buscar">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit" (onclick)="buscar()">Buscar</button>
+        </form>
         <ul class="navbar-nav ml-auto">
             <li class="nav-item" *ngIf="!userLoggedIn">
                 <a class="nav-link" href="http://localhost:8080/agendamlgr-war/oauth/init">Iniciar sesión</a>
@@ -27,14 +31,10 @@
                 <a class="nav-link" (click)="logout()" href="#">Cerrar sesión</a>
             </li>
         </ul>
-        <!--<form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Buscar..." aria-label="Buscar">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit" (onclick)="buscar()">Buscar</button>
-        </form>-->
     </div>
 </nav>
-<main>
+
 <div class="container">
     <router-outlet></router-outlet>
 </div>
-</main>
+

@@ -1,3 +1,5 @@
-main{
-  padding: 2em;
+@media (min-width: 768px) {
+    textarea {
+        min-height: 200px;
+    }
 }

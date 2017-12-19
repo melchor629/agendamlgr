@@ -4,6 +4,7 @@
         <div class="form-group col-md-4">
             <label for="tipo">Tipo</label>
             <select id="tipo" class="form-control" name="tipo" [(ngModel)]="evento.tipo" required>
+                <option selected disabled>Seleccione una opción</option>
                 <option [value]="1">Una vez</option>
                 <option [value]="2">Recurrente</option>
                 <option [value]="3">Persistente</option>

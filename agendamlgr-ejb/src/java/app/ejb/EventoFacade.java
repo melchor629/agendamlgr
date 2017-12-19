@@ -19,6 +19,7 @@ import javax.persistence.Query;
 import javax.persistence.TemporalType;
 import javax.validation.ConstraintViolationException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -187,27 +188,25 @@ public class EventoFacade extends AbstractFacade<Evento> {
         // Llevar a cabo la ordenacion por distancia en la lista de duplicadosEliminados
         // si asi se ha solicitado en el cliente y en base a los parámetros aportados por este
         if (filtroCercania) {
-            // Se almacenan los eventos ordenados por distancia (de cercano a lejano)
-            // La clave del mapa es la que se usa para la ordenacion
-            Map<Double, Evento> mapa = new TreeMap<>();
-
-            // Se procede a rellenar el mapa
-            for (Evento evento : duplicadosEliminados) {
-                double distAEvento = distanciaAEvento(x, y, evento);
-
-                // Solo se meten en el mapa aquellos eventos que esten dentro del radio
-                if (distAEvento <= radio) {
-                    mapa.put(distAEvento, evento);
-                }
-            }
-
-            // A continuacion se obtiene una lista ordenada de los eventos que se han introducido en el map
-            // Se vacia la lista de eventos
-            duplicadosEliminados.clear();
-
-            for (Map.Entry<Double, Evento> entrada : mapa.entrySet()) {
-                duplicadosEliminados.add(entrada.getValue());
-            }
+            Comparator<Map.Entry<Double, Evento>> ordenarPorDistanciaBarraFecha = (p1, p2) -> {
+                double diff = p1.getKey() - p2.getKey();
+                if(Math.abs(diff) < 0.001) return (int) (p1.getValue().getFecha().getTime() - p2.getValue().getFecha().getTime());
+                else return (int) Math.round(diff);
+            };
+            duplicadosEliminados = duplicadosEliminados.stream()
+                    .filter(evento -> evento.getLatitud() != null && evento.getLongitud() != null)
+                    .map(evento -> new Map.Entry<Double, Evento>() {
+                        private double distancia = distanciaAEvento(x, y, evento);
+                        @Override public Double getKey() { return distancia; }
+                        @Override public Evento getValue() { return evento; }
+                        @Override public Evento setValue(Evento value) { return evento; }
+                        @Override public boolean equals(Object o) { return o instanceof Map.Entry && ((Map.Entry<Double, Evento>) o).getKey().equals(getKey()); }
+                        @Override public int hashCode() { return getKey().hashCode(); }
+                    })
+                    .filter(par -> par.getKey() <= radio)
+                    .sorted(ordenarPorDistanciaBarraFecha)
+                    .map(par -> par.getValue())
+                    .collect(Collectors.toList());
         }
 
         return duplicadosEliminados;

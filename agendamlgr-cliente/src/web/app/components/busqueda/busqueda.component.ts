@@ -22,6 +22,7 @@ export class BusquedaComponent implements OnInit {
   categoriasIds: number[] = [];
   eventos: Evento[] = [];
   palabraFiltro: string;
+  geolocalizando: boolean = false;
 
   constructor(private eventoService: EventoService, private categoriaService: CategoriaService, private route: ActivatedRoute) {
     if(this.route.snapshot.params['categoriasSeleccionadas']){
@@ -85,9 +86,40 @@ export class BusquedaComponent implements OnInit {
     });
   }
 
-  comprobarPermisosUbicacion(): void {
+  geolocalizacion() {
     if(this.ordenarPorDistancia) {
-      //TODO Comprobar el tema de la posición
+      if(navigator.geolocation) {
+        this.geolocalizando = true;
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            this.latitud = position.coords.latitude;
+            this.longitud = position.coords.longitude;
+            console.log(position.coords);
+            this.geolocalizando = false;
+          },
+          error => {
+            if(error.code === error.PERMISSION_DENIED) {
+              //TODO usar algo más bonito
+              alert(`Has denegado el acceso para que obtengamos tu posición`);
+            } else if(error.code === error.POSITION_UNAVAILABLE) {
+              //TODO usar algo más bonito
+              alert(`No hemos podido obtener tu posición geográfica (${error.message})`);
+            } else if(error.code === error.TIMEOUT) {
+              //TODO usar algo más bonito
+              alert(`Ha pasado tanto tiempo obteniendo tu posición, que hemos decidido no seguir esperando... (${error.message})`);
+            }
+            this.ordenarPorDistancia = false;
+            this.geolocalizando = false;
+          },
+          { enableHighAccuracy: true }
+        );
+      } else {
+        alert('Tu navegador no soporta geolocalización'); //TODO usar algo mas bonito
+        this.ordenarPorDistancia = false;
+      }
+    } else {
+      this.latitud = null;
+      this.longitud = null;
     }
   }
 
