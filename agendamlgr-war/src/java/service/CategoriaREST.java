@@ -6,25 +6,18 @@
 package service;
 
 import app.ejb.CategoriaFacade;
-import app.ejb.EventoFacade;
 import app.ejb.UsuarioFacade;
 import app.entity.Categoria;
-import app.entity.Evento;
 import app.entity.Usuario;
-import app.exception.AgendamlgException;
 import app.exception.AgendamlgNotFoundException;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.ws.rs.HeaderParam;
 
 /**
  *
@@ -33,9 +26,6 @@ import javax.ws.rs.HeaderParam;
 @Stateless
 @Path("categoria")
 public class CategoriaREST{
-
-    @EJB
-    private EventoFacade eventoFacade;
 
     @EJB
     private UsuarioFacade usuarioFacade;
@@ -65,7 +55,7 @@ public class CategoriaREST{
     @GET
     @Path("/preferencias")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<CategoriaProxy> buscarPreferenciasUsuario(@HeaderParam("bearer") String token) throws AgendamlgException, AgendamlgNotFoundException, NotAuthenticatedException{
+    public List<CategoriaProxy> buscarPreferenciasUsuario(@HeaderParam("bearer") String token) throws AgendamlgNotFoundException, NotAuthenticatedException{
         String idUsuario = TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token));
         Usuario usuario = usuarioFacade.find(idUsuario);
         if(usuario == null){
@@ -73,16 +63,24 @@ public class CategoriaREST{
         }
         return categoriaFacade.buscarPreferenciasUsuario(usuario).stream().map(CategoriaProxy::new).collect(Collectors.toList());
     }
-    
-    @GET
-    @Path("/categoriasEvento/{idEvento}")
-    @Produces({MediaType.APPLICATION_JSON})
-    public List<CategoriaProxy> buscarCategoriasEvento(@PathParam("idEvento") int idEvento) throws AgendamlgNotFoundException{
-        Evento evento = eventoFacade.find(idEvento);
-        if(evento == null){
-            throw AgendamlgNotFoundException.eventoNoExiste(idEvento);
-        }
-        return categoriaFacade.buscarCategoriasEvento(evento).stream().map(CategoriaProxy::new).collect(Collectors.toList());
+
+    @DELETE
+    @Path("/preferencias/{id}")
+    @Produces({ MediaType.APPLICATION_JSON })
+    public String eliminarPreferenciaUsuario(@HeaderParam("bearer") String token, @PathParam("id") int id) throws NotAuthenticatedException {
+        String idUsuario = TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token));
+        Usuario usuario = usuarioFacade.find(idUsuario);
+        return "{\"deleted\": " + categoriaFacade.eliminarPreferenciaUsuario(usuario, id) + "}";
+    }
+
+    @POST
+    @Path("/preferencias")
+    @Produces({ MediaType.APPLICATION_JSON })
+    public List<CategoriaProxy> nuevaPreferenciaUsuario(CategoriaProxy categoria, @HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgNotFoundException {
+        String idUsuario = TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token));
+        Usuario usuario = usuarioFacade.find(idUsuario);
+        categoriaFacade.afegirPreferenciaUsuari(usuario, categoria.id);
+        return categoriaFacade.buscarPreferenciasUsuario(usuario).stream().map(CategoriaProxy::new).collect(Collectors.toList());
     }
     
     public static class CategoriaProxy implements Serializable{
@@ -96,9 +94,9 @@ public class CategoriaREST{
 
         public CategoriaProxy() {
         }
-        
-        
-        
+
+
+
         CategoriaProxy(Categoria categoria){
             this.id = categoria.getId();
             this.nombre = categoria.getNombre();

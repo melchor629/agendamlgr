@@ -18,6 +18,8 @@ export class PerfilComponent implements OnInit {
   errorResponse: HttpErrorResponse;
   usuario: Usuario;
   preferencias: Categoria[] = [];
+  noPreferencias: Categoria[] = [];
+  categorias: Categoria[] = [];
   eventos: Evento[];
 
   constructor(private categoriaService: CategoriaService,
@@ -43,13 +45,52 @@ export class PerfilComponent implements OnInit {
       this.usuarioService.obtenerUsuarioDeLaSesion().subscribe(resultado => this.usuario = resultado,(errorResponse) =>{
         this.errorResponse = errorResponse;
       });
-      this.categoriaService.buscarPreferenciasUsuario().subscribe(resultado => this.preferencias = resultado,(errorResponse) =>{
-        this.errorResponse = errorResponse;
-      });
+      this.categoriaService.buscarPreferenciasUsuario().subscribe(
+        resultado => {
+          this.preferencias = resultado;
+          this.categoriaService.buscarTodasLasCategorias().subscribe(
+              categorias => {
+                this.categorias = categorias;
+                this.noPreferencias = this.categoriasDeInteresParaInsertar;
+              },
+              error => this.errorResponse = error
+          );
+        },(errorResponse) =>{
+          this.errorResponse = errorResponse;
+        });
       this.eventoService.buscarEventosUsuario().subscribe(resultado => this.eventos = resultado,(errorResponse) =>{
         this.errorResponse = errorResponse;
         this.eventos = [];
       });
     }
   }
+
+  borrar(event: Event, categoria: Categoria) {
+    event.preventDefault();
+    this.categoriaService.eliminarPreferenciaUsuario(categoria).subscribe(
+        res => {
+          if(res.deleted) {
+            this.preferencias = this.preferencias.filter(value => value.id !== categoria.id);
+            this.noPreferencias = this.categoriasDeInteresParaInsertar;
+          }
+        },
+        error => this.errorResponse = error
+    );
+  }
+
+  insertar(event: Event, categoria: Categoria) {
+    event.preventDefault();
+    this.categoriaService.añadirPreferenciaUsuario(categoria).subscribe(
+        res => {
+          this.preferencias = res;
+          this.noPreferencias = this.categoriasDeInteresParaInsertar;
+        },
+        error => this.errorResponse = error
+    )
+  }
+
+  get categoriasDeInteresParaInsertar(): Categoria[] {
+    return this.categorias.filter(categoria => !this.preferencias.find(c => c.id == categoria.id));
+  }
+
 }

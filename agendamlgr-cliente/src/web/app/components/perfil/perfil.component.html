@@ -14,11 +14,25 @@
             </p>
             <div *ngIf="preferencias.length > 0">
                 <b>Preferencias</b>
-                <div class="list-group">
-                    <a class="list-group-item list-group-item-action"
-                       *ngFor="let categoria of preferencias"
-                       routerLink="/buscar/{{ categoria.id }}">
-                        {{ categoria.nombre }}
+                <div class="list-group overflow">
+                    <a class="list-group-item list-group-item-action flex-column align-items-start"
+                       *ngFor="let categoria of preferencias">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <h6 class="mb-0"><a routerLink="/buscar/{{ categoria.id }}">{{ categoria.nombre }}</a></h6>
+                            <a href="#" (click)="borrar($event, categoria)" class="delete">&times;</a>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div *ngIf="preferencias.length < categorias.length" style="margin-top: 15px;">
+                <b>Podría interesarte...</b>
+                <div class="list-group overflow">
+                    <a class="list-group-item list-group-item-action flex-column align-items-start"
+                       *ngFor="let categoria of categoriasDeInteresParaInsertar">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <h6 class="mb-0"><a routerLink="/buscar/{{ categoria.id }}">{{ categoria.nombre }}</a></h6>
+                            <a href="#" (click)="insertar($event, categoria)" class="delete">+</a>
+                        </div>
                     </a>
                 </div>
             </div>

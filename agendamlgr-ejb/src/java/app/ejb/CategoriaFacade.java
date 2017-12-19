@@ -9,6 +9,7 @@ import app.entity.Categoria;
 import app.entity.Evento;
 import app.entity.Usuario;
 import app.exception.AgendamlgException;
+import app.exception.AgendamlgNotFoundException;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -46,5 +47,30 @@ public class CategoriaFacade extends AbstractFacade<Categoria> {
         Query q = this.em.createQuery("select c from Categoria c where :evento member of c.eventoList");
         q.setParameter("evento", evento);
         return q.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    public boolean eliminarPreferenciaUsuario(Usuario usuario, int preferencia) {
+        Query q = this.em.createQuery("select c from Categoria c where :usuario member of c.usuarioList and c.id = :id");
+        q.setParameter("usuario", usuario);
+        q.setParameter("id", preferencia);
+        List<Categoria> categoriaONo = (List<Categoria>) q.getResultList();
+        if(!categoriaONo.isEmpty()) {
+            categoriaONo.get(0).getUsuarioList().remove(usuario);
+            usuario.getCategoriaList().remove(categoriaONo.get(0));
+            edit(categoriaONo.get(0));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void afegirPreferenciaUsuari(Usuario usuari, int preferencia) throws AgendamlgNotFoundException {
+        Categoria categoria = find(preferencia);
+        if(categoria == null) throw AgendamlgNotFoundException.categoriaNoExiste(preferencia);
+
+        usuari.getCategoriaList().add(categoria);
+        categoria.getUsuarioList().add(usuari);
+        edit(categoria);
     }
 }
