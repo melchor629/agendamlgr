@@ -1,6 +1,14 @@
 <app-mostrarError [errorResponse]="errorResponse"></app-mostrarError>
 <h2>Opciones de busqueda</h2>
 <ngForm>
+    <div class="form-group row">
+        <div class="col-sm-4 col-md-2 d-flex align-items-center">
+            <label for="texto" style="margin: 0">Filtro por título</label>
+        </div>
+        <div class="col-sm-8 col-md-10">
+            <input type="text" class="form-control" id="texto" name="texto" [(ngModel)]="texto" placeholder="Filtrar por título" />
+        </div>
+    </div>
     <div class="form-row">
         <div class="form-group col-md-4">
             <label for="categorias">Categorias</label>

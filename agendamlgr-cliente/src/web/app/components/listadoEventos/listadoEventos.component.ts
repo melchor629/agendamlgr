@@ -16,20 +16,23 @@ export class ListadoEventosComponent implements OnChanges {
         for(let propertyName in changes) {
             if(propertyName === 'eventos') {
                 this.page = 0;
-                this.totalPages = this.eventos ? Math.round(this.eventos.length / 10) : 1;
+                this.totalPages = this.eventos ? Math.trunc(this.eventos.length / 10) + +(this.eventos.length % 10 !== 0) : 1;
             }
         }
     }
 
-    private goToPage(page: number): void {
+    private goToPage(page: number, event: Event): void {
+        event.preventDefault();
         this.page = page;
     }
 
-    private goToPreviousPage(): void {
+    private goToPreviousPage(event: Event): void {
+        event.preventDefault();
         this.page--;
     }
 
-    private goToNextPage(): void {
+    private goToNextPage(event: Event): void {
+        event.preventDefault();
         this.page++;
     }
 

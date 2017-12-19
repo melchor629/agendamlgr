@@ -14,6 +14,7 @@ import { EditarEventoComponent } from "./components/editarEvento/editarEvento.co
 import { CrearEventoComponent } from "./components/crearEvento/crearEvento.component";
 import { ListadoEventosComponent } from "./components/listadoEventos/listadoEventos.component";
 import { MostrarErrorComponent } from "./components/mostrarError/mostrarError.component";
+import { BusquedaNormalComponent } from "./components/busquedaNormal/busquedaNormal.component";
 //Service imports
 import { CategoriaService } from './services/categoria.service';
 import { UsuarioService } from './services/usuario.service';
@@ -32,6 +33,7 @@ const appRoutes: Routes = [
     {path: 'verEvento/:id', component: VerEventoComponent},
     { path: 'buscar/:categoriasSeleccionadas', component: BusquedaComponent },
     { path: 'buscar', component: BusquedaComponent },
+    { path: 'nbuscar/:texto', component: BusquedaNormalComponent },
     { path: 'editarEvento/:id', component: EditarEventoComponent },
     { path: 'crearEvento', component: CrearEventoComponent }
 ];
@@ -53,6 +55,7 @@ const appRoutes: Routes = [
         CrearEventoComponent,
         ListadoEventosComponent,
         MostrarErrorComponent,
+        BusquedaNormalComponent,
         ParseDateStringPipe,
         MarkdownPipe
     ],
@@ -65,4 +68,4 @@ const appRoutes: Routes = [
 })
 export class AppModule { }
 
-registerLocaleData(localeEs, 'es')
+registerLocaleData(localeEs, 'es');

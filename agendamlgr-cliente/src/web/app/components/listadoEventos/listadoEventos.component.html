@@ -2,16 +2,16 @@
     <nav aria-label="Page navigation example">
         <ul class="pagination">
             <li [class]="page === 0 ? 'page-item disabled' : 'page-item'">
-                <a class="page-link" href="javascript:window.Boolean(0)" aria-label="Anterior" (click)="goToPreviousPage()">
+                <a class="page-link" href="#" aria-label="Anterior" (click)="goToPreviousPage($event)">
                     <span aria-hidden="true">&laquo;</span>
                     <span class="sr-only">Anterior</span>
                 </a>
             </li>
             <li *ngFor="let i of range(0, totalPages)" [class]="page === i ? 'page-item active' : 'page-item'">
-                <a class="page-link" href="javascript:window.Boolean(0)" (click)="goToPage(i)">{{ i + 1 }}</a>
+                <a class="page-link" href="#" (click)="goToPage(i, $event)">{{ i + 1 }}</a>
             </li>
             <li [class]="page === totalPages - 1 ? 'page-item disabled' : 'page-item'">
-                <a class="page-link" href="javascript:window.Boolean(0)" aria-label="Siguiente" (click)="goToNextPage()">
+                <a class="page-link" href="#" aria-label="Siguiente" (click)="goToNextPage($event)">
                     <span aria-hidden="true">&raquo;</span>
                     <span class="sr-only">Siguiente</span>
                 </a>
@@ -55,16 +55,16 @@
     <nav aria-label="Page navigation example">
         <ul class="pagination">
             <li [class]="page === 0 ? 'page-item disabled' : 'page-item'">
-                <a class="page-link" href="javascript:window.Boolean(0)" aria-label="Anterior" (click)="goToPreviousPage()">
+                <a class="page-link" href="#" aria-label="Anterior" (click)="goToPreviousPage($event)">
                     <span aria-hidden="true">&laquo;</span>
                     <span class="sr-only">Anterior</span>
                 </a>
             </li>
             <li *ngFor="let i of range(0, totalPages)" [class]="page === i ? 'page-item active' : 'page-item'">
-                <a class="page-link" href="javascript:window.Boolean(0)" (click)="goToPage(i)">{{ i + 1 }}</a>
+                <a class="page-link" href="#" (click)="goToPage(i, $event)">{{ i + 1 }}</a>
             </li>
             <li [class]="page === totalPages - 1 ? 'page-item disabled' : 'page-item'">
-                <a class="page-link" href="javascript:window.Boolean(0)" aria-label="Siguiente" (click)="goToNextPage()">
+                <a class="page-link" href="#" aria-label="Siguiente" (click)="goToNextPage($event)">
                     <span aria-hidden="true">&raquo;</span>
                     <span class="sr-only">Siguiente</span>
                 </a>

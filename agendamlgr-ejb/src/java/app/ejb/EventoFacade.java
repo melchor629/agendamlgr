@@ -132,7 +132,7 @@ public class EventoFacade extends AbstractFacade<Evento> {
         String filtroNombre;
         boolean filtroNombreValido = textoTitulo != null && !textoTitulo.trim().isEmpty();
         if(filtroNombreValido){
-            filtroNombre =  " and (0 < LOCATE(:textoTitulo, e.nombre)) ";
+            filtroNombre =  " and (0 < LOCATE(LOWER(:textoTitulo), LOWER(e.nombre))) ";
         }
         else{
             filtroNombre = " ";
