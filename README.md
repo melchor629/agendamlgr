@@ -31,6 +31,9 @@ el cliente permite acceder todos los servicios de la lista.
  6. Instalar dependencias de node.js del proyecto _agendamlgr-cliente_ con `npm install`
  7. Compilar la versión _debug_ (`npm run build-debug`) o _release_ (`npm run build`) del cliente
 
+## Quieres instalar AngularMaps y peta?
+Si después del pull `npm install` no funciona, haz lo siguiente: `npm i -f` y luego `npm install`
+
 ## Requisitos
 Hay que tener instalado:
 * JVM

@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/melchor629/agendamlgr#readme",
   "dependencies": {
+    "@agm/core": "^1.0.0-beta.2",
     "@angular/common": "^5.1.1",
     "@angular/compiler": "^5.1.1",
     "@angular/core": "^5.1.1",
