@@ -1,4 +1,5 @@
 import {Component, OnInit} from "@angular/core";
+import { HttpErrorResponse } from '@angular/common/http';
 import {CategoriaService} from "../../services/categoria.service";
 import {EventoService} from "../../services/evento.service";
 import {UsuarioService} from "../../services/usuario.service";
@@ -13,6 +14,7 @@ import {Categoria} from "../../interfaces/categoria";
 })
 export class EditarEventoComponent implements OnInit {
 
+    errorResponse: HttpErrorResponse = new HttpErrorResponse({});
     private id: number;
     private evento: Evento;
     private categorias: Categoria[] = [];
@@ -42,8 +44,12 @@ export class EditarEventoComponent implements OnInit {
             evento.fecha = evento.fecha.replace("Z[UTC]", "");
             this.fecha = this.eventoService.corregirFecha(new Date(evento.fecha).toISOString());
             this.categoriasEvento = evento.categoriaList.map(categoria => categoria.id);
+        },(errorResponse) =>{
+          this.errorResponse = errorResponse;
         });
-        this.categoriaService.buscarTodasLasCategorias().subscribe(categorias => this.categorias = categorias)
+        this.categoriaService.buscarTodasLasCategorias().subscribe(categorias => this.categorias = categorias,(errorResponse) =>{
+          this.errorResponse = errorResponse;
+        });
     }
 
     private onEdit(): void {
@@ -66,8 +72,9 @@ export class EditarEventoComponent implements OnInit {
         }
         this.eventoService.actualizarEvento(this.evento).subscribe(
             () => this.router.navigateByUrl(`/verEvento/${this.evento.id}`),
-            error => alert(JSON.stringify(error.error))
-        );
+            (errorResponse) =>{
+              this.errorResponse = errorResponse;
+            });
     }
 
     private onCancel(): void {

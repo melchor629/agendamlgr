@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { EventoService } from '../../services/evento.service';
 import { Evento } from '../../interfaces/evento';
 
@@ -9,6 +10,7 @@ import { Evento } from '../../interfaces/evento';
 })
 export class HomeComponent implements OnInit {
 
+  errorResponse: HttpErrorResponse = new HttpErrorResponse({});
   eventos: Evento[];
 
   constructor(private eventoService: EventoService) {}
@@ -20,6 +22,8 @@ export class HomeComponent implements OnInit {
   listarEventos(){
     this.eventoService.buscarEventos().subscribe((resultado)=>{
       this.eventos = resultado;
+    },(errorResponse) =>{
+      this.errorResponse = errorResponse;
     });
   }
 }

@@ -1,19 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { CategoriaService } from '../../services/categoria.service';
 import { EventoService } from '../../services/evento.service';
 import { UsuarioService } from '../../services/usuario.service';
-import {Evento, eventoVacio} from '../../interfaces/evento';
-import {FotosDeEvento, fotosDeEventoVacio} from '../../interfaces/fotosDeEvento';
+import { Evento, eventoVacio } from '../../interfaces/evento';
+import { FotosDeEvento, fotosDeEventoVacio } from '../../interfaces/fotosDeEvento';
 import { Foto } from '../../interfaces/foto';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-verEvento',
   templateUrl: './verEvento.component.html',
   styleUrls: ['./verEvento.component.scss']
 })
 export class VerEventoComponent implements OnInit {
 
+  errorResponse: HttpErrorResponse = new HttpErrorResponse({});
   id: number;
   evento: Evento;
   nombreCreador: string;
@@ -40,17 +42,25 @@ export class VerEventoComponent implements OnInit {
       });
       this.usuarioService.buscarUsuario(this.evento.creador).subscribe((resultado2)=>{
           this.nombreCreador = resultado2.nombre;
+      },(errorResponse) =>{
+        this.errorResponse = errorResponse;
       });
+    },(errorResponse) =>{
+      this.errorResponse = errorResponse;
     });
     this.eventoService.buscarFotosParaEvento(this.id).subscribe((resultado3)=>{
       this.fotosDeEvento = resultado3;
       this.fotos = this.fotosDeEvento.fotos;
+    },(errorResponse) =>{
+      this.errorResponse = errorResponse;
     });
   }
 
   validar(){
     this.eventoService.validarEvento(this.id).subscribe((resultado)=>{
       console.log(resultado);
+    },(errorResponse) =>{
+      this.errorResponse = errorResponse;
     });
   }
 

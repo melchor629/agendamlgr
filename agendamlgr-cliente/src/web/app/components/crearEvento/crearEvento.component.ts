@@ -1,4 +1,5 @@
 import {Component, OnInit} from "@angular/core";
+import { HttpErrorResponse } from '@angular/common/http';
 import {CategoriaService} from "../../services/categoria.service";
 import {EventoService} from "../../services/evento.service";
 import {UsuarioService} from "../../services/usuario.service";
@@ -14,6 +15,7 @@ import {Router} from "@angular/router";
 })
 export class CrearEventoComponent implements OnInit {
 
+    errorResponse: HttpErrorResponse = new HttpErrorResponse({});
     private evento: Evento;
     private categorias: Categoria[] = [];
     private categoriasEvento: number[] = [];
@@ -32,7 +34,9 @@ export class CrearEventoComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.categoriaService.buscarTodasLasCategorias().subscribe(categorias => this.categorias = categorias)
+        this.categoriaService.buscarTodasLasCategorias().subscribe(categorias => this.categorias = categorias,(errorResponse) =>{
+          this.errorResponse = errorResponse;
+        });
     }
 
     private onCreate(): void {
@@ -49,9 +53,9 @@ export class CrearEventoComponent implements OnInit {
             }
         }
         this.eventoService.crearEvento(this.evento).subscribe(
-            evento => this.router.navigateByUrl(`/verEvento/${evento.id}`),
-            error => alert(JSON.stringify(<Error>error.error))
-        );
+            evento => this.router.navigateByUrl(`/verEvento/${evento.id}`),(errorResponse) =>{
+              this.errorResponse = errorResponse;
+            });
     }
 
     private onCancel(): void {
