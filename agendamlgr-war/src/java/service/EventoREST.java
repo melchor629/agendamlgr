@@ -48,9 +48,6 @@ public class EventoREST {
     @EJB
     private CategoriaFacade categoriaFacade;
 
-    // Coordenadas por defecto
-    public static double LATITUD_DEFECTO = 36.7212411;
-    public static double LONGITUD_DEFECTO = -4.4214114999999765;
 
     private static final Function<? super Evento, EventoProxyMini> convertToMiniProxyWithFlickr = evento -> {
         EventoProxyMini miniEvento = new EventoProxyMini(evento);
@@ -178,9 +175,9 @@ public class EventoREST {
             eventoDB.setLatitud(new BigDecimal(coords[0]));
             eventoDB.setLongitud(new BigDecimal(coords[1]));
         } else {
-            // las coordenadas son nulas, se le ponen las coordenadas del centro de Malaga
-            eventoDB.setLatitud(new BigDecimal(LATITUD_DEFECTO));
-            eventoDB.setLongitud(new BigDecimal(LONGITUD_DEFECTO));
+            // las coordenadas son nulas, se dejan así
+            eventoDB.setLatitud(null);
+            eventoDB.setLongitud(null);
         }
 
         // Rellenar los atributos propios de Flickr
@@ -376,7 +373,7 @@ public class EventoREST {
 
         // Se procede a obtener las coordenadas como un par (latitud,longitud)
         String coordenadas = buscarCoordenadas(direccion);
-        double latitud, longitud;
+        double latitud = 0, longitud = 0;
         boolean encontrado = true;
 
         if (coordenadas != null) {
@@ -386,12 +383,8 @@ public class EventoREST {
             latitud = Double.parseDouble(coords[0]);
             longitud = Double.parseDouble(coords[1]);
         } else {
-            // Se indica que no se han encontrado las coordenadas y se mandan
-            // las de Malaga
+            // Se indica que no se han encontrado las coordenadas
             encontrado = false;
-            // Las coordenadas son nulas, se le ponen las coordenadas del centro de Malaga
-            latitud = LATITUD_DEFECTO;
-            longitud = LONGITUD_DEFECTO;
         }
 
         return new Coordenadas(encontrado, latitud, longitud);
