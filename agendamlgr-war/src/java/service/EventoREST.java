@@ -242,6 +242,24 @@ public class EventoREST {
         eventoDB.setTipo(evento.tipo);
         modificarDatosFlickr(eventoDB, evento.flickrUserID, evento.flickrAlbumID);
 
+        // Actualizacion de coordenadas del evento
+        // Rellenar latitud y longitud del evento
+        // Obtener lat y long
+        String coordenadas = buscarCoordenadas(evento.direccion);
+
+        if (coordenadas != null) {
+            // Separar coordenadas devueltas en latitud y longitud
+            String[] coords = coordenadas.split(",");
+
+            eventoDB.setLatitud(new BigDecimal(coords[0]));
+            eventoDB.setLongitud(new BigDecimal(coords[1]));
+        } else {
+            // las coordenadas son nulas, se dejan así
+            eventoDB.setLatitud(null);
+            eventoDB.setLongitud(null);
+        }
+        
+        
         // Proceder a editar el evento
         eventoFacade.editarEventoTipoUsuario(eventoDB, listaCategorias, usuario);
 
