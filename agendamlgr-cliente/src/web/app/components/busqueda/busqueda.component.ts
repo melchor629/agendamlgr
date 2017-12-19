@@ -1,4 +1,5 @@
 import { Component,OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { EventoService } from '../../services/evento.service';
 import { CategoriaService } from '../../services/categoria.service';
 import { Evento } from '../../interfaces/evento';
@@ -12,6 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class BusquedaComponent implements OnInit {
 
+  errorResponse: HttpErrorResponse = new HttpErrorResponse({});
   categorias: Categoria[];
   preferencias: Categoria[];
   ordenarPorDistancia: boolean = false;
@@ -64,12 +66,16 @@ export class BusquedaComponent implements OnInit {
   listarCategorias() {
       this.categoriaService.buscarTodasLasCategorias().subscribe((resultado) => {
           this.categorias = resultado;
+      },(errorResponse) =>{
+        this.errorResponse = errorResponse;
       });
   }
 
   listarPreferencias() {
       this.categoriaService.buscarPreferenciasUsuario().subscribe((resultado) => {
           this.preferencias = resultado;
+      },(errorResponse) =>{
+        this.errorResponse = errorResponse;
       });
   }
 
@@ -82,6 +88,8 @@ export class BusquedaComponent implements OnInit {
     this.eventos = null;
     this.eventoService.filtrarEventos(ordenarPorDistancia,radio,latitud,longitud,mostrarDeMiPreferencia,categoriasSeleccionadas).subscribe((resultado)=>{
       this.eventos = resultado;
+    },(errorResponse) =>{
+      this.errorResponse = errorResponse;
     });
   }
 
