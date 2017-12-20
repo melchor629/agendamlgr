@@ -33,7 +33,6 @@ export class EditarEventoComponent implements OnInit {
         this.id = Number(route.snapshot.params['id']);
         this.evento = eventoVacio();
         this.fecha = this.eventoService.corregirFecha();
-        console.log("Una fecha guapa:"+this.fecha);
     }
 
     ngOnInit(): void {
@@ -60,8 +59,6 @@ export class EditarEventoComponent implements OnInit {
         this.evento.fecha = this.fecha;
         if (this.urlFlickr) {
             let result = this.flickrRegex.exec(this.urlFlickr);
-            console.log(this.urlFlickr);
-            console.log(result);
             if (result && result.length === 3) {
                 this.evento.flickrAlbumID = result[2];
                 this.evento.flickrUserID = result[1];

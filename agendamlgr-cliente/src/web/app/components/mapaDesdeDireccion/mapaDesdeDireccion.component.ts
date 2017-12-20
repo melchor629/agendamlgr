@@ -7,11 +7,12 @@ import {Coordenadas} from "../../interfaces/evento";
     templateUrl: 'mapaDesdeDireccion.component.html'
 })
 
-export class MapaDesdeDireccionComponent implements OnChanges {
+export class MapaDesdeDireccionComponent implements OnChanges{
 
     @Input() direccion: string;
 
     private resultados: Coordenadas;
+    private primeraVisualizacion: boolean = false;
 
     constructor(private eventoService: EventoService) {
         this.resultados = {encontrado: false, latitud: 0, longitud: 0};
@@ -19,16 +20,10 @@ export class MapaDesdeDireccionComponent implements OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         for (let propertyName in changes) {
-            /* if (propertyName === 'direccion') {
-                if (this.direccion != null && this.direccion.trim().length != 0) {
-                    this.eventoService.obtenerCoordenadasDesdeDireccion(this.direccion).subscribe(
-                        coordenadas => {
-                            this.resultados = coordenadas;
-                        },
-                        error => console.log(error)
-                    )
-                }
-            } */
+            if (propertyName === 'direccion' && !this.primeraVisualizacion && this.direccion != null && this.direccion.trim().length != 0) {
+                this.primeraVisualizacion = true;
+                this.actualizarMapa();
+            }
         }
     }
 
