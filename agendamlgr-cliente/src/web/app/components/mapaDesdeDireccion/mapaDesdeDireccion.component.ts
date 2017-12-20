@@ -19,7 +19,7 @@ export class MapaDesdeDireccionComponent implements OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         for (let propertyName in changes) {
-            if (propertyName === 'direccion') {
+            /* if (propertyName === 'direccion') {
                 if (this.direccion != null && this.direccion.trim().length != 0) {
                     this.eventoService.obtenerCoordenadasDesdeDireccion(this.direccion).subscribe(
                         coordenadas => {
@@ -28,7 +28,18 @@ export class MapaDesdeDireccionComponent implements OnChanges {
                         error => console.log(error)
                     )
                 }
-            }
+            } */
+        }
+    }
+
+    actualizarMapa() {
+        if (this.direccion != null && this.direccion.trim().length != 0) {
+            this.eventoService.obtenerCoordenadasDesdeDireccion(this.direccion).subscribe(
+                coordenadas => {
+                    this.resultados = coordenadas;
+                },
+                error => console.log(error)
+            )
         }
     }
 
