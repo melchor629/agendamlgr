@@ -1,0 +1,16 @@
+<div style="margin-bottom: 1rem">
+    <div class="d-flex justify-content-center align-items-center">
+        <button type="button" class="btn btn-primary" (click)="actualizarMapa()">Comprobar dirección en mapa</button>
+    </div>
+</div>
+
+<agm-map [latitude]="resultados.latitud" [longitude]="resultados.longitud" [zoom]="14" *ngIf="resultados.encontrado">
+    <agm-marker [latitude]="resultados.latitud" [longitude]="resultados.longitud"></agm-marker>
+</agm-map>
+
+<div style="margin-bottom: 1rem" *ngIf="!resultados.encontrado">
+    <div class="d-flex justify-content-center align-items-center" style="height: 40vh; background-color: #cccccc">
+        <p style="margin:0;color:#000">Mapa disponible cuando se aporte una dirección válida</p>
+    </div>
+</div>
+<div style="margin: 1rem;"></div>

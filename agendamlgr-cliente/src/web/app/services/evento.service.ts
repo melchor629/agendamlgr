@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {AbstractService} from './abstract.service';
-import {Evento} from '../interfaces/evento';
+import {Coordenadas, Evento} from '../interfaces/evento';
 import {Categoria} from '../interfaces/categoria';
 import {FotosDeEvento} from '../interfaces/fotosDeEvento';
 
@@ -63,6 +63,10 @@ export class EventoService extends AbstractService {
 
     buscarFotosParaEvento(id: number) {
         return this.get<FotosDeEvento>('evento', `fotos/${id}`);
+    }
+
+    obtenerCoordenadasDesdeDireccion(direccion: string){
+        return this.get<Coordenadas>('evento',`coordenadas/${direccion}`);
     }
 
     corregirFecha(fecha = new Date().toISOString()): string {

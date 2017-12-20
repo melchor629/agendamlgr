@@ -27,6 +27,7 @@ import { MarkdownPipe } from "./pipes/markdown.pipe";
 
 import localeEs from '@angular/common/locales/es';
 import { registerLocaleData } from "@angular/common";
+import {MapaDesdeDireccionComponent} from "./components/mapaDesdeDireccion/mapaDesdeDireccion.component";
 
 const apiKey = require('./services/tokens.json');
 
@@ -65,7 +66,8 @@ const appRoutes: Routes = [
         MostrarErrorComponent,
         BusquedaNormalComponent,
         ParseDateStringPipe,
-        MarkdownPipe
+        MarkdownPipe,
+        MapaDesdeDireccionComponent
     ],
     providers: [
         CategoriaService,

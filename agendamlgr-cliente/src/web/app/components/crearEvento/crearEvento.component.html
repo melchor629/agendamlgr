@@ -55,6 +55,8 @@
         <input id="direccion" class="form-control" required max="250" placeholder="Dirección del evento" name="direccion" [(ngModel)]="evento.direccion" />
     </div>
 
+    <mapa-desde-direccion [direccion]="evento.direccion"></mapa-desde-direccion>
+
     <div class="form-row">
         <div class="form-group col-md-4">
             <label for="precio">Precio <small>(opcional)</small></label>
