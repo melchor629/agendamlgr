@@ -555,19 +555,23 @@ public class EventoREST {
 
         // Direccion del evento
         public String direccion;
+        
+        public Double latitud, longitud;
 
         public String fotoUrl;
 
         public EventoProxyMini() {
         }
 
-        private EventoProxyMini(Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion) {
+        private EventoProxyMini(Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion, Double latitud, Double longitud) {
             this.id = id;
             this.nombre = nombre;
             this.descripcion = ellipsize(descripcion, MAX_CARACTERES_DESCRIPCION);
             this.fecha = fecha;
             this.precio = precio;
             this.direccion = direccion;
+            this.latitud = latitud;
+            this.longitud = longitud;
         }
 
         // Acepta un evento en el constructor
@@ -580,6 +584,8 @@ public class EventoREST {
             this.fecha = evento.getFecha();
             this.precio = evento.getPrecio();
             this.direccion = evento.getDireccion();
+            this.latitud = evento.getLatitud() != null ? evento.getLatitud().doubleValue() : null;
+            this.longitud = evento.getLongitud() != null ? evento.getLongitud().doubleValue() : null;
         }
 
     }
@@ -599,23 +605,19 @@ public class EventoREST {
         // ID Usuario creador del evento
         public String creador;
 
-        public Double latitud, longitud;
-
         // Atributos para la funcionalidad relacionada con Flickr
         public String flickrUserID, flickrAlbumID;
 
         public EventoProxy() {
         }
 
-        public EventoProxy(Short tipo, boolean validado, List<CategoriaREST.CategoriaProxy> categoriaList, String creador, Double latitud, Double longitud, Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion, String flickrUserID, String flickrAlbumID) {
+        public EventoProxy(Short tipo, boolean validado, List<CategoriaREST.CategoriaProxy> categoriaList, String creador, Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion, String flickrUserID, String flickrAlbumID, Double latitud, Double longitud) {
 
-            super(id, nombre, descripcion, fecha, precio, direccion);
+            super(id, nombre, descripcion, fecha, precio, direccion, latitud, longitud);
             this.tipo = tipo;
             this.validado = validado;
             this.categoriaList = categoriaList;
             this.creador = creador;
-            this.latitud = latitud;
-            this.longitud = longitud;
             this.flickrAlbumID = flickrAlbumID;
             this.flickrUserID = flickrUserID;
         }
@@ -631,9 +633,6 @@ public class EventoREST {
             //
 
             this.categoriaList = evento.getCategoriaList().stream().map(CategoriaREST.CategoriaProxy::new).collect(Collectors.toList());
-
-            this.latitud = evento.getLatitud() != null ? evento.getLatitud().doubleValue() : null;
-            this.longitud = evento.getLongitud() != null ? evento.getLongitud().doubleValue() : null;
             this.creador = evento.getCreador().getId();
             // Volver a fijar la descipcion en su version larga
             this.descripcion = evento.getDescripcion();

@@ -1,4 +1,16 @@
 @import "~bootstrap/scss/bootstrap";
+@import "~snazzy-info-window/dist/snazzy-info-window.scss";
+
+// Correcion del padding
+.si-content-wrapper{
+    padding: 2%;
+    padding-top: 30px;
+}
+
+.si-content{
+    max-width: 500px;
+    max-height: initial;
+}
 
 //Loading spinner
 //From https://codepen.io/mrrocks/pen/EiplA
@@ -85,4 +97,9 @@ body > my-app > .container {
 
 .ng-touched.ng-invalid:not(form)  {
     @extend .is-invalid;
+}
+
+// Altura del mapa de Angular Maps
+agm-map {
+  height: 40vh;
 }

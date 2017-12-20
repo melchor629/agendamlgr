@@ -33,7 +33,9 @@
 
 <h4>Ubicación</h4>
 <p>
-    AQUI DEBE IR EL MAPA DE GOOGLE MAPS<br />
+    <agm-map [latitude]="evento.latitud" [longitude]="evento.longitud" [zoom]="14">
+        <agm-marker [latitude]="evento.latitud" [longitude]="evento.longitud"></agm-marker>
+    </agm-map>
     {{ evento.direccion }}
 </p>
 
