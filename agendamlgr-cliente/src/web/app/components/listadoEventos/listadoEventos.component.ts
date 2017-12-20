@@ -77,8 +77,6 @@ export class ListadoEventosComponent implements OnChanges {
                     return a;
                 }, {lat: 0, long: 0});
 
-                console.log(coords.lat + " , " + coords.long);
-
                 this.latitud = coords.lat / eventosCalculados;
                 this.longitud = coords.long / eventosCalculados;
             }
