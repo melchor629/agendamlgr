@@ -1,3 +1,19 @@
 .espacio {
     margin-top: 40px;
 }
+
+.delete {
+    color: lightgrey;
+    transition: color .2s ease-in-out;
+
+    &:hover {
+        color: #157ffb;
+        text-decoration: none;
+    }
+}
+
+.overflow {
+    overflow-y: auto;
+    max-height: 230px;
+    padding-right: 10px;
+}

@@ -25,6 +25,7 @@ export class BusquedaComponent implements OnInit {
     eventos: Evento[] = [];
     palabraFiltro: string;
     geolocalizando: boolean = false;
+    texto: string = "";
 
     constructor(private eventoService: EventoService, private categoriaService: CategoriaService, private route: ActivatedRoute) {
         if(this.route.snapshot.params['categoriasSeleccionadas']){
@@ -61,7 +62,7 @@ export class BusquedaComponent implements OnInit {
             };
             categoriasSeleccionadas.push(c);
         }
-        this.listarEventosFiltrados(this.ordenarPorDistancia,this.radio,this.latitud,this.longitud,this.mostrarDeMiPreferencia,categoriasSeleccionadas);
+        this.listarEventosFiltrados(this.ordenarPorDistancia,this.radio,this.latitud,this.longitud,this.mostrarDeMiPreferencia,categoriasSeleccionadas,this.texto);
     }
 
     listarCategorias() {
@@ -87,9 +88,10 @@ export class BusquedaComponent implements OnInit {
                            latitud: number,
                            longitud: number,
                            mostrarDeMiPreferencia: boolean,
-                           categoriasSeleccionadas: Categoria[]){
+                           categoriasSeleccionadas: Categoria[],
+                           texto?: string){
         this.eventos = null;
-        this.eventoService.filtrarEventos(ordenarPorDistancia,radio,latitud,longitud,mostrarDeMiPreferencia,categoriasSeleccionadas).subscribe((resultado)=>{
+        this.eventoService.filtrarEventos(ordenarPorDistancia,radio,latitud,longitud,mostrarDeMiPreferencia,categoriasSeleccionadas, texto).subscribe((resultado)=>{
             this.eventos = resultado;
         },(errorResponse) =>{
             this.errorResponse = errorResponse;

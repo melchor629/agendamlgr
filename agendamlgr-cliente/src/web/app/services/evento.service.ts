@@ -46,14 +46,18 @@ export class EventoService extends AbstractService {
                    latitud: number,
                    longitud: number,
                    mostrarDeMiPreferencia: boolean,
-                   categoriasSeleccionadas: Categoria[]) {
+                   categoriasSeleccionadas: Categoria[],
+                   filtroTitulo?: string) {
         let params = new HttpParams();
         params = params.append('ordenarPorDistancia', ordenarPorDistancia ? 'true' : 'false');
         if (ordenarPorDistancia) params = params.append('radio', radio.toString());
         if (ordenarPorDistancia) params = params.append('latitud', latitud.toString());
         if (ordenarPorDistancia) params = params.append('longitud', longitud.toString());
         params = params.append('mostrarDeMiPreferencia', mostrarDeMiPreferencia ? 'true' : 'false');
-        categoriasSeleccionadas.forEach(categoria => params = params.append('categoriasSeleccionadas', categoria.id.toString()));
+        if(filtroTitulo) params = params.append('textoTitulo', filtroTitulo);
+        if(categoriasSeleccionadas) {
+            categoriasSeleccionadas.forEach(categoria => params = params.append('categoriasSeleccionadas', categoria.id.toString()));
+        }
         return this.get<Evento[]>('evento', 'filtrar', {params});
     }
 

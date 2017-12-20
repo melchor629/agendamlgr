@@ -22,7 +22,11 @@ export class CategoriaService extends AbstractService{
     return this.get<Categoria[]>('categoria', 'preferencias');
   }
 
-  buscarCategoriasEvento(id: number){
-    return this.get<Categoria[]>('categoria', `categoriasEvento${id}`);
+  eliminarPreferenciaUsuario(categoria: Categoria) {
+    return this.delete<{deleted: boolean}>('categoria', `preferencias/${categoria.id}`);
+  }
+
+  añadirPreferenciaUsuario(categoria: Categoria) {
+    return this.post<Categoria[]>('categoria', 'preferencias', categoria);
   }
 }

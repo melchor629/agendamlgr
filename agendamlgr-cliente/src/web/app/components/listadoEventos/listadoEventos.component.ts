@@ -23,7 +23,8 @@ export class ListadoEventosComponent implements OnChanges {
         for (let propertyName in changes) {
             if (propertyName === 'eventos') {
                 this.page = 0;
-                this.totalPages = this.eventos ? Math.round(this.eventos.length / 10) : 1;
+
+                this.totalPages = this.eventos ? Math.trunc(this.eventos.length / 10) + +(this.eventos.length % 10 !== 0) : 1;
                 this.actualizarCoordenadasCentrado();
             }
 
@@ -33,15 +34,18 @@ export class ListadoEventosComponent implements OnChanges {
         }
     }
 
-    private goToPage(page: number): void {
+    private goToPage(page: number, event: Event): void {
+        event.preventDefault();
         this.page = page;
     }
 
-    private goToPreviousPage(): void {
+    private goToPreviousPage(event: Event): void {
+        event.preventDefault();
         this.page--;
     }
 
-    private goToNextPage(): void {
+    private goToNextPage(event: Event): void {
+        event.preventDefault();
         this.page++;
     }
 
@@ -65,7 +69,7 @@ export class ListadoEventosComponent implements OnChanges {
 
                 let eventosCalculados: number = 0;
                 let coords = this.eventos.reduce((a, b) => {
-                    if(b.longitud != null && b.latitud != null) {
+                    if (b.longitud != null && b.latitud != null) {
                         a.lat += b.latitud as number;
                         a.long += b.longitud as number;
                         eventosCalculados++;
@@ -73,7 +77,7 @@ export class ListadoEventosComponent implements OnChanges {
                     return a;
                 }, {lat: 0, long: 0});
 
-                console.log(coords.lat+" , "+coords.long);
+                console.log(coords.lat + " , " + coords.long);
 
                 this.latitud = coords.lat / eventosCalculados;
                 this.longitud = coords.long / eventosCalculados;
