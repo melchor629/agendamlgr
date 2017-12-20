@@ -1,29 +1,33 @@
-<div class="container-fluid" style="margin-bottom: 1rem;">
-    <agm-map style="height: 40vh;" [latitude]="latitud" [longitude]="longitud" [zoom]="12">
+<div style="margin-bottom: 1rem;" *ngIf="eventos && eventos.length !== 0">
+    <agm-map style="height: 40vh;" [latitude]="latitud" [longitude]="longitud" [fitBounds]="limites">
         <agm-marker *ngFor="let evento of eventos" [latitude]="evento.latitud" [longitude]="evento.longitud">
-            <agm-snazzy-info-window [closeWhenOthersOpen]="true">
+            <agm-snazzy-info-window [closeWhenOthersOpen]="true" [maxWidth]="300" [maxHeight]="400">
                 <ng-template>
-                    <p class="font-weight-bold">{{evento.nombre}}:</p>
-                    <p>{{evento.descripcion}}</p>
-                    <p>{{evento.fecha | parseDateString | date:'EEEE d \'de\' MMMM (y), HH:mm':'':'es'}}</p>
-                    <p *ngIf="evento.precio">{{evento.precio | currency:'EUR':'symbol'}}</p>
-                    <p><a routerLink="/verEvento/{{evento.id}}" class="card-link">Ver evento</a></p>
-                    <!-- <div class="card">
+                    <div class="card">
+                        <img src="{{ evento.fotoUrl }}" class="card-img-top" *ngIf="evento.fotoUrl" />
                          <div class="card-body">
-                             <h4 class="card-title" style="font-size: 1.3em;">{{evento.nombre}}</h4>
-                             <h6 class="card-subtitle mb-2 text-muted" style="font-size: 1.3em;">{{evento.fecha | parseDateString | date:'EEEE d
-                                 \'de\' MMMM (y), HH:mm':'':'es'}}</h6>
-                             <h6 *ngIf="evento.precio" class="card-subtitle mb-2 text-muted" style="font-size: 1.3em;">{{evento.precio |
-                                 currency:'EUR':'symbol'}}</h6>
-                             <p class="card-text">{{evento.descripcion}}</p>
+                             <h5 class="card-title">{{evento.nombre}}</h5>
+                             <h6 class="card-subtitle mb-2 text-muted">
+                                 {{evento.fecha | parseDateString | date:'HH:mm dd/MM':'':'es'}}
+                             </h6>
                              <a routerLink="/verEvento/{{evento.id}}" class="card-link">Ver evento</a>
                          </div>
-                     </div> -->
-
+                     </div>
                 </ng-template>
             </agm-snazzy-info-window>
         </agm-marker>
+        <agm-marker *ngIf="coordedanadasCentrado"
+                    [latitude]="coordedanadasCentrado.latitude"
+                    [longitude]="coordedanadasCentrado.longitude"
+                    iconUrl="img/ic_my_location_black_24px.svg"
+                    title="Tu posición"></agm-marker>
     </agm-map>
+</div>
+
+<div style="margin-bottom: 1rem" *ngIf="!(eventos && eventos.length !== 0)">
+    <div class="d-flex justify-content-center align-items-center" style="height: 40vh; background-color: #cccccc">
+        <p style="margin:0;color:white">Mapa disponible cuando haya resultados</p>
+    </div>
 </div>
 
 <div class="d-flex justify-content-center" *ngIf="eventos && eventos.length !== 0">
@@ -58,9 +62,7 @@
             <h6 class="card-subtitle mb-2 text-muted">
                 {{ evento.fecha | parseDateString | date:'EEEE d \'de\' MMMM (y), HH:mm':'':'es' }}
             </h6>
-            <p class="card-text">
-                {{ evento.descripcion }}
-            </p>
+            <p class="card-text" [innerHTML]="evento.descripcion | md"></p>
             <a routerLink="/verEvento/{{evento.id}}" class="card-link">Ver más</a> &nbsp;
             <a href="#" class="card-link" *ngIf="evento.precio">Comprar tickets ({{ evento.precio }} €)</a>
         </div>

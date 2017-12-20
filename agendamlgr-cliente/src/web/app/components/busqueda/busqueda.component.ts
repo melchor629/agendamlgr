@@ -26,6 +26,7 @@ export class BusquedaComponent implements OnInit {
     palabraFiltro: string;
     geolocalizando: boolean = false;
     texto: string = "";
+    coordenadasGeolocalizacion: any = null;
 
     constructor(private eventoService: EventoService, private categoriaService: CategoriaService, private route: ActivatedRoute) {
         if(this.route.snapshot.params['categoriasSeleccionadas']){
@@ -100,6 +101,7 @@ export class BusquedaComponent implements OnInit {
     }
 
     geolocalizacion() {
+        this.coordenadasGeolocalizacion = null;
         if(this.ordenarPorDistancia) {
             if(navigator.geolocation) {
                 this.geolocalizando = true;
@@ -107,7 +109,7 @@ export class BusquedaComponent implements OnInit {
                     position => {
                         this.latitud = position.coords.latitude;
                         this.longitud = position.coords.longitude;
-                        console.log(position.coords);
+                        this.coordenadasGeolocalizacion = position.coords;
                         this.geolocalizando = false;
                     },
                     error => {
