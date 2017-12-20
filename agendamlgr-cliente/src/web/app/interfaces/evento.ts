@@ -1,4 +1,5 @@
 import { Categoria } from './categoria';
+
 export interface Evento{
   id: number;
   nombre: string;
@@ -15,6 +16,12 @@ export interface Evento{
   categoriaList: Categoria[];
   flickrUserID: string;
   flickrAlbumID: string;
+}
+
+export interface Coordenadas{
+    encontrado: boolean;
+    latitud: number;
+    longitud: number;
 }
 
 export function eventoVacio(): Evento {
