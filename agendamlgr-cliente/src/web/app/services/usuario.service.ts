@@ -17,4 +17,12 @@ export class UsuarioService extends AbstractService{
   buscarUsuario(id: string){
     return this.get<Usuario>('usuario', id);
   }
+
+  borrarUsuario(user: string | Usuario) {
+    return this.delete<{status: boolean}>('usuario', user instanceof String ? user : user.id);
+  }
+
+  modificarTipoUsuario(user: string | Usuario, tipo: number) {
+    return this.put<Usuario>('usuario', user instanceof String ? user : user.id, Math.trunc(tipo));
+  }
 }
