@@ -68,13 +68,4 @@ export class EventoService extends AbstractService {
     obtenerCoordenadasDesdeDireccion(direccion: string){
         return this.get<Coordenadas>('evento',`coordenadas/${direccion}`);
     }
-
-    corregirFecha(fecha = new Date().toISOString()): string {
-        // Dependiendo de si la fecha acaba en UTC o no hay que quitarle la Z
-
-        fecha = fecha.replace("Z[UTC]", "");
-        fecha = fecha.replace("[UTC]", "");
-        fecha = fecha.replace("Z", "");
-        return fecha;
-    }
 }

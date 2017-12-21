@@ -6,6 +6,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AgmCoreModule } from '@agm/core';
 import { AgmSnazzyInfoWindowModule } from '@agm/snazzy-info-window';
+import { DateTimePickerModule } from 'ng-pick-datetime';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //Component imports
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
@@ -17,6 +19,7 @@ import { CrearEventoComponent } from "./components/crearEvento/crearEvento.compo
 import { ListadoEventosComponent } from "./components/listadoEventos/listadoEventos.component";
 import { MostrarErrorComponent } from "./components/mostrarError/mostrarError.component";
 import { BusquedaNormalComponent } from "./components/busquedaNormal/busquedaNormal.component";
+import { MapaDesdeDireccionComponent } from "./components/mapaDesdeDireccion/mapaDesdeDireccion.component";
 //Service imports
 import { CategoriaService } from './services/categoria.service';
 import { UsuarioService } from './services/usuario.service';
@@ -26,8 +29,7 @@ import { ParseDateStringPipe } from "./pipes/parseDateString.pipe";
 import { MarkdownPipe } from "./pipes/markdown.pipe";
 
 import localeEs from '@angular/common/locales/es';
-import { registerLocaleData } from "@angular/common";
-import {MapaDesdeDireccionComponent} from "./components/mapaDesdeDireccion/mapaDesdeDireccion.component";
+import { registerLocaleData } from '@angular/common';
 
 const apiKey = require('./services/tokens.json');
 
@@ -46,6 +48,7 @@ const appRoutes: Routes = [
 @NgModule({
     imports: [
         BrowserModule,
+        BrowserAnimationsModule,
         HttpClientModule,
         FormsModule,
         RouterModule.forRoot(appRoutes),
@@ -53,6 +56,7 @@ const appRoutes: Routes = [
             apiKey: apiKey.google_api_key
         }),
         AgmSnazzyInfoWindowModule,
+        DateTimePickerModule
     ],
     declarations: [
         AppComponent,

@@ -20,7 +20,7 @@ export class EditarEventoComponent implements OnInit {
     private categorias: Categoria[] = [];
     private categoriasEvento: number[] = [];
     private urlFlickr: string;
-    private fecha: string;
+    private fecha: Date;
 
     private flickrRegexString = 'https://www\\.flickr\\.com/photos/([0-9@a-zA-Z]*)/(?:albums|sets)/(\\d*)';
     private flickrRegex = new RegExp(this.flickrRegexString, 'g');
@@ -32,7 +32,7 @@ export class EditarEventoComponent implements OnInit {
                 route: ActivatedRoute) {
         this.id = Number(route.snapshot.params['id']);
         this.evento = eventoVacio();
-        this.fecha = this.eventoService.corregirFecha();
+        this.fecha = new Date();
     }
 
     ngOnInit(): void {
@@ -41,7 +41,7 @@ export class EditarEventoComponent implements OnInit {
             if (evento.flickrUserID && evento.flickrAlbumID)
                 this.urlFlickr = `https://www.flickr.com/photos/${evento.flickrUserID}/albums/${evento.flickrAlbumID}`;
             evento.fecha = evento.fecha.replace("Z[UTC]", "");
-            this.fecha = this.eventoService.corregirFecha(new Date(evento.fecha).toISOString());
+            this.fecha = new Date(evento.fecha);
             this.categoriasEvento = evento.categoriaList.map(categoria => categoria.id);
         },(errorResponse) =>{
           this.errorResponse = errorResponse;
@@ -56,7 +56,7 @@ export class EditarEventoComponent implements OnInit {
         this.flickrRegex.lastIndex = 0;
 
         this.evento.categoriaList = this.categoriasEvento.map(id => <Categoria>{id, nombre: null});
-        this.evento.fecha = this.fecha;
+        this.evento.fecha = this.fecha.toISOString();
         if (this.urlFlickr) {
             let result = this.flickrRegex.exec(this.urlFlickr);
             if (result && result.length === 3) {

@@ -5,7 +5,6 @@ import {EventoService} from "../../services/evento.service";
 import {UsuarioService} from "../../services/usuario.service";
 import {Evento, eventoVacio} from "../../interfaces/evento";
 import {Categoria} from "../../interfaces/categoria";
-import {Error} from "../../interfaces/error";
 import {Router} from "@angular/router";
 
 @Component({
@@ -20,7 +19,7 @@ export class CrearEventoComponent implements OnInit {
     private categorias: Categoria[] = [];
     private categoriasEvento: number[] = [];
     private urlFlickr: string;
-    private fecha: string;
+    private fecha: Date;
 
     private flickrRegexString = 'https://www\\.flickr\\.com/photos/([0-9@a-zA-Z]*)/(?:albums|sets)/(\\d*)';
     private flickrRegex = new RegExp(this.flickrRegexString, 'g');
@@ -30,7 +29,7 @@ export class CrearEventoComponent implements OnInit {
                 private usuarioService: UsuarioService,
                 private router: Router) {
         this.evento = eventoVacio();
-        this.fecha = this.eventoService.corregirFecha();
+        this.fecha = new Date();
     }
 
     ngOnInit(): void {
@@ -41,7 +40,7 @@ export class CrearEventoComponent implements OnInit {
 
     private onCreate(): void {
         this.evento.categoriaList = this.categoriasEvento.map(id => <Categoria>{ id, nombre: null });
-        this.evento.fecha = this.fecha;
+        this.evento.fecha = this.fecha.toISOString();
         if(this.urlFlickr) {
             let result = this.flickrRegex.exec(this.urlFlickr);
             if(result && result.length === 3) {
