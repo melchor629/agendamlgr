@@ -23,7 +23,6 @@ export class BusquedaComponent implements OnInit {
     mostrarDeMiPreferencia: boolean = false;
     categoriasIds: number[] = [];
     eventos: Evento[] = [];
-    palabraFiltro: string;
     geolocalizando: boolean = false;
     texto: string = "";
     coordenadasGeolocalizacion: any = null;

@@ -7,7 +7,7 @@ export class MarkdownPipe implements PipeTransform {
     private reader = new commonmark.Parser();
     private writer = new commonmark.HtmlRenderer({ safe: true });
 
-    transform(md: string, ...args: any[]): any {
+    transform(md: string): any {
         if(md) {
             return this.writer.render(
                 this.reader.parse(

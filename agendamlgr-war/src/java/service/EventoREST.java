@@ -378,7 +378,7 @@ public class EventoREST {
     @Path("coordenadas/{direccion}")
     @Produces({MediaType.APPLICATION_JSON})
     public Coordenadas obtenerCoordenadas(@PathParam("direccion") String direccion, @HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgException {
-        String id = TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token));
+        TokensUtils.getUserIdFromJwtTokenOrThrow(TokensUtils.decodeJwtToken(token));
         // Si no se proporciona token o este no es valido se lanzara una excepcion
 
         // Se procede a obtener las coordenadas como un par (latitud,longitud)
@@ -429,25 +429,25 @@ public class EventoREST {
     }
 
     // Dado un texto permite abreviarlo a un máximo de caracteres dado
-    private final static String NON_THIN = "[^iIl1\\.,']";
+    private final static String NON_THIN = "[^iIl1.,']";
 
     private static int textWidth(String str) {
         return str.length() - str.replaceAll(NON_THIN, "").length() / 2;
     }
 
-    private static String ellipsize(String text, int max) {
+    private static String ellipsize(String text) {
 
-        if (textWidth(text) <= max) {
+        if (textWidth(text) <= EventoREST.MAX_CARACTERES_DESCRIPCION) {
             return text;
         }
 
         // Start by chopping off at the word before max
         // This is an over-approximation due to thin-characters...
-        int end = text.lastIndexOf(' ', max - 3);
+        int end = text.lastIndexOf(' ', EventoREST.MAX_CARACTERES_DESCRIPCION - 3);
 
         // Just one long word. Chop it off.
         if (end == -1) {
-            return text.substring(0, max - 3) + "...";
+            return text.substring(0, EventoREST.MAX_CARACTERES_DESCRIPCION - 3) + "...";
         }
 
         // Step forward as long as textWidth allows.
@@ -461,7 +461,7 @@ public class EventoREST {
                 newEnd = text.length();
             }
 
-        } while (textWidth(text.substring(0, newEnd) + "...") < max);
+        } while (textWidth(text.substring(0, newEnd) + "...") < EventoREST.MAX_CARACTERES_DESCRIPCION);
 
         return text.substring(0, end) + "...";
     }
@@ -497,6 +497,7 @@ public class EventoREST {
        de eventos. Esto permite seleccionar los eventos de forma mas precisa que
        obteniendolos todos
      */
+    @SuppressWarnings("unused")
     public static class Filtrado implements Serializable {
 
         public Boolean ordenarPorDistancia;
@@ -548,8 +549,10 @@ public class EventoREST {
         // Direccion del evento
         public String direccion;
         
+        @SuppressWarnings("unused")
         public Double latitud, longitud;
 
+        @SuppressWarnings("unused")
         public String fotoUrl;
 
         public EventoProxyMini() {
@@ -558,7 +561,7 @@ public class EventoREST {
         private EventoProxyMini(Integer id, String nombre, String descripcion, Date fecha, BigDecimal precio, String direccion, Double latitud, Double longitud) {
             this.id = id;
             this.nombre = nombre;
-            this.descripcion = ellipsize(descripcion, MAX_CARACTERES_DESCRIPCION);
+            this.descripcion = ellipsize(descripcion);
             this.fecha = fecha;
             this.precio = precio;
             this.direccion = direccion;
@@ -572,7 +575,7 @@ public class EventoREST {
             this.id = evento.getId();
 
             this.nombre = evento.getNombre();
-            this.descripcion = ellipsize(evento.getDescripcion(), MAX_CARACTERES_DESCRIPCION);
+            this.descripcion = ellipsize(evento.getDescripcion());
             this.fecha = evento.getFecha();
             this.precio = evento.getPrecio();
             this.direccion = evento.getDireccion();
@@ -582,6 +585,7 @@ public class EventoREST {
 
     }
 
+    @SuppressWarnings("unused")
     public static class EventoProxy extends EventoProxyMini {
 
         // Tipo del evento 1=Una vez, 2=Recurrente, 3=Persistente

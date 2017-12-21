@@ -17,11 +17,6 @@ import java.io.IOException;
 public class LoginServlet extends AbstractAuthorizationCodeServlet {
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doGet(req, resp);
-    }
-
-    @Override
     protected AuthorizationCodeFlow initializeFlow() throws IOException {
         return Shared.newFlow();
     }

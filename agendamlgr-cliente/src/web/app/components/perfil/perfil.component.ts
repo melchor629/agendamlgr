@@ -26,7 +26,6 @@ export class PerfilComponent implements OnInit {
 
     // Indica si el perfil que se está viendo es el del que tiene la sesion iniciada
     private miPerfil: boolean = true;
-    private sumaSeguridad: number = 0;
 
     // Usuario de sesion
     private usuarioSesion: any;
@@ -106,13 +105,13 @@ export class PerfilComponent implements OnInit {
     }
 
     submitModificarTipo() {
-        this.usuarioService.modificarTipoUsuario(this.usuario, this.usuario.tipo).subscribe(u => {
+        this.usuarioService.modificarTipoUsuario(this.usuario, this.usuario.tipo).subscribe(() => {
             $('#modalExito').modal('show');
         }, error => this.errorResponse = error);
     }
 
     borrarUsuario() {
-        this.usuarioService.borrarUsuario(this.usuario).subscribe(u => {
+        this.usuarioService.borrarUsuario(this.usuario).subscribe(() => {
             // El usuario ha sido borrado con exito, proceder a hacer un logout
             if(this.miPerfil) {
                 window.localStorage.removeItem("token");

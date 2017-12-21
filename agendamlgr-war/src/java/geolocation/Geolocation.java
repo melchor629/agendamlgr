@@ -25,11 +25,12 @@ import java.util.Map;
  * @author john
  */
 public class Geolocation {
+    @SuppressWarnings("unchecked")
     public static String encontrarCoordenadas(String direccion) throws IOException{
         HttpClient httpClient = new DefaultHttpClient();
         HttpUriRequest request = new HttpGet("https://maps.googleapis.com/maps/api/geocode/json?address="+URLEncoder.encode(direccion, StandardCharsets.UTF_8.name())+"&key="+ TokensUtils.googleApiKey);
         HttpResponse res = httpClient.execute(request);
-        Map<String, Object> resultadoJSON = new Gson().fromJson(
+        Map<String, Object> resultadoJSON = (Map<String, Object>) new Gson().fromJson(
             new InputStreamReader(res.getEntity().getContent()),
             Map.class
         );

@@ -1,5 +1,5 @@
 <app-mostrarError [errorResponse]="errorResponse"></app-mostrarError>
-<h2>{{ evento.nombre }} <small>por <a routerLink="/perfil/{{ evento.creador }}">{{ nombreCreador }}</a></small></h2>
+<h2><b *ngIf="!evento.validado">*</b> {{ evento.nombre }} <small>por <a routerLink="/perfil/{{ evento.creador }}">{{ nombreCreador }}</a></small></h2>
 
 <p style="font-size: 11px;">
     <span *ngFor="let categoria of evento.categoriaList">
@@ -10,7 +10,7 @@
 <div class="w-100">
     <div id="carouselEventPictures" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
-            <div [class]="i === 0 ? 'carousel-item active' : 'carousel-item'" *ngFor="let foto of fotos; let i = index">
+            <div [class]="i === 0 ? 'carousel-item active' : 'carousel-item'" *ngFor="let foto of fotos">
                 <img class="d-block w-100" [src]="foto.url" [alt]="foto.titulo" />
             </div>
         </div>
@@ -32,7 +32,7 @@
 <p [innerHTML]="evento.descripcion | md"></p>
 
 <h4>Ubicación</h4>
-<p>
+<p class="text-center">
     <agm-map [latitude]="evento.latitud" [longitude]="evento.longitud" [zoom]="14">
         <agm-marker [latitude]="evento.latitud" [longitude]="evento.longitud"></agm-marker>
     </agm-map>

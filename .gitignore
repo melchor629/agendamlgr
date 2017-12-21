@@ -27,8 +27,6 @@ out/
 /agendamlgr-cliente/node_modules/
 /agendamlgr-cliente/web/*
 !/agendamlgr-cliente/web/WEB-INF/
-!/agendamlgr-cliente/web/img/
-
 #Depenencias con Google OAuth 2.0
 tokens.json
 !agendamlgr-war/lib/*

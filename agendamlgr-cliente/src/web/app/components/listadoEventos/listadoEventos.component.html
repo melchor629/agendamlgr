@@ -43,9 +43,7 @@
                 <a class="page-link" href="#" (click)="goToPage(i, $event)">{{ i + 1 }}</a>
             </li>
             <li [class]="page === totalPages - 1 ? 'page-item disabled' : 'page-item'">
-
                 <a class="page-link" href="#" aria-label="Siguiente" (click)="goToNextPage($event)">
-
                     <span aria-hidden="true">&raquo;</span>
                     <span class="sr-only">Siguiente</span>
                 </a>
@@ -87,9 +85,7 @@
     <nav aria-label="Page navigation example">
         <ul class="pagination">
             <li [class]="page === 0 ? 'page-item disabled' : 'page-item'">
-
                 <a class="page-link" href="#" aria-label="Anterior" (click)="goToPreviousPage($event)">
-
                     <span aria-hidden="true">&laquo;</span>
                     <span class="sr-only">Anterior</span>
                 </a>

@@ -34,12 +34,13 @@ public class UsuarioFacade extends AbstractFacade<Usuario> {
         super(Usuario.class);
     }
 
+    @SuppressWarnings("unchecked")
     public List<Usuario> buscarUsuariosPreferencias(List<Categoria> categorias) {
         //select i from Item i join i.categoryList category where category in :categories
         if (categorias != null && !categorias.isEmpty()) {
             Query q = this.em.createQuery("select distinct u from Usuario u join u.categoriaList c where c in :categorias");
             q.setParameter("categorias", categorias);
-            return (List) q.getResultList();
+            return (List<Usuario>) q.getResultList();
         }else{
             return (new ArrayList<>());
         }

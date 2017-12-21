@@ -196,7 +196,7 @@ public class EventoFacade extends AbstractFacade<Evento> {
             duplicadosEliminados = duplicadosEliminados.stream()
                     .filter(evento -> evento.getLatitud() != null && evento.getLongitud() != null)
                     .map(evento -> new Map.Entry<Double, Evento>() {
-                        private double distancia = distanciaAEvento(x, y, evento);
+                        private final double distancia = distanciaAEvento(x, y, evento);
                         @Override public Double getKey() { return distancia; }
                         @Override public Evento getValue() { return evento; }
                         @Override public Evento setValue(Evento value) { return evento; }
@@ -319,7 +319,7 @@ public class EventoFacade extends AbstractFacade<Evento> {
      * 47.6788206, -122.5271205) --> 14.973190481586224 [km]
      *
      */
-    public static class Haversine {
+    private static class Haversine {
 
         private static final int EARTH_RADIUS = 6371; // Approx Earth radius in KM
 

@@ -8,7 +8,6 @@ package app.ejb;
 import app.entity.Categoria;
 import app.entity.Evento;
 import app.entity.Usuario;
-import app.exception.AgendamlgException;
 import app.exception.AgendamlgNotFoundException;
 
 import javax.ejb.Stateless;
@@ -35,18 +34,20 @@ public class CategoriaFacade extends AbstractFacade<Categoria> {
     public CategoriaFacade() {
         super(Categoria.class);
     }
-    
+
+    @SuppressWarnings("unchecked")
     public List<Categoria> buscarPreferenciasUsuario(Usuario usuario) {
         Query q = this.em.createQuery("select c from Categoria c where :usuario member of c.usuarioList");
         q.setParameter("usuario", usuario);
-        return (List) q.getResultList();
+        return (List<Categoria>) q.getResultList();
     }
-    
+
+    @SuppressWarnings("unchecked")
     // Devuelve las categorias de un evento dado
     public List<Categoria> buscarCategoriasEvento(Evento evento){
         Query q = this.em.createQuery("select c from Categoria c where :evento member of c.eventoList");
         q.setParameter("evento", evento);
-        return q.getResultList();
+        return (List<Categoria>) q.getResultList();
     }
 
     @SuppressWarnings("unchecked")
