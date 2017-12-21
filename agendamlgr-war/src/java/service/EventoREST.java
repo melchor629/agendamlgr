@@ -114,7 +114,7 @@ public class EventoREST {
 
         Evento evento = eventoFacade.find(id);
 
-        if (!(evento != null && (periodista || evento.getValidado() == 1))) {
+        if (!(evento != null && (periodista || evento.getValidado() == 1 || evento.getCreador().equals(usuarioSesion)))) {
             throw AgendamlgNotFoundException.eventoNoExiste(id);
         }
 
@@ -358,7 +358,7 @@ public class EventoREST {
     public FotosDeEvento buscarFotosParaEvento(@PathParam("id") int eventoId, @HeaderParam("bearer") String token) throws NotAuthenticatedException, AgendamlgNotFoundException, IOException {
         Usuario usuario = usuarioDesdeToken(token);
         Evento evento = eventoFacade.find(eventoId);
-        if (evento == null || ((usuario == null || usuario.getTipo() < 3) && evento.getValidado() == 0)) {
+        if (evento == null || ((usuario == null || usuario.getTipo() < 3) && evento.getValidado() == 0 && !evento.getCreador().equals(usuario))) {
             throw AgendamlgNotFoundException.eventoNoExiste(eventoId);
         }
 
