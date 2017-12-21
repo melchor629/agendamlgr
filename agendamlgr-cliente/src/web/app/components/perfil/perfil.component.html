@@ -1,17 +1,50 @@
 <app-mostrarError [errorResponse]="errorResponse"></app-mostrarError>
+
+<div class="modal fade" id="modalExito">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cambios guardados correctamente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Tipo de usuario cambiado con éxito</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Entendido</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div *ngIf="usuario">
     <h3>{{ usuario.nombre }} {{ usuario.apellidos }}</h3>
     <div class="row">
         <div class="col-md-auto col-xs-12">
-            <img [src]="usuario.image" class="rounded img-fluid" />
+            <img [src]="usuario.image" class="rounded img-fluid"/>
         </div>
         <div class="col-md-auto col-xs-12">
             <div class="espacio d-block d-md-none"></div>
             <p>
                 <b>Email</b> <a href="mailto:{{ usuario.email }}">{{ usuario.email }}</a>
-                <br />
-                <b>Tipo</b> {{ [null,'Normal','Super Usuario','Periodista'][usuario.tipo] }}
+                <br/>
+                <span [hidden]="!miPerfil"><b>Tipo</b> {{ ['Normal','Super Usuario','Periodista'][usuario.tipo-1] }}</span>
             </p>
+            <div *ngIf="!miPerfil && usuarioSesion.tipo == 3">
+                <form (submit)="submitModificarTipo()" class="form-inline">
+                    <div class="form-group" style="margin-right: 2%;">
+                        <select class="custom-select" name="selectRango" [(ngModel)]="usuario.tipo" required>
+                            <option *ngFor="let tipo of ['Normal','Super Usuario','Periodista']; let i = index"
+                                    [value]="i+1">
+                                {{tipo}}
+                            </option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">✔</button>
+                </form>
+            </div>
             <div *ngIf="preferencias.length > 0">
                 <b>Preferencias</b>
                 <div class="list-group overflow">
@@ -42,6 +75,21 @@
     <div class="espacio"></div>
     <h3>Eventos creados</h3>
     <listado-eventos [eventos]="eventos"></listado-eventos>
+</div>
+
+<div *ngIf="miPerfil || (!miPerfil && usuarioSesion.tipo == 3)">
+<div class="p-3 mb-2 bg-danger text-white">
+    ¡Cuidado con lo que haces! El botón de abajo destruirá {{ miPerfil ? 'tu' : 'este'}} perfil (y todo el contenido asociado) para siempre...
+</div>
+    <form class="form-inline" (submit)="borrarUsuario()">
+        <div class="form-group">
+            Resultado de sumar 4 + 3:
+        </div>
+        <div class="form-group mx-sm-3">
+            <input type="text" name="resultadoSumaSeguridad" class="form-control" placeholder="Suma..." [(ngModel)]="sumaSeguridad">
+        </div>
+        <button type="submit" class="btn btn-danger" [disabled]="sumaSeguridad != 7">Borrar perfil</button>
+    </form>
 </div>
 
 <div *ngIf="!usuario && usuario === null">

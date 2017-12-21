@@ -23,6 +23,6 @@ export class UsuarioService extends AbstractService{
   }
 
   modificarTipoUsuario(user: string | Usuario, tipo: number) {
-    return this.put<Usuario>('usuario', user instanceof String ? user : user.id, Math.trunc(tipo));
+    return this.put<Usuario>('usuario', user instanceof String ? user : user.id, { tipo: Math.trunc(tipo) });
   }
 }
