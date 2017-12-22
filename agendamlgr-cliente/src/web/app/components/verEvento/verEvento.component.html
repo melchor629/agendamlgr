@@ -45,5 +45,7 @@
     <span>&nbsp;</span>
     <a routerLink="/editarEvento/{{ evento.id }}" class="btn btn-warning" *ngIf="editable">Editar</a>
     <span>&nbsp;</span>
+    <a href="#" (click)="eliminar()" class="btn btn-danger" *ngIf="borrable">Eliminar</a>
+    <span>&nbsp;</span>
     <a href="#" class="btn btn-success" *ngIf="evento.precio">Comprar entradas ({{ evento.precio }}€)</a>
 </div>

@@ -23,6 +23,7 @@ export class VerEventoComponent implements OnInit {
   fotos: Foto[];
   private validable: boolean = false;
   private editable: boolean = false;
+  private borrable: boolean = false;
 
   constructor(private categoriaService: CategoriaService,
               private eventoService: EventoService,
@@ -39,6 +40,7 @@ export class VerEventoComponent implements OnInit {
       this.usuarioService.obtenerUsuarioDeLaSesion().subscribe(usuario => {
         this.validable = !this.evento.validado && usuario.tipo == 3;
         this.editable = this.evento.creador === usuario.id || usuario.tipo == 3;
+        this.borrable = usuario.tipo === 3;
       });
       this.usuarioService.buscarUsuario(this.evento.creador).subscribe((resultado2)=>{
           this.nombreCreador = resultado2.nombre;
@@ -62,6 +64,13 @@ export class VerEventoComponent implements OnInit {
     },(errorResponse) =>{
       this.errorResponse = errorResponse;
     });
+  }
+
+  eliminar() {
+    this.eventoService.borrarEvento(this.id).subscribe(
+        null,
+        error => this.errorResponse = error
+    );
   }
 
 }
