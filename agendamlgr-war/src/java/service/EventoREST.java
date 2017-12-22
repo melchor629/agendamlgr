@@ -325,6 +325,14 @@ public class EventoREST {
 
         Usuario usuarioSesion = usuarioDesdeToken(token);
 
+        // Si el usuario no tiene la sesion iniciada y sin embargo se indica que
+        // se quieren mostrar eventos de las preferencias de este, mostrarDeMiPreferencia
+        // se establece a null
+        
+        if(usuarioSesion == null){
+            filtro.mostrarDeMiPreferencia = false;
+        }
+        
         List<Categoria> listaCategorias;
 
         // Dependiendo de si se quieren mostrar los eventos que sean preferencia del usuario

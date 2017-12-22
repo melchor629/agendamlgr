@@ -145,10 +145,10 @@ public class EventoFacade extends AbstractFacade<Evento> {
             // Usuario con sesion iniciada y periodista
             Query q;
             if (categorias != null && categorias.size() > 0) {
-                q = this.em.createQuery("select e from Evento e join e.categoriaList c where c in :categorias and e.fecha > :hoy"+filtroNombre+"ORDER BY e.fecha ASC");
+                q = this.em.createQuery("select e from Evento e join e.categoriaList c where c in :categorias and (e.fecha > :hoy or e.tipo = 2 or e.tipo = 3)"+filtroNombre+"ORDER BY e.fecha ASC");
                 q.setParameter("categorias", categorias);
             } else {
-                q = em.createQuery("SELECT e FROM Evento e WHERE e.fecha > :hoy"+filtroNombre+"ORDER BY e.fecha ASC");
+                q = em.createQuery("SELECT e FROM Evento e WHERE (e.fecha > :hoy or e.tipo = 2 or e.tipo = 3)"+filtroNombre+"ORDER BY e.fecha ASC");
             }
             q.setParameter("hoy", ahora, TemporalType.TIMESTAMP);
             
@@ -162,10 +162,10 @@ public class EventoFacade extends AbstractFacade<Evento> {
             // Usuario no logueado o no periodista
             Query q;
             if (categorias != null && categorias.size() > 0) {
-                q = this.em.createQuery("select e from Evento e join e.categoriaList c where c in :categorias and e.fecha > :hoy and e.validado = 1"+filtroNombre+"ORDER BY e.fecha ASC");
+                q = this.em.createQuery("select e from Evento e join e.categoriaList c where c in :categorias and (e.fecha > :hoy or e.tipo = 2 or e.tipo = 3) and e.validado = 1"+filtroNombre+"ORDER BY e.fecha ASC");
                 q.setParameter("categorias", categorias);
             } else {
-                q = em.createQuery("SELECT e FROM Evento e WHERE e.fecha > :hoy AND e.validado = 1"+filtroNombre+"ORDER BY e.fecha ASC");
+                q = em.createQuery("SELECT e FROM Evento e WHERE (e.fecha > :hoy or e.tipo = 2 or e.tipo = 3) AND e.validado = 1"+filtroNombre+"ORDER BY e.fecha ASC");
             }
             q.setParameter("hoy", ahora, TemporalType.TIMESTAMP);
             
@@ -264,7 +264,7 @@ public class EventoFacade extends AbstractFacade<Evento> {
             if (evento.getTipo() < 1 || evento.getTipo() > 3) {
                 throw AgendamlgException.tipoInvalido(evento.getTipo());
             }
-            if (usuarioQueEdita.getTipo() == 3) {
+            if (usuarioQueEdita.getTipo() == 3 || evento.getCreador().getId().equals(usuarioQueEdita.getId())) {
                 this.actualizarCategoriaEvento(evento, categoriasEvento);
             } else {
                 throw AgendamlgException.sinPermisos(usuarioQueEdita.getNombre());
