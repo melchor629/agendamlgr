@@ -10,7 +10,7 @@
 <div class="w-100">
     <div id="carouselEventPictures" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
-            <div [class]="i === 0 ? 'carousel-item active' : 'carousel-item'" *ngFor="let foto of fotos">
+            <div [class]="i === 0 ? 'carousel-item active' : 'carousel-item'" *ngFor="let foto of fotos; let i = index">
                 <img class="d-block w-100" [src]="foto.url" [alt]="foto.titulo" />
             </div>
         </div>

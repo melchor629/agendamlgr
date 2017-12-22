@@ -78,17 +78,17 @@
 </div>
 
 <div *ngIf="miPerfil || (!miPerfil && usuarioSesion.tipo == 3)">
-<div class="p-3 mb-2 bg-danger text-white">
-    ¡Cuidado con lo que haces! El botón de abajo destruirá {{ miPerfil ? 'tu' : 'este'}} perfil (y todo el contenido asociado) para siempre...
-</div>
+    <div class="p-3 mb-2 bg-danger text-white">
+        ¡Cuidado con lo que haces! El botón de abajo destruirá {{ miPerfil ? 'tu' : 'este'}} perfil (y todo el contenido asociado) para siempre...
+    </div>
     <form class="form-inline" (submit)="borrarUsuario()">
         <div class="form-group">
-            Resultado de sumar 4 + 3:
+            Resultado de sumar {{ n1 }} + {{ n2 }}:
         </div>
         <div class="form-group mx-sm-3">
             <input type="text" name="resultadoSumaSeguridad" class="form-control" placeholder="Suma..." [(ngModel)]="sumaSeguridad">
         </div>
-        <button type="submit" class="btn btn-danger" [disabled]="sumaSeguridad != 7">Borrar perfil</button>
+        <button type="submit" class="btn btn-danger" [disabled]="sumaSeguridad != n1+n2">Borrar perfil</button>
     </form>
 </div>
 

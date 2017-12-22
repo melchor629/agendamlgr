@@ -30,6 +30,10 @@ export class PerfilComponent implements OnInit {
     // Usuario de sesion
     private usuarioSesion: any;
 
+    private n1: number;
+    private n2: number;
+    private sumaSeguridad: number;
+
     constructor(private categoriaService: CategoriaService,
                 private usuarioService: UsuarioService,
                 private eventoService: EventoService,
@@ -40,15 +44,16 @@ export class PerfilComponent implements OnInit {
 
     ngOnInit() {
         this.listarDatosUsuarios();
-        this.usuarioService.obtenerUsuarioDeLaSesion().subscribe(usuario => {this.usuarioSesion = usuario;},
-            err => {this.errorResponse = err});
+        this.n1 = Math.trunc(Math.random() * 9) + 1;
+        this.n2 = Math.trunc(Math.random() * 9) + 1;
     }
 
     listarDatosUsuarios() {
         let userId = this.route.snapshot.params['id'];
         if (userId) {
             this.miPerfil = false;
-
+            this.usuarioService.obtenerUsuarioDeLaSesion().subscribe(usuario => {this.usuarioSesion = usuario;},
+                err => {this.errorResponse = err});
             this.usuarioService.buscarUsuario(userId).subscribe(usuario => this.usuario = usuario, (errorResponse) => {
                 this.errorResponse = errorResponse;
             });
@@ -57,7 +62,7 @@ export class PerfilComponent implements OnInit {
                 this.eventos = [];
             });
         } else {
-            this.usuarioService.obtenerUsuarioDeLaSesion().subscribe(resultado => this.usuario = resultado, (errorResponse) => {
+            this.usuarioService.obtenerUsuarioDeLaSesion().subscribe(resultado => this.usuario = this.usuarioSesion = resultado, (errorResponse) => {
                 this.errorResponse = errorResponse;
             });
             this.categoriaService.buscarPreferenciasUsuario().subscribe(
