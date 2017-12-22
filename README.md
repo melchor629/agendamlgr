@@ -49,6 +49,9 @@ Hay que tener instalado:
 ## Creado a partir de:
 * [Glassfish](https://javaee.github.io/glassfish/) - Servidor Web
 * [Java EE](http://www.oracle.com/technetwork/java/javaee/overview/index.html) - Marco de Trabajo para Desarrollo Web
+* [JWT for Java](https://github.com/auth0/java-jwt) - Implementación de JWT para Java
+* [GSON](https://github.com/google/gson) - Serializer & Deserializer of JSON for Java
+* [httpclient](https://hc.apache.org) - Cliente (decente) HTTP para Java
 * [Apache Derby](https://db.apache.org/derby/) - Base de datos
 * [node.js][2] - Parte del frontend
 * [Bootstrap 4][3] - Diseño y estrucutra del frontend

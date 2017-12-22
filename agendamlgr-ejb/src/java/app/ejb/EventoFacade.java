@@ -98,9 +98,13 @@ public class EventoFacade extends AbstractFacade<Evento> {
     @SuppressWarnings("unchecked")
     public List<Evento> buscarEventosUsuario(Usuario usuario, boolean todos) throws AgendamlgNotFoundException {
         if (usuario != null) {
-            Query q = this.em.createQuery("select e from Evento e where e.creador.id=:id and e.validado=:v");
+            Query q;
+            if(todos) {
+                q = this.em.createQuery("select e from Evento e where e.creador.id=:id ORDER BY e.fecha ASC");
+            } else {
+                q = this.em.createQuery("select e from Evento e where e.creador.id=:id and e.validado=1 ORDER BY e.fecha ASC");
+            }
             q.setParameter("id", usuario.getId());
-            q.setParameter("v", todos ? 1 : 0);
             return (List) q.getResultList();
         } else {
             throw AgendamlgNotFoundException.usuarioNoExiste();
